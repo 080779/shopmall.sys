@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/style.css" />
+    <link href="~/assets/css/codemirror.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/assets/css/ace.min.css" />
+    <link rel="stylesheet" href="~/assets/css/font-awesome.min.css" />
+    <link href="~/css/my_pagination.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery.min.js"></script>
+    <!--[if IE]>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <![endif]-->
+    <!--[if !IE]> -->
+    <script type="text/javascript">
+        window.jQuery || document.write("<script src='/assets/js/jquery-2.0.3.min.js'>" + "<" + "/script>");
+    </script>
+    <!-- <![endif]-->
+    <script type="text/javascript">
+        if ("ontouchend" in document) document.write("<script src='/assets/js/jquery.mobile.custom.min.js'>" + "<" + "/script>");
+    </script>
+    <script type="text/javascript" src="~/js/vue.min2.5.16.js"></script>
+    <script type="text/javascript" src="~/js/vue-resource.min1.5.0.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/typeahead-bs2.min.js"></script>
+    <!-- page specific plugin scripts -->
+    <script src="~/assets/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/jquery.dataTables.bootstrap.js"></script>
+    <script type="text/javascript" src="~/js/H-ui.js"></script>
+    <script type="text/javascript" src="~/js/H-ui.admin.js"></script>
+    <script src="~/assets/layer/layer.js" type="text/javascript"></script>
+    <script src="~/assets/laydate/laydate.js" type="text/javascript"></script>
+    <title>新增客户</title>
+</head>
+
+<body>
+    <div id="app">
+        <div class="xinxi" style="margin-top:30px">
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">客户账号：</label>
+                <div class="col-sm-9">
+                    <input placeholder="客户账号" v-model="mobile" class="col-xs-4 text_info" maxlength="11" type="text" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">会员编号：</label>
+                <div class="col-sm-9">
+                    <input placeholder="会员编号" v-model="code" class="col-xs-4 text_info" type="text" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">支付密码：</label>
+                <div class="col-sm-9">
+                    <input placeholder="支付密码" v-model="password" class="col-xs-4 text_info" type="password" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">确认密码：</label>
+                <div class="col-sm-9">
+                    <input placeholder="确认密码" v-model="password1" class="col-xs-4 text_info" type="password" />
+                </div>
+            </div>
+            <div class="Button_operation clearfix">
+                <a v-on:click="btnSave" class="btn btn-xs btn-info">确认添加</a>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vue = new Vue({
+        el: "#app",
+        data: {
+            mobile: "", code: "", password: "", password1: ""
+        },
+        methods: {
+            btnSave: function () {
+                if (this.mobile == "") {
+                    layer.alert('客户账号不能为空', { icon: 0, tilte: '提示框' });
+                    return;
+                }
+                var reg = /^1\d{10}$/;
+                if (!reg.test(this.mobile)) {
+                    layer.alert('客户账号手机号码格式不正确', { icon: 0, tilte: '提示框' });
+                    return;
+                }
+                if (this.code == "") {
+                    layer.alert('会员编号不能为空', { icon: 0, tilte: '提示框' });
+                    return;
+                }
+                if (this.password == "") {
+                    layer.alert('交易密码不能为空', { icon: 0, tilte: '提示框' });
+                    return;
+                }
+                if (this.password.length < 6 || this.password.length > 8) {
+                    layer.alert('请输入6-8位密码', { icon: 0, tilte: '提示框' });
+                    return;
+                }
+                if (this.password != this.password1) {
+                    layer.alert('两次密码不一致', { icon: 0, tilte: '提示框' });
+                    return;
+                }
+                this.$http.post('/user/add', { mobile: this.mobile, code: this.code, password: this.password }, { emulateJSON: true }).then(function (result) {
+                    if (result.data.status == 1) {
+                        layer.alert(result.data.msg, { icon: 6, tilte: '提示框' });
+                        this.mobile = "";
+                        this.code = "";
+                        this.password = "";
+                        this.password1 = "";
+                    }
+                    else if (result.data.status == 0) {
+                        layer.alert(result.data.msg, { icon: 0, tilte: '提示框' });
+                    }
+                    else if (result.data.status == 302) {
+                        window.location.href = result.data.data;
+                    }
+                    else {
+                        layer.alert('未知错误', { icon: 0, tilte: '提示框' });
+                    }                    
+                });
+            }
+        }
+    });
+</script>
