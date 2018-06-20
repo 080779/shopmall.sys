@@ -65,6 +65,7 @@
     <Compile Include="Config\SettingTypeConfig.cs" />
     <Compile Include="Config\StateConfig.cs" />
     <Compile Include="Config\TakeCashConfig.cs" />
+    <Compile Include="Entity\OrderEntity.cs" />
     <Compile Include="Entity\GoodsEntity.cs" />
     <Compile Include="Entity\GoodsSecondTypeEntity.cs" />
     <Compile Include="Entity\GoodsImgEntity.cs" />
