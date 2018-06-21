@@ -9,10 +9,9 @@ namespace IMS.Web.Areas.Admin.Models.User
 {
     public class ListViewModel
     {
-        public PlatformUserDTO[] PlatformUsers { get; set; }
+        public UserDTO[] Users { get; set; }
         public string PageHtml { get; set; }
         public int PageCount { get; set; }
         public List<Page> Pages { get; set; }
-        public long PlatformIntegral { get; set; }
     }
 }

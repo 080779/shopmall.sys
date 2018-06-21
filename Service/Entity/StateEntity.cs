@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace IMS.Service.Entity
 {
+    /// <summary>
+    /// 提现状态实体类
+    /// </summary>
     public class StateEntity:BaseEntity
     {
         public string Name { get; set; }

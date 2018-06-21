@@ -7,7 +7,7 @@ namespace IMS.Service.Config
     {
         public SettingConfig()
         {
-            ToTable("T_Settings");
+            ToTable("tb_settings");
             Property(s => s.Name).HasMaxLength(30).IsRequired();
             Property(s => s.Description).HasMaxLength(100);
             HasRequired(s => s.SettingType).WithMany().HasForeignKey(s => s.SettingTypeId).WillCascadeOnDelete(false);

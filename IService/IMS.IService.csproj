@@ -43,12 +43,9 @@
     <Compile Include="IAdminLogService.cs" />
     <Compile Include="IUserService.cs" />
     <Compile Include="IAdminService.cs" />
-    <Compile Include="IJournalService.cs" />
-    <Compile Include="IJournalTypeService.cs" />
     <Compile Include="INavBarService.cs" />
     <Compile Include="IPermissionService.cs" />
     <Compile Include="IPermissionTypeService.cs" />
-    <Compile Include="IPlatformUserService.cs" />
     <Compile Include="IServiceSupport.cs" />
     <Compile Include="IStateService.cs" />
     <Compile Include="ITakeCashService.cs" />

@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace IMS.Service.Entity
 {
+    /// <summary>
+    /// 提现实体类
+    /// </summary>
     public class TakeCashEntity:BaseEntity
     {
-        public long PlatformUserId { get; set; }
-        public long IntegralTypeId { get; set; }
+        public long UserId { get; set; }
+        public UserEntity User { get; set; }
         public long StateId { get; set; }
-        public long? Integral { get; set; }
         public decimal? Amount { get; set; }
         public string Description { get; set; }
-        public virtual PlatformUserEntity PlatformUser { get; set; }
-        public virtual IntegralTypeEntity IntegralType { get; set; }
         public virtual StateEntity State { get; set; }
     }
 }

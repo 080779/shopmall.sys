@@ -13,23 +13,18 @@ namespace IMS.Service.Entity
     /// </summary>
     public class OrderEntity : BaseEntity
     {
-        public string Name { get; set; }
         public string Code { get; set; }
-        public string Standard { get; set; }//规格
-        public decimal Price { get; set; }
-        public decimal RealityPrice { get; set; }
-        public long GoodsAreaId { get; set; }
-        public GoodsAreaEntity GoodsArea { get; set; }
-        public long GoodsTypeId { get; set; }
-        public GoodsTypeEntity GoodsType { get; set; }
-        public long GoodsSecondTypeId { get; set; }
-        public GoodsSecondTypeEntity GoodsSecondType { get; set; }
-        public bool IsPutaway { get; set; }//是否上架
-        public bool IsRecommend { get; set; }//是否推荐
-        public string Description { get; set; }
-        public long GoodsImgId { get; set; }
-        public GoodsImgEntity GoodsImg { get; set; }
-        public long Inventory { get; set; }
-        public long SaleNum { get; set; }
+        public long BuyerId { get; set; }
+        public UserEntity Buyer { get; set; }
+        public decimal Amount { get; set; }
+        public long AddressId { get; set; }
+        public AddressEntity Address { get; set; }//收货地址
+        public long PayTypeId { get; set; }
+        public PayCodeEntity PayType { get; set; }//支付方式
+        public long OrderStateId { get; set; }
+        public OrderStateEntity OrderState { get; set; }//订单状态
+        public DateTime ApplyTime { get; set; }//申请退货时间
+        public decimal DeductAmount { get; set; }//扣除金额
+        public decimal RefundAmount { get; set; }//应退款金额
     }
 }

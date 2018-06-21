@@ -12,7 +12,7 @@ namespace IMS.Service.Config
     {
         public NavBarConfig()
         {
-            ToTable("T_NavBars");
+            ToTable("tb_navbars");
             Property(n => n.MenuName).HasMaxLength(50);
             Property(n => n.Url).HasMaxLength(500);
         }

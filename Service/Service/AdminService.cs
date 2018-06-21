@@ -29,30 +29,10 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 var user = dbc.GetAll<AdminEntity>().SingleOrDefault(a => a.Mobile == mobile);
-                var p_user_m = dbc.GetAll<PlatformUserEntity>().SingleOrDefault(p => p.Mobile == mobile);
-                var p_user_c = dbc.GetAll<PlatformUserEntity>().SingleOrDefault(p => p.Mobile == mobile);
                 if (user!=null)
                 {
                     return -2;
                 }
-                if(p_user_m!=null)
-                {
-                    return -3;
-                }
-                if(p_user_c!=null)
-                {
-                    return -4;
-                }
-                long type = dbc.GetAll<PlatformUserTypeEntity>().SingleOrDefault(p=>p.Name=="平台").Id;
-                PlatformUserEntity u_entity = new PlatformUserEntity();
-                u_entity.Code = mobile;
-                u_entity.Mobile = mobile;
-                u_entity.AdderMobile = adminMobile;
-                u_entity.Salt = CommonHelper.GetCaptcha(6);
-                u_entity.Password = CommonHelper.GetMD5(password);
-                u_entity.TradePassword = CommonHelper.GetMD5(password);
-                u_entity.PlatformUserTypeId = type;
-                dbc.PlatformUsers.Add(u_entity);
 
                 AdminEntity entity = new AdminEntity();
                 entity.Mobile = mobile;
@@ -73,13 +53,6 @@ namespace IMS.Service.Service
                 {
                     return false;
                 }
-                var platformUser = await dbc.GetAll<PlatformUserEntity>().SingleOrDefaultAsync(p => p.Mobile == entity.Mobile);
-                if(platformUser==null)
-                {
-                    return false;
-                }
-                platformUser.Mobile = mobile;
-                platformUser.Code = mobile;
 
                 entity.Mobile = mobile;
                 entity.Description = description;
@@ -132,12 +105,6 @@ namespace IMS.Service.Service
                 {
                     return false;
                 }
-                var platformUser = await dbc.GetAll<PlatformUserEntity>().SingleOrDefaultAsync(p => p.Mobile == entity.Mobile);
-                if (platformUser == null)
-                {
-                    return false;
-                }
-                platformUser.IsDeleted = true;
 
                 entity.IsDeleted = true;
                 await dbc.SaveChangesAsync();
@@ -154,12 +121,6 @@ namespace IMS.Service.Service
                 {
                     return false;
                 }
-                var platformUser = await dbc.GetAll<PlatformUserEntity>().SingleOrDefaultAsync(p => p.Mobile == entity.Mobile);
-                if (platformUser == null)
-                {
-                    return false;
-                }
-                platformUser.IsEnabled = !platformUser.IsEnabled;
 
                 entity.IsEnabled = !entity.IsEnabled;
                 await dbc.SaveChangesAsync();
@@ -198,7 +159,7 @@ namespace IMS.Service.Service
                     }
                     if (startTime != null)
                     {
-                        admins = admins.Where(a => a.CreateTime.Year >= startTime.Value.Year && a.CreateTime.Month >= startTime.Value.Month && a.CreateTime.Day >= startTime.Value.Day);
+                        admins = admins.Where(a => a.CreateTime>=startTime);
                     }
                     if (endTime != null)
                     {

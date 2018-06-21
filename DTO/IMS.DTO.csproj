@@ -40,16 +40,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GoodsSecondTypeDTO.cs" />
+    <Compile Include="SlideDTO.cs" />
+    <Compile Include="PayCodeDTO.cs" />
+    <Compile Include="OrderStateDTO.cs" />
+    <Compile Include="OrderDTO.cs" />
+    <Compile Include="NoticeDTO.cs" />
+    <Compile Include="LogisticsDTO.cs" />
+    <Compile Include="LevelTypeDTO.cs" />
+    <Compile Include="GoodsTypeDTO.cs" />
+    <Compile Include="GoodsImgDTO.cs" />
+    <Compile Include="GoodsDTO.cs" />
+    <Compile Include="GoodsCarDTO.cs" />
+    <Compile Include="GoodsAreaDTO.cs" />
+    <Compile Include="BankAccountDTO.cs" />
+    <Compile Include="AddressDTO.cs" />
     <Compile Include="AdminDTO.cs" />
     <Compile Include="AdminLogDTO.cs" />
     <Compile Include="BaseDTO.cs" />
-    <Compile Include="JournalDTO.cs" />
-    <Compile Include="JournalTypeDTO.cs" />
     <Compile Include="NavBarDTO.cs" />
     <Compile Include="PermissionDTO.cs" />
     <Compile Include="PermissionTypeDTO.cs" />
-    <Compile Include="PlatformUserDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserDTO.cs" />
     <Compile Include="StateDTO.cs" />
     <Compile Include="TakeCashDTO.cs" />
   </ItemGroup>

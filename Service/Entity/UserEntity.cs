@@ -13,13 +13,14 @@ namespace IMS.Service.Entity
     {
         public string Mobile { get; set; }
         public string Code { get; set; }
-        public decimal Amount { get; set; }
+        public string NickName { get; set; }
+        public string HeadPic { get; set; }
+        public decimal Amount { get; set; } = 0;
         public long LevelId { get; set; }
         public LevelTypeEntity Level { get; set; }
         public long RecommendId { get; set; }
         public UserEntity Recommend { get; set; }
-        public long BankAccountId { get; set; }
-        public BankAccountEntity BankAccount { get; set; }
+        public long? BankAccountId { get; set; }
         public string Description { get; set; }
         public string Salt { get; set; } = string.Empty;
         public string Password { get; set; }

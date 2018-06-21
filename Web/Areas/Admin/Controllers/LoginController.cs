@@ -13,7 +13,6 @@ namespace IMS.Web.Areas.Admin.Controllers
     public class LoginController : Controller
     {
         public IAdminService adminService { get; set; }
-        public IPlatformUserService platformUserService { get; set; }
         public ActionResult Login()
         {
             return View();
@@ -39,14 +38,11 @@ namespace IMS.Web.Areas.Admin.Controllers
                 return Json(new AjaxResult { Status = 0, Msg = "管理员账号已经被冻结" });
             }
             Session["Platform_AdminUserId"] = res;
-            var user = await platformUserService.GetModelAsync("mobile", "PlatformUser201805051709360001");
-            Session["Platform_User_Id"] = user.Id;
             return Json(new AjaxResult { Status = 302, Msg = "登录成功", Data = "/admin/home/index" });
         }
 
         public ActionResult Logout()
         {
-            Session["Platform_User_Id"] = null;
             Session["Platform_AdminUserId"] = null;
             return Redirect("/admin/login/login");
         }

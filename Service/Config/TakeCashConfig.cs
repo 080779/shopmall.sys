@@ -7,9 +7,8 @@ namespace IMS.Service.Config
     {
         public TakeCashConfig()
         {
-            ToTable("T_TakeCashes");
-            HasRequired(t => t.PlatformUser).WithMany().HasForeignKey(t => t.PlatformUserId).WillCascadeOnDelete(false);
-            HasRequired(t => t.IntegralType).WithMany().HasForeignKey(t => t.IntegralTypeId).WillCascadeOnDelete(false);
+            ToTable("tb_takecashes");
+            HasRequired(t => t.User).WithMany().HasForeignKey(t => t.UserId).WillCascadeOnDelete(false);
             HasRequired(t => t.State).WithMany().HasForeignKey(t => t.StateId).WillCascadeOnDelete(false);
             Property(t => t.Description).HasMaxLength(100);
         }

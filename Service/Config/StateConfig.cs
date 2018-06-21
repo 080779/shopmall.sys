@@ -7,7 +7,7 @@ namespace IMS.Service.Config
     {
         public StateConfig()
         {
-            ToTable("T_States");
+            ToTable("tb_states");
             Property(s => s.Name).HasMaxLength(30).IsRequired();
             Property(s => s.Description).HasMaxLength(100);
         }

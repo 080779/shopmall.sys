@@ -8,14 +8,12 @@ namespace IMS.DTO
 {
     public class TakeCashDTO:BaseDTO
     {
-        public long PlatformUserId { get; set; }
-        public long IntegralTypeId { get; set; }
+        public long UserId { get; set; }
+        public string UserMobile { get; set; }
+        public string UserCode { get; set; }
         public long StateId { get; set; }
-        public long? Integral { get; set; }
         public decimal? Amount { get; set; }
         public string Description { get; set; }
-        public string PlatformUserMobile { get; set; }
-        public string IntegralTypeName { get; set; }
         public string StateName { get; set; }
     }
 }

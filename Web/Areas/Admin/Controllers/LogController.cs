@@ -15,13 +15,13 @@ namespace IMS.Web.Areas.Admin.Controllers
     {
         public IAdminLogService adminLogService { get; set; }
         private int pageSize = 10;
-        [Permission("日志管理_查看日志")]
+        //[Permission("日志管理_查看日志")]
         public ActionResult List()
         {
             return View();
         }
         [HttpPost]
-        [Permission("日志管理_查看日志")]
+        //[Permission("日志管理_查看日志")]
         public async Task<ActionResult> List(string mobile,DateTime? startTime,DateTime? endTime,int pageIndex=1)
         {
             var result = await adminLogService.GetModelListAsync(mobile, null, startTime, endTime, pageIndex, pageSize);

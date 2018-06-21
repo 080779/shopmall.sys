@@ -7,7 +7,7 @@ namespace IMS.Service.Config
     {
         public AdminLogConfig()
         {
-            ToTable("T_AdminLogs");
+            ToTable("tb_adminLogs");
             HasRequired(a => a.Admin).WithMany().HasForeignKey(a => a.AdminId).WillCascadeOnDelete(false);
             HasRequired(a => a.PermissionType).WithMany().HasForeignKey(a => a.PermissionTypeId).WillCascadeOnDelete(false);
             Property(a => a.Description).HasMaxLength(500);

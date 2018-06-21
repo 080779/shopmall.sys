@@ -15,18 +15,16 @@ namespace IMS.Web.Areas.Admin.Controllers
     public class AdminController : Controller
     {
         public IAdminService adminService { get; set; }
-        public IPlatformUserService platformUserService { get; set; }
         public IPermissionService permissionService { get; set; }
         public IPermissionTypeService permissionTypeService { get; set; }
-        public IJournalService journalService { get; set; }
         private int pageSize = 10;
-        [Permission("管理员管理_管理员管理")]
+        //[Permission("管理员管理_管理员管理")]
         public ActionResult List()
         {            
             return View();
         }
         [HttpPost]
-        [Permission("管理员管理_管理员管理")]
+        //[Permission("管理员管理_管理员管理")]
         public async Task<ActionResult> List(string mobile, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
             string adminMobile = (await adminService.GetModelAsync(Convert.ToInt64(Session["Platform_AdminUserId"]))).Mobile;
@@ -71,9 +69,9 @@ namespace IMS.Web.Areas.Admin.Controllers
             model.PageCount = pager.PageCount;
             return Json(new AjaxResult { Status = 1, Data = model });
         }
-        [Permission("管理员管理_管理员管理")]
-        [Permission("管理员管理_新增管理")]
-        [AdminLog("管理员管理", "新增管理")]
+        //[Permission("管理员管理_管理员管理")]
+        //[Permission("管理员管理_新增管理")]
+        //[AdminLog("管理员管理", "新增管理")]
         public async Task<ActionResult> Add(string mobile,string password)
         {
             string adminMobile = (await adminService.GetModelAsync(Convert.ToInt64(Session["Platform_AdminUserId"]))).Mobile;
@@ -96,9 +94,9 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             return Json(new AjaxResult { Status = 1,Msg= "添加管理员成功", Data = "/admin/admin/list" });
         }
-        [Permission("管理员管理_管理员管理")]
-        [Permission("管理员管理_修改权限")]
-        [AdminLog("管理员管理", "修改权限")]
+        //[Permission("管理员管理_管理员管理")]
+        //[Permission("管理员管理_修改权限")]
+        //[AdminLog("管理员管理", "修改权限")]
         public async Task<ActionResult> EditPermission(long id,long[] permissionIds)
         {
             if (permissionIds==null)
@@ -112,9 +110,9 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             return Json(new AjaxResult { Status = 1, Msg = "编辑管理员权限成功", Data = "/admin/admin/list" });
         }
-        [Permission("管理员管理_管理员管理")]
-        [Permission("管理员管理_修改密码")]
-        [AdminLog("管理员管理", "修改密码")]
+        //[Permission("管理员管理_管理员管理")]
+        //[Permission("管理员管理_修改密码")]
+        //[AdminLog("管理员管理", "修改密码")]
         public async Task<ActionResult> EditPassword(long id, string password)
         {
             if (string.IsNullOrEmpty(password))
@@ -153,9 +151,9 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             return Json(new AjaxResult { Status = 1, Data = permissionTypes });
         }
-        [Permission("管理员管理_管理员管理")]
-        [Permission("管理员管理_冻结账户")]
-        [AdminLog("管理员管理", "冻结账户")]
+        //[Permission("管理员管理_管理员管理")]
+        //[Permission("管理员管理_冻结账户")]
+        //[AdminLog("管理员管理", "冻结账户")]
         public async Task<ActionResult> Frozen(long id)
         {
             bool res= await adminService.FrozenAsync(id);
@@ -165,9 +163,9 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             return Json(new AjaxResult { Status = 1, Msg = "冻结、解冻管理员账号操作成功" });
         }
-        [Permission("管理员管理_管理员管理")]
-        [Permission("管理员管理_删除账户")]
-        [AdminLog("管理员管理", "删除账户")]
+        //[Permission("管理员管理_管理员管理")]
+        //[Permission("管理员管理_删除账户")]
+        //[AdminLog("管理员管理", "删除账户")]
         public async Task<ActionResult> Del(long id)
         {
             bool res = await adminService.DeleteAsync(id);
@@ -176,29 +174,6 @@ namespace IMS.Web.Areas.Admin.Controllers
                 return Json(new AjaxResult { Status = 0, Msg = "删除管理员账户失败" });
             }
             return Json(new AjaxResult { Status = 1, Msg = "删除管理员账户成功" });
-        }
-        [Permission("管理员管理_管理员管理")]
-        public async Task<ActionResult> GetJournal(long id, int pageIndex = 1)
-        {
-            int pageSize = 8;
-            string adminMobile = (await adminService.GetModelAsync(id)).Mobile;
-            long userId = (await platformUserService.GetModelAsync("mobile", adminMobile)).Id;
-
-            JournalSearchResult result = await journalService.GetAgencyModelListAsync(userId, null, null, null, null, pageIndex, pageSize);
-            GetJournalViewModel model = new GetJournalViewModel();
-            model.Journals = result.Journals;
-            model.GivingIntegralCount = result.GivingIntegralCount == null ? 0 : result.GivingIntegralCount;
-            model.UseIntegralCount = result.UseIntegralCount == null ? 0 : result.UseIntegralCount;
-
-            Pagination pager = new Pagination();
-            pager.PageIndex = pageIndex;
-            pager.PageSize = pageSize;
-            pager.TotalCount = result.TotalCount;
-            pager.GetPagerHtml();
-
-            model.Pages = pager.Pages;
-            model.PageCount = pager.PageCount;
-            return Json(new AjaxResult { Status = 1, Data = model });
         }
     }
 }

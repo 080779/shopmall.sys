@@ -7,7 +7,7 @@ namespace IMS.Service.Config
     {
         public SettingTypeConfig()
         {
-            ToTable("T_SettingTypes");
+            ToTable("tb_settingtypes");
             Property(s => s.Name).HasMaxLength(30).IsRequired();
             Property(s => s.Description).HasMaxLength(100);
         }

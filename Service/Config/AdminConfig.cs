@@ -7,7 +7,7 @@ namespace IMS.Service.Config
     {
         public AdminConfig()
         {
-            ToTable("T_Admins");
+            ToTable("tb_admins");
             Property(a => a.Mobile).HasMaxLength(50).IsRequired();
             Property(a => a.Description).HasMaxLength(100);
             Property(a => a.Salt).HasMaxLength(20).IsRequired().IsUnicode();
