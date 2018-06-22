@@ -171,5 +171,42 @@ namespace IMS.Service.Service
                 return result;
             }
         }
+        public async Task<UserTeamSearchResult> GetModelTeamListAsync(long? teamLevel, string mobile,string code, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserTeamSearchResult result = new UserTeamSearchResult();
+                UserEntity entity = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Mobile == mobile);
+                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(r => r.UserId == entity.Id);
+                var recommends = dbc.GetAll<RecommendEntity>();
+                if (teamLevel!=null)
+                {
+                    if(teamLevel==1)
+                    {
+                        recommends = recommends.Where(a => a.Recommend.Id==entity.Id);
+                    }
+                    else if(teamLevel==2)
+                    {
+                        recommends = recommends.Where(a => a.RecommendPath.Contains("-"+entity.Id.ToString()+"-") && a.RecommendGenera==recommend.RecommendGenera+2);
+                    }
+                    else if (teamLevel == 3)
+                    {
+                        recommends = recommends.Where(a => a.RecommendPath.Contains("-" + entity.Id.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 3);
+                    }
+                }
+                if (startTime != null)
+                {
+                    recommends = recommends.Where(a => a.CreateTime >= startTime);
+                }
+                if (endTime != null)
+                {
+                    recommends = recommends.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
+                }
+                result.TotalCount = recommends.LongCount();
+                var userResult = await recommends.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                result.Users = userResult.Select(a => ToDTO(a)).ToArray();
+                return result;
+            }
+        }
     }
 }
