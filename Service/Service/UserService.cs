@@ -17,7 +17,6 @@ namespace IMS.Service.Service
         {
             UserDTO dto = new UserDTO();
             dto.Amount = entity.Amount;
-            dto.BankAccountId = entity.BankAccountId;
             dto.Code = entity.Code;
             dto.CreateTime = entity.CreateTime;
             dto.Description = entity.Description;
@@ -29,13 +28,10 @@ namespace IMS.Service.Service
             dto.LevelName = entity.Level.Name;
             dto.Mobile = entity.Mobile;
             dto.NickName = entity.NickName;
-            dto.RecommendCode = entity.Recommend.Code;
-            dto.RecommendId = entity.RecommendId;
-            dto.RecommendMobile = entity.Recommend.Mobile;
             return dto;
         }
 
-        public async Task<long> AddAsync(string mobile, string password, long levelTypeId,long recommendId)
+        public async Task<long> AddAsync(string mobile, string password, long levelTypeId)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -47,7 +43,6 @@ namespace IMS.Service.Service
                 UserEntity user = new UserEntity();
                 user.LevelId = levelTypeId;
                 user.Mobile = mobile;
-                user.RecommendId = recommendId;
                 user.Salt = CommonHelper.GetCaptcha(4);
                 user.Password = CommonHelper.GetMD5(password + user.Salt);
                 dbc.Users.Add(user);
@@ -55,7 +50,31 @@ namespace IMS.Service.Service
                 return user.Id;
             }
         }
+        public async Task<long> AddRecommendAsync(long userId, long recommendId)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                RecommendEntity user = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(u => u.UserId == userId);
+                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(u => u.UserId == recommendId);
+                if (user != null)
+                {
+                    return -1;
+                }
+                if(recommend==null)
+                {
+                    return -2;
+                }
+                user = new RecommendEntity();
+                user.UserId = userId;
+                user.RecommendId = recommendId;
+                user.RecommendGenera = recommend.RecommendGenera + 1;
+                user.RecommendPath = recommend.RecommendPath+"-"+userId;
 
+                dbc.Recommends.Add(user);
+                await dbc.SaveChangesAsync();
+                return user.Id;
+            }
+        }
         public async Task<bool> DeleteAsync(long id)
         {
             using (MyDbContext dbc = new MyDbContext())
@@ -64,6 +83,16 @@ namespace IMS.Service.Service
                 if (entity == null)
                 {
                     return false;
+                }
+                AddressEntity address = await dbc.GetAll<AddressEntity>().SingleOrDefaultAsync(a=>a.UserId==id);
+                if(address!=null)
+                {
+                    address.IsDeleted = true;
+                }
+                BankAccountEntity bankAccount = await dbc.GetAll<BankAccountEntity>().SingleOrDefaultAsync(a => a.UserId == id);
+                if (bankAccount != null)
+                {
+                    bankAccount.IsDeleted = true;
                 }
                 entity.IsDeleted = true;
                 await dbc.SaveChangesAsync();
@@ -114,19 +143,19 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<UserSearchResult> GetModelListAsync(string mobile, string code, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        public async Task<UserSearchResult> GetModelListAsync(long? levelId,string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserSearchResult result = new UserSearchResult();
                 var users = dbc.GetAll<UserEntity>();
-                if (!string.IsNullOrEmpty(mobile))
+                if(levelId!=null)
                 {
-                    users = users.Where(a => a.Mobile.Contains(mobile));
+                    users = users.Where(a => a.LevelId==levelId);
                 }
-                if (!string.IsNullOrEmpty(code))
+                if (!string.IsNullOrEmpty(keyword))
                 {
-                    users = users.Where(a => a.Code.Contains(code));
+                    users = users.Where(a => a.Mobile.Contains(keyword) || a.Code.Contains(keyword) || a.NickName.Contains(keyword));
                 }
                 if (startTime != null)
                 {

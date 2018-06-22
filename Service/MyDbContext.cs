@@ -51,5 +51,6 @@ namespace IMS.Service
         public DbSet<SettingEntity> Settings { get; set; }
         public DbSet<SettingTypeEntity> SettingTypes { get; set; }
         public DbSet<TakeCashEntity> TakeCashes { get; set; }
+        public DbSet<RecommendEntity> Recommends { get; set; }
     }
 }

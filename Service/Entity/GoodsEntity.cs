@@ -19,16 +19,16 @@ namespace IMS.Service.Entity
         public decimal Price { get; set; }
         public decimal RealityPrice { get; set; }
         public long GoodsAreaId { get; set; }
-        public GoodsAreaEntity GoodsArea { get; set; }
+        public virtual GoodsAreaEntity GoodsArea { get; set; }
         public long GoodsTypeId { get; set; }
-        public GoodsTypeEntity GoodsType { get; set; }
+        public virtual GoodsTypeEntity GoodsType { get; set; }
         public long GoodsSecondTypeId { get; set; }
-        public GoodsSecondTypeEntity GoodsSecondType { get; set; }
+        public virtual GoodsSecondTypeEntity GoodsSecondType { get; set; }
         public bool IsPutaway { get; set; }//是否上架
         public bool IsRecommend { get; set; }//是否推荐
         public string Description { get; set; }
         public long GoodsImgId { get; set; }
-        public GoodsImgEntity GoodsImg { get; set; }
+        public virtual GoodsImgEntity GoodsImg { get; set; }
         public long Inventory { get; set; }
         public long SaleNum { get; set; }
     }

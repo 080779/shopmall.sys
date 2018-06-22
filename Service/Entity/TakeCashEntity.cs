@@ -12,7 +12,7 @@ namespace IMS.Service.Entity
     public class TakeCashEntity:BaseEntity
     {
         public long UserId { get; set; }
-        public UserEntity User { get; set; }
+        public virtual UserEntity User { get; set; }
         public long StateId { get; set; }
         public decimal? Amount { get; set; }
         public string Description { get; set; }

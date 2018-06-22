@@ -17,8 +17,6 @@ namespace IMS.Service.Config
             Property(p => p.Password).HasMaxLength(50);
             Property(p => p.TradePassword).HasMaxLength(50);
             HasRequired(p => p.Level).WithMany().HasForeignKey(p => p.LevelId).WillCascadeOnDelete(false);
-            HasRequired(p => p.Recommend).WithMany().HasForeignKey(p => p.RecommendId).WillCascadeOnDelete(false);
-            //HasRequired(p => p.BankAccount).WithMany().HasForeignKey(p => p.BankAccountId).WillCascadeOnDelete(false);
         }
     }
 }

@@ -13,6 +13,7 @@ namespace IMS.Service.Config
             Property(p => p.AccountName).HasMaxLength(50).IsRequired();
             Property(p => p.Description).HasMaxLength(100);
             HasRequired(p => p.PayCode).WithMany().HasForeignKey(p => p.PayCodeId).WillCascadeOnDelete(false);
+            HasRequired(p => p.User).WithMany().HasForeignKey(p => p.UserId).WillCascadeOnDelete(false);
         }
     }
 }

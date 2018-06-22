@@ -11,6 +11,8 @@ namespace IMS.Service.Entity
     /// </summary>
     public class AddressEntity : BaseEntity
     {
+        public long UserId { get; set; }
+        public virtual UserEntity User { get; set; }
         public string Name { get; set; }//收货人姓名
         public string Mobile { get; set; }//收货人手机号
         public string Address { get; set; }//收货人地址

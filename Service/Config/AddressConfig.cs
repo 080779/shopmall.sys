@@ -12,6 +12,7 @@ namespace IMS.Service.Config
             Property(p => p.Mobile).HasMaxLength(50).IsRequired();
             Property(p => p.Address).HasMaxLength(256);
             Property(p => p.Description).HasMaxLength(100);
+            HasRequired(p => p.User).WithMany().HasForeignKey(p => p.UserId).WillCascadeOnDelete(false);
         }
     }
 }

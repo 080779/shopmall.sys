@@ -14,10 +14,6 @@ namespace IMS.DTO
         public decimal Amount { get; set; }
         public long LevelId { get; set; }
         public string LevelName { get; set; }
-        public long RecommendId { get; set; }
-        public string RecommendMobile { get; set; }
-        public string RecommendCode { get; set; }
-        public long? BankAccountId { get; set; }
         public string Description { get; set; }
         public int ErrorCount { get; set; }
         public DateTime ErrorTime { get; set; }

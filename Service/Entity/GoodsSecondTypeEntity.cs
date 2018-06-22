@@ -16,6 +16,6 @@ namespace IMS.Service.Entity
         public string Name { get; set; }
         public string Description { get; set; } 
         public long GoodsTypeId { get; set; }
-        public GoodsTypeEntity GoodsType { get; set; }
+        public virtual GoodsTypeEntity GoodsType { get; set; }
     }
 }

@@ -17,10 +17,7 @@ namespace IMS.Service.Entity
         public string HeadPic { get; set; }
         public decimal Amount { get; set; } = 0;
         public long LevelId { get; set; }
-        public LevelTypeEntity Level { get; set; }
-        public long RecommendId { get; set; }
-        public UserEntity Recommend { get; set; }
-        public long? BankAccountId { get; set; }
+        public virtual LevelTypeEntity Level { get; set; }
         public string Description { get; set; }
         public string Salt { get; set; } = string.Empty;
         public string Password { get; set; }
