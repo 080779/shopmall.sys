@@ -16,8 +16,8 @@ namespace IMS.Service.Entity
         public string Name { get; set; }
         public string Code { get; set; }
         public string Standard { get; set; }//规格
-        public decimal Price { get; set; }
-        public decimal RealityPrice { get; set; }
+        public decimal Price { get; set; }//原价
+        public decimal RealityPrice { get; set; }//现价
         public long GoodsAreaId { get; set; }
         public virtual GoodsAreaEntity GoodsArea { get; set; }
         public long GoodsTypeId { get; set; }
@@ -29,7 +29,7 @@ namespace IMS.Service.Entity
         public string Description { get; set; }
         public long GoodsImgId { get; set; }
         public virtual GoodsImgEntity GoodsImg { get; set; }
-        public long Inventory { get; set; }
+        public long Inventory { get; set; }//库存
         public long SaleNum { get; set; }
     }
 }

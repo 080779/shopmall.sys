@@ -41,8 +41,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IAdminLogService.cs" />
+    <Compile Include="IGoodsSecondTypeService.cs" />
+    <Compile Include="IGoodsService.cs" />
     <Compile Include="ILevelTypeService.cs" />
     <Compile Include="IGoodsAreaService.cs" />
+    <Compile Include="IGoodsTypeService.cs" />
     <Compile Include="INoticeService.cs" />
     <Compile Include="ITypeService.cs" />
     <Compile Include="ISlideService.cs" />

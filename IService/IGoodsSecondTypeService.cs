@@ -1,0 +1,22 @@
+﻿using IMS.DTO;
+using System;
+using System.Threading.Tasks;
+
+namespace IMS.IService
+{
+    /// <summary>
+    /// 商品分类管理接口
+    /// </summary>
+    public interface IGoodsSecondTypeService : IServiceSupport
+    {
+        Task<long> AddAsync(string name, string description);
+        Task<bool> UpdateAsync(long id, string name, string description);
+        Task<bool> DeleteAsync(long id);
+        Task<GoodsSecondTypeSearchResult> GetModelListAsync(string keyword,DateTime? startTime,DateTime? endTime,int pageIndex,int pageSize);
+    }
+    public class GoodsSecondTypeSearchResult
+    {
+        public GoodsSecondTypeDTO[] GoodsSecondTypes { get; set; }
+        public long TotalCount { get; set; }
+    }   
+}
