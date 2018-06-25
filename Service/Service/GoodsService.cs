@@ -12,24 +12,51 @@ namespace IMS.Service.Service
 {
     public class GoodsService : IGoodsService
     {
-        public Task<long> AddAsync(GoodsAddEditModel goods)
+        public async Task<long> AddAsync(GoodsAddEditModel goods)
         {
-            throw new NotImplementedException();
+            using (MyDbContext dbc = new MyDbContext())
+            {
+
+            }
         }
 
-        public Task<bool> DeleteAsync(long id)
+        public async Task<bool> DeleteAsync(long id)
         {
-            throw new NotImplementedException();
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                GoodsEntity entity = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g => g.Id == id);
+                if (entity == null)
+                {
+                    return false;
+                }
+                entity.IsDeleted = true;
+                await dbc.SaveChangesAsync();
+                return true;
+            }
         }
 
-        public Task<GoodsSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        public async Task<GoodsSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
-            throw new NotImplementedException();
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                GoodsSearchResult result = new GoodsSearchResult();
+            }
         }
 
-        public Task<bool> UpdateAsync(GoodsAddEditModel goods)
+        public async Task<bool> UpdateAsync(GoodsAddEditModel goods)
         {
-            throw new NotImplementedException();
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                GoodsEntity entity = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g=>g.Id==goods.Id);                
+                if (entity==null)
+                {
+                    return false;
+                }
+                GoodsImgEntity imgEntity = await dbc.GetAll<GoodsImgEntity>().SingleOrDefaultAsync(g => g.Id == entity.GoodsImgId);
+                entity.Description = goods.Description;
+                entity.GoodsAreaId = goods.GoodsAreaId;
+
+            }
         }
     }
 }

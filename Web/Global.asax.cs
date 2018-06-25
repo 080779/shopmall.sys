@@ -2,12 +2,14 @@
 using Autofac.Integration.Mvc;
 using IMS.Common.Newtonsoft;
 using IMS.IService;
+using IMS.Web.App_Start;
 using IMS.Web.App_Start.Filter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
 
@@ -18,6 +20,8 @@ namespace Web
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
+
+            WebApiConfig.Register(GlobalConfiguration.Configuration);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
             log4net.Config.XmlConfigurator.Configure();

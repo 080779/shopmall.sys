@@ -12,24 +12,90 @@ namespace IMS.Service.Service
 {
     public class SlideService : ISlideService
     {
-        public Task<long> AddAsync(string name, string url, string imgUrl, bool isEnabled)
+        private SlideDTO ToDTO(SlideEntity entity)
         {
-            throw new NotImplementedException();
+            SlideDTO dto = new SlideDTO();
+            dto.CreateTime = entity.CreateTime;
+            dto.Id = entity.Id;
+            dto.Code = entity.Code;
+            dto.ImgUrl = entity.ImgUrl;
+            dto.Name = entity.Name;
+            dto.IsEnabled = entity.IsEnabled;
+            dto.Url = entity.Url;
+            return dto;
+        }
+        public async Task<long> AddAsync(string name, string url, string imgUrl, bool isEnabled)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                SlideEntity entity = new SlideEntity();
+                entity.Code = DateTime.Now.ToString("yyyyMMddHHmmss");
+                entity.Name = name;
+                entity.Url = url;
+                entity.ImgUrl = imgUrl;
+                entity.IsEnabled = isEnabled;
+                dbc.Slides.Add(entity);
+                await dbc.SaveChangesAsync();
+                return entity.Id;
+            }
         }
 
-        public Task<bool> DeleteAsync(long id)
+        public async Task<bool> DeleteAsync(long id)
         {
-            throw new NotImplementedException();
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                SlideEntity entity = await dbc.GetAll<SlideEntity>().SingleOrDefaultAsync(g => g.Id == id);
+                if (entity == null)
+                {
+                    return false;
+                }
+                entity.IsDeleted = true;
+                await dbc.SaveChangesAsync();
+                return true;
+            }
         }
 
-        public Task<SlideSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        public async Task<SlideSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
-            throw new NotImplementedException();
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                SlideSearchResult result = new SlideSearchResult();
+                var entities = dbc.GetAll<SlideEntity>();
+                if (string.IsNullOrEmpty(keyword))
+                {
+                    entities = entities.Where(g => g.Code.Contains(keyword) || g.Name.Contains(keyword));
+                }
+                if (startTime != null)
+                {
+                    entities = entities.Where(a => a.CreateTime >= startTime);
+                }
+                if (endTime != null)
+                {
+                    entities = entities.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
+                }
+                result.TotalCount = entities.LongCount();
+                var noticesResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                result.Slides = noticesResult.Select(a => ToDTO(a)).ToArray();
+                return result;
+            }
         }
 
-        public Task<bool> UpdateAsync(long id, string name, string url, string imgUrl, bool isEnabled)
+        public async Task<bool> UpdateAsync(long id, string name, string url, string imgUrl, bool isEnabled)
         {
-            throw new NotImplementedException();
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                SlideEntity entity = await dbc.GetAll<SlideEntity>().SingleOrDefaultAsync(g => g.Id == id);
+                if (entity == null)
+                {
+                    return false;
+                }
+                entity.Name = name;
+                entity.Url = url;
+                entity.ImgUrl = imgUrl;
+                entity.IsEnabled = isEnabled;
+                await dbc.SaveChangesAsync();
+                return true;
+            }
         }
     }
 }

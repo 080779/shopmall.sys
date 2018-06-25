@@ -85,7 +85,6 @@ namespace IMS.Service.Service
                 }
                 entity.Name = name;
                 entity.Description = description;
-                dbc.GoodsTypes.Add(entity);
                 await dbc.SaveChangesAsync();
                 return true;
             }

@@ -88,7 +88,6 @@ namespace IMS.Service.Service
                 entity.Title = title;
                 entity.Description = description;
                 entity.Note = note;
-                dbc.GoodsAreas.Add(entity);
                 await dbc.SaveChangesAsync();
                 return true;
             }
