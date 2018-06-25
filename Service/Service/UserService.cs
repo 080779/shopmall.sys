@@ -157,13 +157,17 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<UserSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        public async Task<UserSearchResult> GetModelListAsync(long? levelId,string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserSearchResult result = new UserSearchResult();
                 var users = dbc.GetAll<UserEntity>();
 
+                if(levelId!=null)
+                {
+                    users = users.Where(a => a.LevelId ==levelId);
+                }
                 if (!string.IsNullOrEmpty(keyword))
                 {
                     users = users.Where(a => a.Mobile.Contains(keyword) || a.Code.Contains(keyword) || a.NickName.Contains(keyword));
@@ -182,7 +186,7 @@ namespace IMS.Service.Service
                 return result;
             }
         }
-        public async Task<UserTeamSearchResult> GetModelTeamListAsync(long? teamLevel,long userId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        public async Task<UserTeamSearchResult> GetModelTeamListAsync(long userId, long? teamLevel, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
