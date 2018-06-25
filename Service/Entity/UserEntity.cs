@@ -9,13 +9,14 @@ namespace IMS.Service.Entity
     /// <summary>
     /// 用户实体类
     /// </summary>
-    public class UserEntity:BaseEntity
+    public class UserEntity : BaseEntity
     {
         public string Mobile { get; set; }
         public string Code { get; set; }
         public string NickName { get; set; }
         public string HeadPic { get; set; }
         public decimal Amount { get; set; } = 0;
+        public virtual RecommendEntity Recommend { get; set; }
         public long LevelId { get; set; }
         public virtual LevelTypeEntity Level { get; set; }
         public string Description { get; set; }

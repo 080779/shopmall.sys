@@ -143,16 +143,27 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<UserSearchResult> GetModelListAsync(long? levelId,string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        public async Task<UserDTO> GetModelByMobileAsync(string mobile)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserSearchResult result = new UserSearchResult();
+                var user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u=>u.Mobile==mobile);
+                if(user==null)
+                {
+                    return null;
+                }
+                return ToDTO(user);
+            }
+        }
+
+        public async Task<UserSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserSearchResult result = new UserSearchResult();
                 var users = dbc.GetAll<UserEntity>();
-                if(levelId!=null)
-                {
-                    users = users.Where(a => a.LevelId==levelId);
-                }
+
                 if (!string.IsNullOrEmpty(keyword))
                 {
                     users = users.Where(a => a.Mobile.Contains(keyword) || a.Code.Contains(keyword) || a.NickName.Contains(keyword));
@@ -171,40 +182,43 @@ namespace IMS.Service.Service
                 return result;
             }
         }
-        public async Task<UserTeamSearchResult> GetModelTeamListAsync(long? teamLevel, string mobile,string code, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        public async Task<UserTeamSearchResult> GetModelTeamListAsync(long? teamLevel,long userId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserTeamSearchResult result = new UserTeamSearchResult();
-                UserEntity entity = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Mobile == mobile);
-                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(r => r.UserId == entity.Id);
+                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(r => r.UserId == userId);
                 var recommends = dbc.GetAll<RecommendEntity>();
                 if (teamLevel!=null)
                 {
                     if(teamLevel==1)
                     {
-                        recommends = recommends.Where(a => a.Recommend.Id==entity.Id);
+                        recommends = recommends.Where(a => a.UserId== userId);
                     }
                     else if(teamLevel==2)
                     {
-                        recommends = recommends.Where(a => a.RecommendPath.Contains("-"+entity.Id.ToString()+"-") && a.RecommendGenera==recommend.RecommendGenera+2);
+                        recommends = recommends.Where(a => a.RecommendPath.Contains("-"+ userId.ToString()+"-") && a.RecommendGenera==recommend.RecommendGenera+2);
                     }
                     else if (teamLevel == 3)
                     {
-                        recommends = recommends.Where(a => a.RecommendPath.Contains("-" + entity.Id.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 3);
+                        recommends = recommends.Where(a => a.RecommendPath.Contains("-" + userId.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 3);
                     }
+                }
+                if(keyword!=null)
+                {
+                    recommends = recommends.Where(a => a.User.Mobile.Contains(keyword) || a.User.Code.Contains(keyword) || a.User.NickName.Contains(keyword));
                 }
                 if (startTime != null)
                 {
-                    recommends = recommends.Where(a => a.CreateTime >= startTime);
+                    recommends = recommends.Where(a => a.User.CreateTime >= startTime);
                 }
                 if (endTime != null)
                 {
-                    recommends = recommends.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
+                    recommends = recommends.Where(a => a.User.CreateTime.Year <= endTime.Value.Year && a.User.CreateTime.Month <= endTime.Value.Month && a.User.CreateTime.Day <= endTime.Value.Day);
                 }
                 result.TotalCount = recommends.LongCount();
-                var userResult = await recommends.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
-                result.Users = userResult.Select(a => ToDTO(a)).ToArray();
+                var userResult = await recommends.OrderByDescending(a => a.User.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                result.Users = userResult.Select(a => ToDTO(a.User)).ToArray();
                 return result;
             }
         }

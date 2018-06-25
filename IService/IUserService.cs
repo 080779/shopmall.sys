@@ -12,8 +12,9 @@ namespace IMS.IService
         Task<bool> FrozenAsync(long id);
         Task<bool> ResetPasswordAsync(long id, string password);
         Task<UserDTO> GetModelAsync(long id);
-        Task<UserSearchResult> GetModelListAsync(long? levelId,string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
-        Task<UserTeamSearchResult> GetModelTeamListAsync(long? teamLevel, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
+        Task<UserDTO> GetModelByMobileAsync(string mobile);
+        Task<UserSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
+        Task<UserTeamSearchResult> GetModelTeamListAsync(long? teamLevel,long userId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
     }
     public class UserSearchResult
     {

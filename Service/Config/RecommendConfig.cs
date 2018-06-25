@@ -8,8 +8,8 @@ namespace IMS.Service.Config
         public RecommendConfig()
         {
             ToTable("tb_recommends");
-            HasRequired(p => p.User).WithMany().HasForeignKey(p => p.UserId).WillCascadeOnDelete(false);
-            HasRequired(p => p.User).WithMany().HasForeignKey(p => p.UserId).WillCascadeOnDelete(false);
+            HasKey(r => r.UserId);
+            HasRequired(p => p.User).WithOptional(p => p.Recommend).WillCascadeOnDelete(false);
         }
     }
 }
