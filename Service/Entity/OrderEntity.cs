@@ -21,7 +21,7 @@ namespace IMS.Service.Entity
         public long PayTypeId { get; set; }
         public virtual PayCodeEntity PayType { get; set; }//支付方式
         public long OrderStateId { get; set; }
-        public virtual OrderStateEntity OrderState { get; set; }//订单状态
+        public virtual IdNameEntity OrderState { get; set; }//订单状态
         public DateTime? PayTime { get; set; }//支付时间
         public DateTime? ConsignTime { get; set; }//发货时间
         public DateTime? EndTime { get; set; }//交易完成时间

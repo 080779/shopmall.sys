@@ -10,7 +10,7 @@ namespace IMS.Web.Areas.Admin.Models.TakeCash
     public class ListViewModel
     {
         public TakeCashDTO[] TakeCashes { get; set; }
-        public StateDTO[] States { get; set; }
+        public IdNameDTO[] States { get; set; }
         public string PageHtml { get; set; }
         public List<Page> Pages { get; set; }
         public long PageCount { get; set; }

@@ -14,7 +14,7 @@ namespace IMS.Web.Areas.Admin.Controllers
     public class TakeCashController : Controller
     {
         public ITakeCashService takeCashService { get; set; }
-        public IStateService stateService { get; set; }
+        public IIdNameService idNameService { get; set; }
         private int pageSize = 10;
         //[Permission("积分管理_积分管理")]
         public ActionResult List()
@@ -29,7 +29,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             TakeCashSearchResult result = await takeCashService.GetModelListAsync(stateId,mobile,startTime, endTime, pageIndex, pageSize);
             ListViewModel model = new ListViewModel();
             model.TakeCashes = result.TakeCashes;
-            model.States = await stateService.GetModelListAsync();
+            model.States = await idNameService.GetByTypeNameAsync("提现状态");
             if(result.GivingIntegralCount==null)
             {
                 result.GivingIntegralCount = 0;

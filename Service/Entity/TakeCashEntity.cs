@@ -16,6 +16,6 @@ namespace IMS.Service.Entity
         public long StateId { get; set; }
         public decimal? Amount { get; set; }
         public string Description { get; set; }
-        public virtual StateEntity State { get; set; }
+        public virtual IdNameEntity State { get; set; }
     }
 }

@@ -34,11 +34,9 @@ namespace IMS.Service
         public DbSet<GoodsImgEntity> GoodsImgs { get; set; }
         public DbSet<GoodsSecondTypeEntity> GoodsSecondTypes { get; set; }
         public DbSet<GoodsTypeEntity> GoodsTypes { get; set; }
-        public DbSet<LevelTypeEntity> LevelTypes { get; set; }
         public DbSet<LogisticsEntity> Logistics { get; set; }
         public DbSet<NoticeEntity> Notices { get; set; }
         public DbSet<OrderEntity> Orders { get; set; }
-        public DbSet<OrderStateEntity> OrderStates { get; set; }
         public DbSet<PayCodeEntity> PayCodes { get; set; }
         public DbSet<SlideEntity> Slides { get; set; }
         public DbSet<UserEntity> Users { get; set; }
@@ -47,9 +45,7 @@ namespace IMS.Service
         public DbSet<AdminLogEntity> AdminLogs { get; set; }
         public DbSet<PermissionEntity> Permissions { get; set; }
         public DbSet<PermissionTypeEntity> PermissionTypes { get; set; }
-        public DbSet<StateEntity> States { get; set; }
         public DbSet<SettingEntity> Settings { get; set; }
-        public DbSet<SettingTypeEntity> SettingTypes { get; set; }
         public DbSet<TakeCashEntity> TakeCashes { get; set; }
         public DbSet<RecommendEntity> Recommends { get; set; }
         public DbSet<OrderListEntity> OrderLists { get; set; }

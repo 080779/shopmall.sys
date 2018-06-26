@@ -67,18 +67,14 @@
     <Compile Include="Config\OrderConfig.cs" />
     <Compile Include="Config\SlideConfig.cs" />
     <Compile Include="Config\PayCodeConfig.cs" />
-    <Compile Include="Config\OrderStateConfig.cs" />
     <Compile Include="Config\NoticeConfig.cs" />
     <Compile Include="Config\LogisticsConfig.cs" />
-    <Compile Include="Config\LevelTypeConfig.cs" />
     <Compile Include="Config\NavBarConfig.cs" />
     <Compile Include="Config\PermissionConfig.cs" />
     <Compile Include="Config\AddressConfig.cs" />
     <Compile Include="Config\GoodsTypeConfig.cs" />
     <Compile Include="Config\PermissionTypeConfig.cs" />
     <Compile Include="Config\SettingConfig.cs" />
-    <Compile Include="Config\SettingTypeConfig.cs" />
-    <Compile Include="Config\StateConfig.cs" />
     <Compile Include="Config\TakeCashConfig.cs" />
     <Compile Include="Entity\GoodsCarEntity.cs" />
     <Compile Include="Entity\DeliveryEntity.cs" />
@@ -91,7 +87,6 @@
     <Compile Include="Entity\GoodsImgEntity.cs" />
     <Compile Include="Entity\GoodsTypeEntity.cs" />
     <Compile Include="Entity\GoodsAreaEntity.cs" />
-    <Compile Include="Entity\OrderStateEntity.cs" />
     <Compile Include="Entity\LogisticsEntity.cs" />
     <Compile Include="Entity\AddressEntity.cs" />
     <Compile Include="Entity\SlideEntity.cs" />
@@ -100,13 +95,10 @@
     <Compile Include="Entity\AdminLogEntity.cs" />
     <Compile Include="Entity\BankAccountEntity.cs" />
     <Compile Include="Entity\PayCodeEntity.cs" />
-    <Compile Include="Entity\LevelTypeEntity.cs" />
     <Compile Include="Entity\NavBarEntity.cs" />
     <Compile Include="Entity\PermissionEntity.cs" />
     <Compile Include="Entity\PermissionTypeEntity.cs" />
     <Compile Include="Entity\SettingEntity.cs" />
-    <Compile Include="Entity\SettingTypeEntity.cs" />
-    <Compile Include="Entity\StateEntity.cs" />
     <Compile Include="Entity\TakeCashEntity.cs" />
     <Compile Include="Entity\UserEntity.cs" />
     <Compile Include="MyDbContext.cs" />
@@ -122,10 +114,8 @@
     <Compile Include="Service\NavBarService.cs" />
     <Compile Include="Service\PermissionService.cs" />
     <Compile Include="Service\PermissionTypeService.cs" />
-    <Compile Include="Service\LevelTypeService.cs" />
     <Compile Include="Service\GoodsAreaService.cs" />
     <Compile Include="Service\UserService.cs" />
-    <Compile Include="Service\StateService.cs" />
     <Compile Include="Service\TakeCashService.cs" />
   </ItemGroup>
   <ItemGroup>

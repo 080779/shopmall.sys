@@ -19,7 +19,7 @@ namespace IMS.Service.Entity
         public decimal SalesAmount { get; set; } = 0;
         public virtual RecommendEntity Recommend { get; set; }
         public long LevelId { get; set; }
-        public virtual LevelTypeEntity Level { get; set; }
+        public virtual IdNameEntity Level { get; set; }
         public string Description { get; set; }
         public string Salt { get; set; } = string.Empty;
         public string Password { get; set; }

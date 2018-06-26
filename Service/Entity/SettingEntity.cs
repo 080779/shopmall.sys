@@ -11,6 +11,6 @@ namespace IMS.Service.Entity
         public string Name { get; set; }
         public string Description { get; set; }
         public long SettingTypeId { get; set; }
-        public virtual SettingTypeEntity SettingType { get; set; }
+        public virtual IdNameEntity SettingType { get; set; }
     }
 }
