@@ -54,5 +54,6 @@ namespace IMS.Service
         public DbSet<RecommendEntity> Recommends { get; set; }
         public DbSet<OrderListEntity> OrderLists { get; set; }
         public DbSet<DeliveryEntity> Deliveries { get; set; }
+        public DbSet<IdNameEntity> IdNames { get; set; }
     }
 }
