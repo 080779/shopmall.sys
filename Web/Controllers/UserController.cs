@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IMS.Web.App_Start.Filter;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -9,6 +10,7 @@ namespace IMS.Web.Controllers
 {
     public class UserController : ApiController
     {
+        [Permission("aa")]
         [HttpPost]
         public IEnumerable<string> Get(Person p)
         {

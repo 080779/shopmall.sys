@@ -28,6 +28,9 @@ namespace IMS.Service.Service
             dto.LevelName = entity.Level.Name;
             dto.Mobile = entity.Mobile;
             dto.NickName = entity.NickName;
+            dto.SalesAmount = entity.SalesAmount;
+            dto.IsReturned = entity.IsReturned;
+            dto.IsUpgraded = entity.IsUpgraded;
             return dto;
         }
 

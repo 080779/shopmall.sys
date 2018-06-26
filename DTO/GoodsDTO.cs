@@ -22,8 +22,6 @@ namespace IMS.DTO
         public bool IsPutaway { get; set; }//是否上架
         public bool IsRecommend { get; set; }//是否推荐
         public string Description { get; set; }
-        public long GoodsImgId { get; set; }
-        public string GoodsImgName { get; set; }
         public long Inventory { get; set; }
         public long SaleNum { get; set; }
     }

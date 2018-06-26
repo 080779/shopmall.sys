@@ -59,6 +59,8 @@
     <Compile Include="Config\AdminLogConfig.cs" />
     <Compile Include="Config\GoodsSecondTypeConfig.cs" />
     <Compile Include="Config\GoodsImgConfig.cs" />
+    <Compile Include="Config\DeliveryConfig.cs" />
+    <Compile Include="Config\OrderListConfig.cs" />
     <Compile Include="Config\RecommendConfig.cs" />
     <Compile Include="Config\UserConfig.cs" />
     <Compile Include="Config\OrderConfig.cs" />
@@ -78,6 +80,8 @@
     <Compile Include="Config\StateConfig.cs" />
     <Compile Include="Config\TakeCashConfig.cs" />
     <Compile Include="Entity\GoodsCarEntity.cs" />
+    <Compile Include="Entity\DeliveryEntity.cs" />
+    <Compile Include="Entity\OrderListEntity.cs" />
     <Compile Include="Entity\RecommendEntity.cs" />
     <Compile Include="Entity\OrderEntity.cs" />
     <Compile Include="Entity\GoodsEntity.cs" />

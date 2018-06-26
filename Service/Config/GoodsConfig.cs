@@ -15,7 +15,7 @@ namespace IMS.Service.Config
             HasRequired(g => g.GoodsArea).WithMany().HasForeignKey(g => g.GoodsAreaId).WillCascadeOnDelete(false);
             HasRequired(g => g.GoodsType).WithMany().HasForeignKey(g => g.GoodsTypeId).WillCascadeOnDelete(false);
             HasRequired(g => g.GoodsSecondType).WithMany().HasForeignKey(g => g.GoodsSecondTypeId).WillCascadeOnDelete(false);
-            HasRequired(g => g.GoodsImg).WithMany().HasForeignKey(g => g.GoodsImgId).WillCascadeOnDelete(false);
+            //HasRequired(g => g.GoodsImg).WithMany().HasForeignKey(g => g.GoodsImgId).WillCascadeOnDelete(false);
         }
     }
 }

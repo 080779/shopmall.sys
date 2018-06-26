@@ -12,7 +12,7 @@ namespace IMS.IService
         Task<long> AddAsync(GoodsAddEditModel goods);
         Task<bool> UpdateAsync(GoodsAddEditModel goods);
         Task<bool> DeleteAsync(long id);
-        Task<GoodsSearchResult> GetModelListAsync(string keyword,DateTime? startTime,DateTime? endTime,int pageIndex,int pageSize);
+        Task<GoodsSearchResult> GetModelListAsync(long? goodsTypeId, long? goodsSecondTypeId, string keyword,DateTime? startTime,DateTime? endTime,int pageIndex,int pageSize);
     }
     public class GoodsSearchResult
     {
@@ -34,6 +34,5 @@ namespace IMS.IService
         public bool IsPutaway { get; set; }//是否上架
         public bool IsRecommend { get; set; }//是否推荐
         public string Description { get; set; }
-        public string[] GoodsImgUrl { get; set; }
     }
 }

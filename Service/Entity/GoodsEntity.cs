@@ -27,8 +27,8 @@ namespace IMS.Service.Entity
         public bool IsPutaway { get; set; }//是否上架
         public bool IsRecommend { get; set; }//是否推荐
         public string Description { get; set; }
-        public long GoodsImgId { get; set; }
-        public virtual GoodsImgEntity GoodsImg { get; set; }
+        //public long GoodsImgId { get; set; }
+        //public virtual GoodsImgEntity GoodsImg { get; set; }
         public long Inventory { get; set; }//库存
         public long SaleNum { get; set; }
     }

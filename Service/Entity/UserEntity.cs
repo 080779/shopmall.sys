@@ -16,6 +16,7 @@ namespace IMS.Service.Entity
         public string NickName { get; set; }
         public string HeadPic { get; set; }
         public decimal Amount { get; set; } = 0;
+        public decimal SalesAmount { get; set; } = 0;
         public virtual RecommendEntity Recommend { get; set; }
         public long LevelId { get; set; }
         public virtual LevelTypeEntity Level { get; set; }
@@ -26,5 +27,7 @@ namespace IMS.Service.Entity
         public int ErrorCount { get; set; } = 0;
         public DateTime ErrorTime { get; set; } = DateTime.Now;
         public bool IsEnabled { get; set; } = true;
+        public bool IsReturned { get; set; } = false;//是否退过货
+        public bool IsUpgraded { get; set; } = false;//是否升级退过货
     }
 }

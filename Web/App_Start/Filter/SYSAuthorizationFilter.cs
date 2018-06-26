@@ -87,6 +87,26 @@ namespace IMS.Web.App_Start.Filter
                     adminLogService.Add(adminUserId.Value,permType,logDesc, ipAddress, "");
                 }
             }
+            else if(v.ToString().ToLower().Contains("/api/"))
+            {
+                long? UserId = (long?)filterContext.HttpContext.Session["Merchant_User_Id"];
+                if (UserId == null)
+                {
+                    if (filterContext.ActionDescriptor.IsDefined(typeof(AllowAnonymousAttribute), true) || filterContext.ActionDescriptor.ControllerDescriptor.IsDefined(typeof(AllowAnonymousAttribute), true))
+                    {
+                        return;
+                    }
+                    if (filterContext.HttpContext.Request.IsAjaxRequest())//判断是否是ajax请求
+                    {
+                        filterContext.Result = new JsonNetResult { Data = new AjaxResult { Status = 302, Data = "/api/login" } };
+                    }
+                    else
+                    {
+                        filterContext.Result = new RedirectResult("/api/login");
+                    }
+                    return;
+                }
+            }
             else
             {
                 long? UserId = (long?)filterContext.HttpContext.Session["Merchant_User_Id"];
