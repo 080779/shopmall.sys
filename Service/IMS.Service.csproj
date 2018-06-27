@@ -63,6 +63,7 @@
     <Compile Include="Config\IdNameConfig.cs" />
     <Compile Include="Config\OrderListConfig.cs" />
     <Compile Include="Config\RecommendConfig.cs" />
+    <Compile Include="Config\UserTokenConfig.cs" />
     <Compile Include="Config\UserConfig.cs" />
     <Compile Include="Config\OrderConfig.cs" />
     <Compile Include="Config\SlideConfig.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="Entity\PermissionTypeEntity.cs" />
     <Compile Include="Entity\SettingEntity.cs" />
     <Compile Include="Entity\TakeCashEntity.cs" />
+    <Compile Include="Entity\UserTokenEntity.cs" />
     <Compile Include="Entity\UserEntity.cs" />
     <Compile Include="MyDbContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -116,6 +118,7 @@
     <Compile Include="Service\PermissionService.cs" />
     <Compile Include="Service\PermissionTypeService.cs" />
     <Compile Include="Service\GoodsAreaService.cs" />
+    <Compile Include="Service\UserTokenService.cs" />
     <Compile Include="Service\UserService.cs" />
     <Compile Include="Service\TakeCashService.cs" />
   </ItemGroup>

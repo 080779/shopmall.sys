@@ -48,6 +48,7 @@
     <Compile Include="IGoodsTypeService.cs" />
     <Compile Include="INoticeService.cs" />
     <Compile Include="IIdNameService.cs" />
+    <Compile Include="IUserTokenService.cs" />
     <Compile Include="ITypeService.cs" />
     <Compile Include="ISlideService.cs" />
     <Compile Include="IUserService.cs" />
@@ -68,6 +69,9 @@
       <Project>{599be380-8a33-46b7-be16-ab6d08ef0c5c}</Project>
       <Name>IMS.DTO</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

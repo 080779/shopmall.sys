@@ -1,4 +1,6 @@
-﻿using System;
+﻿using JWT;
+using JWT.Serializers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -155,6 +157,33 @@ namespace IMS.Common
                 Random ran = new Random();
                 return DateTime.Now.ToString("yyyyMMddHHmmssfff") + ran.Next(100, 999).ToString();
             }
+        }
+        #endregion
+
+        #region JWT解密
+        public static bool JwtDecrypt(string token,string secret,out string res)
+        {
+            try
+            {
+                JsonNetSerializer serializer = new JsonNetSerializer();
+                IDateTimeProvider provider = new UtcDateTimeProvider();
+                IJwtValidator validator = new JwtValidator(serializer, provider);
+                IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+                IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder);
+                var json = decoder.Decode(token, secret, verify: true);
+                res = json;
+                return true;
+            }
+            catch (TokenExpiredException)
+            {
+                res= "Token已经过期";
+                return false;
+            }
+            catch (SignatureVerificationException)
+            {
+                res = "无效的签名token";
+                return false;
+            }
         }
         #endregion
     }

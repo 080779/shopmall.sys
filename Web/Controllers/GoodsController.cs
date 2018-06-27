@@ -22,6 +22,7 @@ namespace IMS.Web.Controllers
         [HttpPost]
         public async Task<ApiResult> AddCar()
         {
+            
             //goodsCarService.AddAsync(1, 1, 1);
             await goodsCarService.UpdateAsync(2,3);
             return new ApiResult { status = 1, msg="ok" };

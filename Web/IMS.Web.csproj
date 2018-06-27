@@ -306,6 +306,7 @@
     <Compile Include="App_Start\Filter\PermissionAttribute.cs" />
     <Compile Include="App_Start\Filter\SYSAuthorizationFilter.cs" />
     <Compile Include="App_Start\Filter\SYSExceptionFilter.cs" />
+    <Compile Include="App_Start\Filter\User.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
