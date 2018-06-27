@@ -20,7 +20,7 @@ namespace IMS.Web.App_Start.Filter
     public class ApiSYSAuthorizationFilter : AuthorizationFilterAttribute
     {
         public IUserTokenService userTokenService = DependencyResolver.Current.GetService<IUserTokenService>();
-        private string TokenSecret = "fde3ffewtwtegfw2dsd4rrjhkffnvb";
+        private string TokenSecret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
         public override void OnAuthorization(HttpActionContext actionContext)
         {
             //if (!context.HttpContext.Request.Headers.TryGetValue("AppKey", out values))
@@ -30,26 +30,33 @@ namespace IMS.Web.App_Start.Filter
             //    context.Result = res;
             //    return;
             //}
-            IEnumerable<string> lists;
-            if (actionContext.Request.Headers.TryGetValues("token", out lists))
+            //KeyValuePair<string, string> keyValuePair = actionContext.Request.GetQueryNameValuePairs().SingleOrDefault(k => k.Key == "token");
+            //if (keyValuePair.Value==null)
+            //{
+            //    actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("Token不能为空"));
+            //    return;
+            //}
+            //string token = keyValuePair.Value;
+            IEnumerable<string> values;
+            if(!actionContext.Request.Headers.TryGetValues("token",out values))
             {
-                actionContext.Response= actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("Token不能为空"));
+                actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("Token不能为空"));
                 return;
             }
-            string token= lists.First();
+            string token = values.First();
             string res;
-            if(!CommonHelper.JwtDecrypt(token, TokenSecret,out res))
+            if (!CommonHelper.JwtDecrypt(token, TokenSecret, out res))
             {
                 actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError(res));
                 return;
             }
             User user = JsonConvert.DeserializeObject<User>(res);
-            if(CacheHelper.GetCache("App_User_Info" + user.UserId)!=null)
+            if (CacheHelper.GetCache("App_User_Info" + user.UserId) != null)
             {
                 return;
             }
-            long id= userTokenService.CheckToken(user.UserId, token);
-            if(id==-1)
+            long id = userTokenService.CheckToken(user.UserId, token);
+            if (id == -1)
             {
                 actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("用户不存在"));
                 return;

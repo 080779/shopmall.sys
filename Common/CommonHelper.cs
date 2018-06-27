@@ -165,7 +165,7 @@ namespace IMS.Common
         {
             try
             {
-                JsonNetSerializer serializer = new JsonNetSerializer();
+                IJsonSerializer serializer = new JsonNetSerializer();
                 IDateTimeProvider provider = new UtcDateTimeProvider();
                 IJwtValidator validator = new JwtValidator(serializer, provider);
                 IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
