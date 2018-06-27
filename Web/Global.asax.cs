@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Integration.Mvc;
+using Autofac.Integration.WebApi;
 using IMS.Common.Newtonsoft;
 using IMS.IService;
 using IMS.Web.App_Start;
@@ -28,6 +29,7 @@ namespace Web
 
             var builder = new ContainerBuilder();//把当前程序集中的 Controller 都注册,不要忘了.PropertiesAutowired()            
             builder.RegisterControllers(typeof(MvcApplication).Assembly).PropertiesAutowired();
+            builder.RegisterApiControllers(typeof(MvcApplication).Assembly).PropertiesAutowired();
 
             Assembly[] assemblies = new Assembly[] { Assembly.Load("IMS.Service") };// 获取所有相关类库的程序集
             builder.RegisterAssemblyTypes(assemblies).
@@ -36,7 +38,14 @@ namespace Web
 
             //注册系统级别的 DependencyResolver，这样当 MVC 框架创建 Controller 等对象的时候都是管 Autofac 要对象。            
             var container = builder.Build();
-            DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
+
+            // Set the dependency resolver for MVC.
+            var resolver = new AutofacDependencyResolver(container);
+            DependencyResolver.SetResolver(resolver);
+
+            // Set the dependency resolver for Web API.
+            var webApiResolver = new AutofacWebApiDependencyResolver(container);
+            GlobalConfiguration.Configuration.DependencyResolver = webApiResolver;            
 
             GlobalFilters.Filters.Add(new JsonNetActionFilter());
             GlobalFilters.Filters.Add(new SYSExceptionFilter());

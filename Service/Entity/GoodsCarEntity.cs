@@ -14,8 +14,8 @@ namespace IMS.Service.Entity
     public class GoodsCarEntity : BaseEntity
     {
         public long GoodsId { get; set; }
+        public long UserId { get; set; }
         public virtual GoodsEntity Goods { get; set; }
         public long Number { get; set; }
-        public decimal TotalAmount { get; set; }
     }
 }

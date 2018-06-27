@@ -88,7 +88,7 @@ namespace IMS.Service.Service
                 {
                     entities = entities.Where(a => a.GoodsSecondTypeId == goodsSecondTypeId);
                 }
-                if (string.IsNullOrEmpty(keyword))
+                if (!string.IsNullOrEmpty(keyword))
                 {
                     entities = entities.Where(g =>g.Code.Contains(keyword) || g.Name.Contains(keyword) || g.Description.Contains(keyword));
                 }

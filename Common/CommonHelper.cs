@@ -55,6 +55,18 @@ namespace IMS.Common
             }
             return sbCode.ToString();
         }
+        public static string GetNumberCaptcha(int length)
+        {
+            char[] data = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+            StringBuilder sbCode = new StringBuilder();
+            Random rand = new Random();
+            for (int i = 0; i < length; i++)
+            {
+                char ch = data[rand.Next(data.Length)];
+                sbCode.Append(ch);
+            }
+            return sbCode.ToString();
+        }
         #region 获取客户端ip地址
         public static string GetWebClientIp()
         {
@@ -133,7 +145,7 @@ namespace IMS.Common
             lock (_lock)
             {
                 Random ran = new Random();
-                return "O" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ran.Next(1000, 9999).ToString();
+                return "dd" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ran.Next(1000, 9999).ToString();
             }
         }
         public static string GetRandom4()

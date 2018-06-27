@@ -20,7 +20,7 @@ namespace IMS.IService
         /// <param name="userId">用户id</param>
         /// <param name="recommendId">推荐人id</param>
         /// <returns></returns>
-        Task<long> AddRecommendAsync(long userId, long recommendId);
+        Task<long> AddRecommendAsync(long userId, string recommendMobile);
         /// <summary>
         /// 删除用户
         /// </summary>
@@ -40,6 +40,7 @@ namespace IMS.IService
         /// <param name="password">密码</param>
         /// <returns></returns>
         Task<bool> ResetPasswordAsync(long id, string password);
+        Task<long> UserCheck(string mobile);
         /// <summary>
         /// 根据id获得用户模型
         /// </summary>

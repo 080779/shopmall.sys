@@ -61,7 +61,7 @@ namespace IMS.Service.Service
             {
                 SlideSearchResult result = new SlideSearchResult();
                 var entities = dbc.GetAll<SlideEntity>();
-                if (string.IsNullOrEmpty(keyword))
+                if (!string.IsNullOrEmpty(keyword))
                 {
                     entities = entities.Where(g => g.Code.Contains(keyword) || g.Name.Contains(keyword));
                 }

@@ -55,7 +55,7 @@ namespace IMS.Service.Service
             {
                 GoodsTypeSearchResult result = new GoodsTypeSearchResult();
                 var entities = dbc.GetAll<GoodsTypeEntity>();
-                if (string.IsNullOrEmpty(keyword))
+                if (!string.IsNullOrEmpty(keyword))
                 {
                     entities = entities.Where(g => g.Name.Contains(keyword) || g.Description.Contains(keyword));
                 }

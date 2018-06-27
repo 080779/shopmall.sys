@@ -7,32 +7,16 @@ namespace IMS.IService
     /// <summary>
     /// 商品分类管理接口
     /// </summary>
-    public interface IGoodsService : IServiceSupport
+    public interface IGoodsTypeService : IServiceSupport
     {
-        Task<long> AddAsync(GoodsAddEditModel goods);
-        Task<bool> UpdateAsync(GoodsAddEditModel goods);
+        Task<long> AddAsync(string name, string description);
+        Task<bool> UpdateAsync(long id, string name, string description);
         Task<bool> DeleteAsync(long id);
-        Task<GoodsSearchResult> GetModelListAsync(long? goodsTypeId, long? goodsSecondTypeId, string keyword,DateTime? startTime,DateTime? endTime,int pageIndex,int pageSize);
+        Task<GoodsTypeSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
     }
-    public class GoodsSearchResult
+    public class GoodsTypeSearchResult
     {
-        public GoodsDTO[] Goods { get; set; }
+        public GoodsTypeDTO[] GoodsTypes { get; set; }
         public long TotalCount { get; set; }
-    }   
-    public class GoodsAddEditModel
-    {
-        public long Id { get; set; }
-        public string Name { get; set; }       
-        public decimal Price { get; set; }//原价
-        public decimal RealityPrice { get; set; }//现价
-        public long Inventory { get; set; }//库存
-        public string Code { get; set; }
-        public string Standard { get; set; }//规格
-        public long GoodsAreaId { get; set; }
-        public long GoodsTypeId { get; set; }
-        public long GoodsSecondTypeId { get; set; }
-        public bool IsPutaway { get; set; }//是否上架
-        public bool IsRecommend { get; set; }//是否推荐
-        public string Description { get; set; }
     }
 }

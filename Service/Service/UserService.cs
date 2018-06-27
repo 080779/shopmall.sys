@@ -53,11 +53,12 @@ namespace IMS.Service.Service
                 return user.Id;
             }
         }
-        public async Task<long> AddRecommendAsync(long userId, long recommendId)
+        public async Task<long> AddRecommendAsync(long userId, string recommendMobile)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 RecommendEntity user = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(u => u.UserId == userId);
+                long recommendId = (dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Mobile == recommendMobile).Id);
                 RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(u => u.UserId == recommendId);
                 if (user != null)
                 {
@@ -130,6 +131,19 @@ namespace IMS.Service.Service
                 entity.Password = CommonHelper.GetMD5(password+entity.Salt);
                 await dbc.SaveChangesAsync();
                 return true;
+            }
+        }
+
+        public async Task<long> UserCheck(string mobile)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserEntity entity = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Mobile == mobile);
+                if (entity == null)
+                {
+                    return -1;
+                }
+                return entity.Id;
             }
         }
 

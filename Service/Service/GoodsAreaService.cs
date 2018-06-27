@@ -57,7 +57,7 @@ namespace IMS.Service.Service
             {
                 GoodsAreaSearchResult result = new GoodsAreaSearchResult();
                 var entities= dbc.GetAll<GoodsAreaEntity>();
-                if(string.IsNullOrEmpty(keyword))
+                if(!string.IsNullOrEmpty(keyword))
                 {
                     entities = entities.Where(g=>g.Title.Contains(keyword) || g.Note.Contains(keyword) || g.Description.Contains(keyword));
                 }

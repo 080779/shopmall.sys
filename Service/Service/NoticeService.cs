@@ -61,7 +61,7 @@ namespace IMS.Service.Service
             {
                 NoticeSearchResult result = new NoticeSearchResult();
                 var entities = dbc.GetAll<NoticeEntity>();
-                if (string.IsNullOrEmpty(keyword))
+                if (!string.IsNullOrEmpty(keyword))
                 {
                     entities = entities.Where(g => g.Code.Contains(keyword) || g.Content.Contains(keyword));
                 }
