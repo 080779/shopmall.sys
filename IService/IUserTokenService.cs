@@ -9,6 +9,8 @@ namespace IMS.IService
 {
     public interface IUserTokenService : IServiceSupport
     {
+        Task<long> AddAsync(long userId,string token);
+        Task<long> UpdateAsync(long userId, string token);
         long CheckToken(long userId,string token);
     }
 }

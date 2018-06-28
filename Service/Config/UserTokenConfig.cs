@@ -8,7 +8,7 @@ namespace IMS.Service.Config
         public UserTokenConfig()
         {
             ToTable("tb_usertokens");
-            Property(p => p.Token).HasMaxLength(156);
+            Property(p => p.Token).HasMaxLength(1024);
         }
     }
 }

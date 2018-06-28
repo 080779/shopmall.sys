@@ -183,7 +183,8 @@ namespace IMS.Common
             {
                 res = "无效的签名token";
                 return false;
-            }
+            }
+
         }
         #endregion
     }

@@ -41,6 +41,7 @@ namespace IMS.IService
         /// <returns></returns>
         Task<bool> ResetPasswordAsync(long id, string password);
         Task<long> UserCheck(string mobile);
+        Task<long> CheckLoginAsync(string mobile, string password);
         /// <summary>
         /// 根据id获得用户模型
         /// </summary>

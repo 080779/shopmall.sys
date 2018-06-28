@@ -57,10 +57,10 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                RecommendEntity user = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(u => u.UserId == userId);
-                long recommendId = (dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Mobile == recommendMobile).Id);
+                UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == userId);
+                long recommendId = (await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Mobile == recommendMobile)).Id;
                 RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(u => u.UserId == recommendId);
-                if (user != null)
+                if (user == null)
                 {
                     return -1;
                 }
@@ -68,13 +68,13 @@ namespace IMS.Service.Service
                 {
                     return -2;
                 }
-                user = new RecommendEntity();
-                user.UserId = userId;
-                user.RecommendId = recommendId;
-                user.RecommendGenera = recommend.RecommendGenera + 1;
-                user.RecommendPath = recommend.RecommendPath+"-"+userId;
+                RecommendEntity ruser = new RecommendEntity();
+                ruser.UserId = userId;
+                ruser.RecommendId = recommendId;
+                ruser.RecommendGenera = recommend.RecommendGenera + 1;
+                ruser.RecommendPath = recommend.RecommendPath+"-"+userId;
 
-                dbc.Recommends.Add(user);
+                dbc.Recommends.Add(ruser);
                 await dbc.SaveChangesAsync();
                 return user.Id;
             }
@@ -142,6 +142,23 @@ namespace IMS.Service.Service
                 if (entity == null)
                 {
                     return -1;
+                }
+                return entity.Id;
+            }
+        }
+
+        public async Task<long> CheckLoginAsync(string mobile, string password)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserEntity entity = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Mobile == mobile);
+                if (entity == null)
+                {
+                    return -1;
+                }
+                if(entity.Password!=CommonHelper.GetMD5(password+entity.Salt))
+                {
+                    return -2;
                 }
                 return entity.Id;
             }

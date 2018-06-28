@@ -14,22 +14,20 @@ using System.Web.Mvc;
 using System.Net;
 using System.Web.Http;
 using Newtonsoft.Json;
+using IMS.Service.Service;
 
 namespace IMS.Web.App_Start.Filter
 {
     public class ApiSYSAuthorizationFilter : AuthorizationFilterAttribute
     {
-        public IUserTokenService userTokenService = DependencyResolver.Current.GetService<IUserTokenService>();
+        public IUserTokenService userTokenService = new UserTokenService();
         private string TokenSecret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
         public override void OnAuthorization(HttpActionContext actionContext)
         {
-            //if (!context.HttpContext.Request.Headers.TryGetValue("AppKey", out values))
-            //{
-            //    res.Content = "AppKey不能为空";
-            //    res.StatusCode = 401;
-            //    context.Result = res;
-            //    return;
-            //}
+            if (actionContext.ActionDescriptor.GetCustomAttributes<System.Web.Http.AllowAnonymousAttribute>().Any() || actionContext.ActionDescriptor.ControllerDescriptor.GetCustomAttributes<System.Web.Http.AllowAnonymousAttribute>().Any())
+            {
+                return;
+            }
             //KeyValuePair<string, string> keyValuePair = actionContext.Request.GetQueryNameValuePairs().SingleOrDefault(k => k.Key == "token");
             //if (keyValuePair.Value==null)
             //{
@@ -51,27 +49,47 @@ namespace IMS.Web.App_Start.Filter
                 return;
             }
             User user = JsonConvert.DeserializeObject<User>(res);
-            if (CacheHelper.GetCache("App_User_Info" + user.UserId) != null)
+            object cache = CacheHelper.GetCache("App_User_CheckToken" + user.UserId);
+            if ( cache != null)
             {
-                return;
+                long idres =(long)CacheHelper.GetCache("App_User_CheckToken" + user.UserId);
+                if (idres == -1)
+                {
+                    actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("用户不存在"));
+                    return;
+                }
+                if (idres == -2)
+                {
+                    actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("后台token为空，请重新登录"));
+                    return;
+                }
+                if (idres == -3)
+                {
+                    actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("token错误"));
+                    return;
+                }
             }
-            long id = userTokenService.CheckToken(user.UserId, token);
-            if (id == -1)
+            else
             {
-                actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("用户不存在"));
-                return;
-            }
-            if (id == -2)
-            {
-                actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("后台token为空，请重新登录"));
-                return;
-            }
-            if (id == -3)
-            {
-                actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("token错误"));
-                return;
-            }
-            CacheHelper.SetCache("App_User_Info" + user.UserId, user, TimeSpan.FromSeconds(30));
+                long id = userTokenService.CheckToken(user.UserId, token);
+                CacheHelper.SetCache("App_User_CheckToken" + user.UserId, id, DateTime.UtcNow.AddSeconds(10), TimeSpan.Zero);
+                object cache1 = CacheHelper.GetCache("App_User_CheckToken" + user.UserId);
+                if (id == -1)
+                {
+                    actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("用户不存在"));
+                    return;
+                }
+                if (id == -2)
+                {
+                    actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("后台token为空，请重新登录"));
+                    return;
+                }
+                if (id == -3)
+                {
+                    actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("输入的token错误"));
+                    return;
+                }
+            }                
         }
     }
 }
