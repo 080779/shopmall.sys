@@ -9,10 +9,10 @@ using System.Web.Mvc;
 
 namespace IMS.Web.Areas.Admin.Controllers
 {
-    public class NoticeController : Controller
+    public class SlideController : Controller
     {
         private int pageSize = 10;
-        public INoticeService noticeService { get; set; }
+        public ISlideService slideService { get; set; }
         public ActionResult List()
         {
             return View();
@@ -20,7 +20,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         [HttpPost]
         public async Task<ActionResult> List(string mobile, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
-            var result = await noticeService.GetModelListAsync(mobile, startTime, endTime, pageIndex, pageSize);
+            var result = await slideService.GetModelListAsync(mobile, startTime, endTime, pageIndex, pageSize);
             return Json(new AjaxResult { Status = 1, Data = result });
         }
     }

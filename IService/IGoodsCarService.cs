@@ -18,7 +18,7 @@ namespace IMS.IService
     public class GoodsCarSearchResult
     {
         public GoodsCarDTO[] GoodsCars { get; set; }
-        public long TotalCount { get; set; }
+        public long PageCount { get; set; }
     }
     public class Goods
     {

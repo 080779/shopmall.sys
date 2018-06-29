@@ -8,7 +8,7 @@
     <link href="~/assets/css/codemirror.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/assets/css/ace.min.css" />
     <link rel="stylesheet" href="~/assets/css/font-awesome.min.css" />
-    <link href="~/css/my_pagination.css" rel="stylesheet" />
+    <link href="~/css/page.css" rel="stylesheet" />
     <script src="~/assets/js/jquery.min.js"></script>
     <!--[if IE]>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -48,8 +48,12 @@
                     <!---->
                     <div class="search_style">
                         <ul class="search_content clearfix">
-                            <li><label class="l_f">管理员账户</label><input name="" v-model="mobile" type="text" class="text_add" placeholder="管理员账户" style=" width:150px" /></li>
-                            <li><label class="l_f">添加时间</label><input class="inline laydate-icon" id="startTime" style=" margin-left:10px;" />至<input class="inline laydate-icon" id="endTime" style=" margin-left:10px;" /></li>
+                            <li><label class="l_f">管理员账户</label><input name="" v-model="searchs.keyword" type="text" class="text_add" placeholder="管理员账户" style=" width:150px" /></li>
+                            <li>
+                                <label class="l_f">添加时间</label>
+                                <input class="inline laydate-icon" id="start" style=" margin-left:10px;" v-on:focus='getstart' />至
+                                <input class="inline laydate-icon" id="end" style=" margin-left:10px;" v-on:focus='getend' />
+                            </li>
                             <li style="width:90px;"><button type="button" v-on:click="search" class="btn_search"><i class="icon-search"></i>查询</button></li>
                         </ul>
                     </div>
@@ -82,13 +86,18 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="nextpage">
-                        <ul id='page' class="pagination">
-                            <li><a href="javascript:;" v-on:click="getPage(1)">首页</a></li>
-                            <li><a href="javascript:;" v-on:click="getPage(uppage)">上一页</a></li>
-                            <li v-for="page in pages" v-on:click="getPage(page.pageIndex)" v-bind:class="page.current"><a href="javascript:;" v-html="page.pageIndex"></a></li>
-                            <li><a href="javascript:;" v-on:click="getPage(nextpage)">下一页</a></li>
-                            <li><a href="javascript:;" v-on:click="getPage(pagecount)">尾页</a></li>
+                    <div class="page-bar">
+                        <ul>
+                            <li><a v-on:click="pages.cur=1,getpage()">首页</a></li>
+                            <li v-if="pages.cur>1"><a v-on:click="pages.cur--,getpage()">上一页</a></li>
+                            <li v-if="pages.cur==1"><a class="banclick">上一页</a></li>
+                            <li v-for="index in indexs" v-bind:class="{'active':pages.cur==index}"><a v-on:click="pageclick(index)" v-html="index"></a></li>
+                            <li v-if="pages.cur!=pages.all"><a v-on:click="pages.cur++,getpage()">下一页</a></li>
+                            <li v-if="pages.cur==pages.all"><a class="banclick">下一页</a></li>
+                            <li><a><input type='text' id='txtpage' style='width: 30px;height: 18px;' v-model="pages.txtpage" onkeyup="value=value.replace(/[^\d]/g,'')" /></a></li>
+                            <li><a id='go' v-on:click="go">跳转</a></li>
+                            <li><a v-on:click="pages.cur=pages.all,getpage()">尾页</a></li>
+                            <li><a>共<i><font v-html="pages.all"></font></i>页</a></li>
                         </ul>
                     </div>
                 </div>
@@ -123,7 +132,7 @@
             </ul>
         </div>
 
-        <div class="table_menu_list" id="journal" style="display:none">
+        @*<div class="table_menu_list" id="journal" style="display:none">
             <div>
                 <div class="integral_box">
                     <ul>
@@ -171,63 +180,70 @@
                     <li><a href="javascript:;" v-on:click="getPage1(journalPage.pagecount)">尾页</a></li>
                 </ul>
             </div>
-        </div>
+        </div>*@
     </div>
 </body>
 </html>
+
 <script type="text/javascript">
     var startTime;
     var endTime;
     var vue = new Vue({
         el: "#app",
         data: {
-            class: "", pages: [], uppage: 1, nextpage: 2, permissionTypes: [], pagecount: 1, mobile: "", admins: [],
+            admins: [],
+            permissionTypes: [],
+            pages: {
+                all: "", cur: 1, txtpage: ""
+            },
+            searchs: {
+                startTime: "", endTime: "", keyword: ""
+            },
             add_mobile: "", add_password: "", add_password1: "", edit_mobile: "", permissionIds: [], edit_password: "", edit_password1: "",
-            journalPage: { journals: [], pages: [], uppage: 1, nextpage: 2, id: "", usecount: 0, givingcount: 0 }
         },
         methods: {
-            search: function () {
-                startTime = $("#startTime").val();
-                endTime = $("#endTime").val();
-                this.$http.post('/admin/admin/list', { mobile: this.mobile, startTime: startTime, endTime: endTime, pageIndex: 1 }, { emulateJSON: true }).then(function (result) {
-                    if (result.data.status == 1) {
-                        this.admins = result.data.data.admins;
-                        this.pageHtml = result.data.data.pageHtml;
-                        this.pages = result.data.data.pages;
-                        this.pagecount = result.data.data.pageCount;
-                    }
-                    else if (result.data.status == 302) {
-                        window.location.href = result.data.data;
+            getstart: function () {
+                var that = this;
+                laydate({
+                    elem: '#start',
+                    choose: function (date) {
+                        that.time.startTime = date;
                     }
                 });
             },
-            getPage: function (page) {
-                if (page == 1) {
-                    this.uppage = 1;
-                    this.nextpage = 2;
-                }
-                else if (page > 1) {
-                    this.uppage = page - 1;
-                    if (this.nextpage < this.pagecount) {
-                        this.nextpage = page + 1;
-                    }
-                    else {
-                        this.nextpage = this.pagecount;
-                    }
-                }
-                startTime = $("#startTime").val();
-                endTime = $("#endTime").val();
-                this.$http.post('/admin/admin/list', { mobile: this.mobile, startTime: startTime, endTime: endTime, pageIndex: page }, { emulateJSON: true }).then(function (result) {
-                    if (result.data.status == 1) {
-                        this.admins = result.data.data.admins;
-                        this.pageHtml = result.data.data.pageHtml;
-                        this.pages = result.data.data.pages;
-                        this.pagecount = result.data.data.pageCount;
-                    }
-                    else if (result.data.status == 302) {
-                        window.location.href = result.data.data;
+            getend: function () {
+                var that = this;
+                laydate({
+                    elem: '#end',
+                    choose: function (date) {
+                        that.time.endTime = date;
                     }
                 });
+            },
+            getpage: function () {
+                this.$http.post('/admin/admin/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
+                    this.notices = result.data.data.notices;
+                    this.pages.all = result.data.data.pageCount;
+                })
+            },
+            pageclick: function (index) {//页码点击事件
+                if (index != this.cur) {
+                    this.pages.cur = index
+                }
+                this.getpage();
+            },
+            go: function () {
+                if (this.pages.txtpage == "") {
+                    return;
+                }
+                else {
+                    this.pages.cur = this.pages.txtpage;
+                }
+                this.getpage();
+            },
+            add: function () { },
+            search: function () {
+                this.getpage();
             },
             add: function () {
                 var that = this;
@@ -297,7 +313,7 @@
                         //    layer.alert('请选择权限', { icon: 0, title: '提示框' });
                         //}
                         //else {
-                            
+
                         //}         
                         that.$http.post('/admin/admin/editpermission', { id: id, permissionIds: that.permissionIds }, { emulateJSON: true }).then(function (result) {
                             if (result.data.status == 1) {
@@ -406,83 +422,47 @@
                         }
                     });
                 });
-            },
-            getjournal: function (id) {
-                this.journalPage.id = id;
-                this.$http.post('/admin/admin/getjournal', { id: id, pageIndex: 1 }, { emulateJSON: true }).then(function (result) {
-                    if (result.data.status == 1) {
-                        this.journalPage.journals = result.data.data.journals;
-                        this.journalPage.pages = result.data.data.pages;
-                        this.journalPage.pagecount = result.data.data.pageCount;
-                        this.journalPage.usecount = result.data.data.useIntegralCount;
-                        this.journalPage.givingcount = result.data.data.givingIntegralCount;
-                    }
-                    else if (result.data.status == 0) {
-                        layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                        this.msg = result.data.msg;
-                    }
-                    else if (result.data.status == 302) {
-                        window.location.href = result.data.data;
-                    }
-                });
-                layer.open({
-                    type: 1,
-                    title: '查看明细',
-                    maxmin: true,
-                    shadeClose: false, //点击遮罩关闭层
-                    area: ['1200px', ''],
-                    offset: ['30px', ''],
-                    content: $('#journal')
-                });
-            },
-            getPage1: function (page) {
-                if (page == 1) {
-                    this.journalPage.uppage = 1;
-                    this.journalPage.nextpage = 2;
-                }
-                else if (page > 1) {
-                    this.journalPage.uppage = page - 1;
-                    if (this.journalPage.nextpage < this.journalPage.pagecount) {
-                        this.journalPage.nextpage = page + 1;
-                    }
-                    else {
-                        this.journalPage.nextpage = this.journalPage.pagecount;
+            }
+        },
+        computed: {
+            indexs: function () {
+                var left = 1;
+                var right = this.pages.all;
+                var ar = [];
+                if (this.pages.all >= 5) {
+                    if (this.pages.cur > 3 && this.pages.cur < this.pages.all - 2) {
+                        left = this.pages.cur - 2
+                        right = this.pages.cur + 2
+                    } else {
+                        if (this.pages.cur <= 3) {
+                            left = 1
+                            right = 5
+                        } else {
+                            right = this.pages.all
+                            left = this.pages.all - 4
+                        }
                     }
                 }
-                this.$http.post('/admin/admin/getjournal', { id: this.journalPage.id, pageIndex: page }, { emulateJSON: true }).then(function (result) {
-                    if (result.data.status == 1) {
-                        this.journalPage.journals = result.data.data.journals;
-                        this.journalPage.pages = result.data.data.pages;
-                        this.journalPage.pagecount = result.data.data.pageCount;
-                    }
-                    else if (result.data.status == 302) {
-                        window.location.href = result.data.data;
-                    }
-                });
+                while (left <= right) {
+                    ar.push(left)
+                    left++
+                }
+                return ar
             }
         },
         mounted: function () {
-            this.$http.post('/admin/admin/list', { mobile: this.mobile, startTime: startTime, endTime: endTime, pageIndex: 1 }, { emulateJSON: true }).then(function (result) {
-                if (result.data.status == 1) {
-                    this.admins = result.data.data.admins;
-                    //this.permissionTypes = result.data.data.permissionTypes;
-                    this.pageHtml = result.data.data.pageHtml;
-                    this.pages = result.data.data.pages;
-                    this.pagecount = result.data.data.pageCount;
-                }
-                else if (result.data.status == 302) {
-                    window.location.href = result.data.data;
-                }
-            });
+            this.$http.post('/admin/admin/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
+                this.admins = result.data.data.admins;
+                this.pages.all = result.data.data.pageCount;
+            })
         }
     });
-
     laydate({
-        elem: '#startTime',
+        elem: '#start',
         event: 'focus'
     });
     laydate({
-        elem: '#endTime',
+        elem: '#end',
         event: 'focus'
     });
 </script>

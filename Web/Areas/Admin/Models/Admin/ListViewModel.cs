@@ -10,9 +10,7 @@ namespace IMS.Web.Areas.Admin.Models.Admin
     public class ListViewModel
     {
         public AdminDTO[] Admins { get; set; }
-        public string PageHtml { get; set; }
         public List<PermissionType> PermissionTypes { get; set; }
-        public List<Page> Pages { get; set; }
         public long PageCount { get; set; }
     }
     public class PermissionType

@@ -214,7 +214,7 @@ namespace IMS.Service.Service
                 {
                     users = users.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
                 }
-                result.TotalCount = users.LongCount();
+                result.PageCount = (int)Math.Ceiling((await users.LongCountAsync()) * 1.0f / pageSize);
                 var userResult = await users.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 result.Users = userResult.Select(a => ToDTO(a)).ToArray();
                 return result;
@@ -254,7 +254,7 @@ namespace IMS.Service.Service
                 {
                     recommends = recommends.Where(a => a.User.CreateTime.Year <= endTime.Value.Year && a.User.CreateTime.Month <= endTime.Value.Month && a.User.CreateTime.Day <= endTime.Value.Day);
                 }
-                result.TotalCount = recommends.LongCount();
+                result.PageCount = (int)Math.Ceiling(recommends.LongCount() * 1.0f / pageSize);
                 var userResult = await recommends.OrderByDescending(a => a.User.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 result.Users = userResult.Select(a => ToDTO(a.User)).ToArray();
                 return result;

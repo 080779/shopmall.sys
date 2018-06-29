@@ -17,6 +17,6 @@ namespace IMS.IService
     public class NoticeSearchResult
     {
         public NoticeDTO[] Notices { get; set; }
-        public long TotalCount { get; set; }
+        public long PageCount { get; set; }
     }   
 }

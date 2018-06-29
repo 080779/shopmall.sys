@@ -165,8 +165,8 @@ namespace IMS.Service.Service
                     {
                         admins = admins.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
                     }
-                }                
-                result.TotalCount = await admins.LongCountAsync();
+                }
+                result.PageCount = (int)Math.Ceiling((await admins.LongCountAsync()) * 1.0f / pageSize);
                 var adminsResult= await admins.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 result.Admins = adminsResult.Select(a => ToDTO(a)).ToArray();                
                 return result;
@@ -195,7 +195,7 @@ namespace IMS.Service.Service
                 {
                     admins = admins.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
                 }
-                result.TotalCount = await admins.LongCountAsync();
+                result.PageCount = (int)Math.Ceiling((await admins.LongCountAsync()) * 1.0f / pageSize);
                 var adminsResult = await admins.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 result.Admins = adminsResult.Select(a => ToDTO(a)).ToArray();
                 return result;

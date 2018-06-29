@@ -21,6 +21,6 @@ namespace IMS.IService
     public class AdminSearchResult
     {
         public AdminDTO[] Admins { get; set; }
-        public long TotalCount { get; set; }
+        public long PageCount { get; set; }
     }
 }

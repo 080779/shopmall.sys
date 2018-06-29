@@ -17,7 +17,7 @@ namespace IMS.IService
     public class GoodsSearchResult
     {
         public GoodsDTO[] Goods { get; set; }
-        public long TotalCount { get; set; }
+        public long PageCount { get; set; }
     }
     public class GoodsAddEditModel
     {

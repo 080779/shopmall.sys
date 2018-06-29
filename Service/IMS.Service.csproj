@@ -61,6 +61,7 @@
     <Compile Include="Config\GoodsImgConfig.cs" />
     <Compile Include="Config\DeliveryConfig.cs" />
     <Compile Include="Config\IdNameConfig.cs" />
+    <Compile Include="Config\MessageConfig.cs" />
     <Compile Include="Config\OrderListConfig.cs" />
     <Compile Include="Config\RecommendConfig.cs" />
     <Compile Include="Config\UserTokenConfig.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Entity\GoodsCarEntity.cs" />
     <Compile Include="Entity\DeliveryEntity.cs" />
     <Compile Include="Entity\IdNameEntity.cs" />
+    <Compile Include="Entity\MessageEntity.cs" />
     <Compile Include="Entity\OrderListEntity.cs" />
     <Compile Include="Entity\RecommendEntity.cs" />
     <Compile Include="Entity\OrderEntity.cs" />
@@ -109,6 +111,7 @@
     <Compile Include="Service\AdminService.cs" />
     <Compile Include="Service\GoodsCarService.cs" />
     <Compile Include="Service\IdNameService.cs" />
+    <Compile Include="Service\MessageService.cs" />
     <Compile Include="Service\SlideService.cs" />
     <Compile Include="Service\NoticeService.cs" />
     <Compile Include="Service\GoodsTypeService.cs" />

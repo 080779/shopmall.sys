@@ -82,7 +82,7 @@ namespace IMS.Service.Service
                 {
                     entities = entities.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
                 }
-                result.TotalCount = entities.LongCount();
+                result.PageCount = (int)Math.Ceiling((await entities.LongCountAsync()) * 1.0f / pageSize);
                 var goodsAreaResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 var imgUrls = dbc.GetAll<GoodsImgEntity>();
                 result.GoodsCars = goodsAreaResult.Select(a => ToDTO(a,imgUrls.First(g=>g.GoodsId==a.GoodsId).ImgUrl)).ToArray();

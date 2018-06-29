@@ -16,6 +16,6 @@ namespace IMS.IService
     public class AdminLogSearchResult
     {
         public AdminLogDTO[] AdminLogs { get; set; }
-        public long TotalCount { get; set; }
+        public long PageCount { get; set; }
     }
 }

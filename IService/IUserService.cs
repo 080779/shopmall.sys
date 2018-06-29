@@ -81,12 +81,12 @@ namespace IMS.IService
     public class UserSearchResult
     {
         public UserDTO[] Users { get; set; }
-        public long TotalCount { get; set; }
+        public long PageCount { get; set; }
     }
     public class UserTeamSearchResult
     {
         public UserDTO TeamUser { get; set; }
         public UserDTO[] Users { get; set; }
-        public long TotalCount { get; set; }
+        public long PageCount { get; set; }
     }
 }

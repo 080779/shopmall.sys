@@ -2,11 +2,14 @@
 using JWT.Serializers;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace IMS.Common
 {
@@ -160,32 +163,86 @@ namespace IMS.Common
         }
         #endregion
 
-        #region JWT解密
-        public static bool JwtDecrypt(string token,string secret,out string res)
+        #region 发送短信
+        public static string SendMessage2(string PhoneNum, string content,out string state,out string MsgState)
         {
-            try
-            {
-                IJsonSerializer serializer = new JsonNetSerializer();
-                IDateTimeProvider provider = new UtcDateTimeProvider();
-                IJwtValidator validator = new JwtValidator(serializer, provider);
-                IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
-                IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder);
-                var json = decoder.Decode(token, secret, verify: true);
-                res = json;
-                return true;
-            }
-            catch (TokenExpiredException)
-            {
-                res= "Token已经过期";
-                return false;
-            }
-            catch (SignatureVerificationException)
-            {
-                res = "无效的签名token";
-                return false;
-            }
+            string user = System.Configuration.ConfigurationManager.AppSettings["SMS_USER"];
+            string pass = System.Configuration.ConfigurationManager.AppSettings["SMS_PASS"];
+            string product = System.Configuration.ConfigurationManager.AppSettings["SMS_PRODUCT"];
+            string sms_switch = System.Configuration.ConfigurationManager.AppSettings["SMS_SWITCH"];
+            //string content = string.Format(System.Configuration.ConfigurationManager.AppSettings["SMS_Template1"], smsg);//发送内容
+                                                                                                    // if (sms_switch != "Open") return -1;
 
+            MsgState = string.Empty;
+
+            string sname = user;// new lgk.BLL.tb_globeParam().GetModel(" ParamName='MessageName'").ParamVarchar;
+            string spwd = pass;// new lgk.BLL.tb_globeParam().GetModel(" ParamName='MessagePsw'").ParamVarchar;
+            string scorpid = "";// this.TxtScorpid.Text.Trim();
+            string sprdid = product;
+
+            string PostUrl = "http://cf.lmobile.cn/submitdata/service.asmx/g_Submit";
+
+            string postStrTpl = "sname={0}&spwd={1}&scorpid={2}&sprdid={3}&sdst={4}&smsg={5}";
+
+            UTF8Encoding encoding = new UTF8Encoding();
+            byte[] postData = encoding.GetBytes(string.Format(postStrTpl, sname, spwd, scorpid, sprdid, PhoneNum, content));
+
+            HttpWebRequest myRequest = (HttpWebRequest)WebRequest.Create(PostUrl);
+            myRequest.Method = "POST";
+            myRequest.ContentType = "application/x-www-form-urlencoded";
+            myRequest.ContentLength = postData.Length;
+
+            Stream newStream = myRequest.GetRequestStream();
+            // Send the data.
+            newStream.Write(postData, 0, postData.Length);
+            newStream.Flush();
+            newStream.Close();
+
+            HttpWebResponse myResponse = (HttpWebResponse)myRequest.GetResponse();
+            if (myResponse.StatusCode == HttpStatusCode.OK)
+            {
+                StreamReader reader = new StreamReader(myResponse.GetResponseStream(), Encoding.UTF8);
+                string responseData = reader.ReadToEnd();
+
+                XmlDocument xd = new XmlDocument();
+                xd.LoadXml(responseData);
+                XmlNode stateXmlNode = xd.ChildNodes[1].ChildNodes[0];
+                state = stateXmlNode.InnerText;
+
+                //如果成功则保存到数据库
+                if (state == "0")
+                {
+                    MsgState = "";
+                }
+                else
+                {
+                    XmlNode msgIDXmlNode = xd.ChildNodes[1].ChildNodes[2];
+                    MsgState = msgIDXmlNode.InnerText;
+                }
+                //反序列化upfileMmsMsg.Text
+                //实现自己的逻辑
+
+                //string sql = string.Format(" INSERT INTO [dbo].[tb_message] ([Userid],[MobileNum],[Mcontent],[Flag])VALUES('{0}','{1}','{2}','{3}')", 0, PhoneNum, content + "," + MsgState, state);
+                //DbHelperSQL.GetSingle(sql);
+                return state;
+            }
+            else
+            {
+                state = "-1";
+                return "9999";
+                //访问失败
+            }
         }
+
+        //<!--短信设置-->
+        //<add key="SMS_USER" value="dlgxnn07"/>
+        //<add key="SMS_PASS" value="d0JAEWy4"/>
+        //<!--短信产品号-->
+        //<add key="SMS_PRODUCT" value="1012818"/>
+        //<!--短信emailTemplateId-->
+        //<add key="SMS_Template1" value="您的验证码为{0}，验证码5分钟内有效，请勿转发他人，谢谢合作！【联州商汇】"/>
+        //<!--短信emailTemplateId-->
+        //<add key="SMS_Template2" value="温馨提示，您于{0}年{1}月{2}日提交的订单{3}已匹配成功，请及时进行操作。【中国红】"/>
         #endregion
     }
 }

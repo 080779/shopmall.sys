@@ -25,19 +25,9 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         //[Permission("管理员管理_管理员管理")]
-        public async Task<ActionResult> List(string mobile, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
+        public async Task<ActionResult> List(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
-            string adminMobile = (await adminService.GetModelAsync(Convert.ToInt64(Session["Platform_AdminUserId"]))).Mobile;
-            long id = (await adminService.GetModelAsync(Convert.ToInt64(Session["Platform_AdminUserId"]))).Id;
-            AdminSearchResult result;
-            if (adminService.HasPermission(id, "管理员管理_查看其他管理员"))
-            {
-                result = await adminService.GetModelListHasPerAsync(adminMobile, mobile, startTime, endTime, pageIndex, pageSize);
-            }
-            else
-            {
-                result = await adminService.GetModelListAsync(adminMobile, mobile, startTime, endTime, pageIndex, pageSize);
-            }            
+            AdminSearchResult result= await adminService.GetModelListAsync("admin", keyword, startTime, endTime, pageIndex, pageSize);          
             ListViewModel model = new ListViewModel();
             model.Admins = result.Admins;
             PermissionTypeDTO[] types = await permissionTypeService.GetModelList();
@@ -51,22 +41,7 @@ namespace IMS.Web.Areas.Admin.Controllers
                 permissionTypes.Add(permissionType);
             }
             model.PermissionTypes = permissionTypes;
-
-            Pagination pager = new Pagination();
-            pager.PageIndex = pageIndex;
-            pager.PageSize = pageSize;
-            pager.TotalCount = result.TotalCount;
-
-            if (result.TotalCount <= pageSize)
-            {
-                model.PageHtml = "";
-            }
-            else
-            {
-                model.PageHtml = pager.GetPagerHtml();
-            }
-            model.Pages = pager.Pages;
-            model.PageCount = pager.PageCount;
+            model.PageCount = result.PageCount;
             return Json(new AjaxResult { Status = 1, Data = model });
         }
         //[Permission("管理员管理_管理员管理")]

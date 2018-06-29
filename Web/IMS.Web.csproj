@@ -298,7 +298,9 @@
     <Content Include="js\respond.min.js" />
     <Content Include="js\vue-resource.min1.5.0.js" />
     <Content Include="js\vue.min2.5.16.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\Filter\AdminLogAttribute.cs" />
@@ -312,15 +314,14 @@
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\AdminController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
-    <Compile Include="Areas\Admin\Controllers\LogController.cs" />
+    <Compile Include="Areas\Admin\Controllers\AdminLogController.cs" />
     <Compile Include="Areas\Admin\Controllers\LoginController.cs" />
+    <Compile Include="Areas\Admin\Controllers\SlideController.cs" />
     <Compile Include="Areas\Admin\Controllers\NoticeController.cs" />
     <Compile Include="Areas\Admin\Controllers\TakeCashController.cs" />
     <Compile Include="Areas\Admin\Controllers\UserController.cs" />
     <Compile Include="Areas\Admin\Models\Admin\GetListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Admin\ListViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\Log\ListViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\Notice\ListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\TakeCash\ListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\User\ListViewModel.cs" />
     <Compile Include="Controllers\GoodsController.cs" />
@@ -328,6 +329,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\User\UserSendMsgModel.cs" />
     <Compile Include="Models\User\UserLoginModel.cs" />
     <Compile Include="Models\User\UserRegisterModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -354,10 +356,10 @@
     <Content Include="Areas\Admin\Views\Login\Login.cshtml" />
     <Content Include="Areas\Admin\Views\User\List.cshtml" />
     <Content Include="Areas\Admin\Views\TakeCash\List.cshtml" />
-    <Content Include="Areas\Admin\Views\Log\List.cshtml" />
+    <Content Include="Areas\Admin\Views\AdminLog\List.cshtml" />
     <Content Include="Areas\Admin\Views\Home\Permission.cshtml" />
     <Content Include="Areas\Admin\Views\Notice\List.cshtml" />
-    <Content Include="Areas\Admin\Views\Notice\List1.cshtml" />
+    <Content Include="Areas\Admin\Views\Slide\List.cshtml" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Views\Home\Index.cshtml" />

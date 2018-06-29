@@ -34,16 +34,6 @@ namespace IMS.Service.Service
             }
         }
 
-        //public async Task<PermissionDTO[]> GetByTypeIdAsync(long typeId,long id)
-        //{
-        //    using (MyDbContext dbc = new MyDbContext())
-        //    {
-        //        var entities = dbc.GetAll<PermissionEntity>().Where(p => p.PermissionTypeId == id);
-        //        var permissions = await entities.ToListAsync();
-        //        return permissions.Select(p => ToDTO(p)).ToArray();
-        //    }
-        //}
-
         public PermissionDTO GetByDesc(string description)
         {
             using (MyDbContext dbc = new MyDbContext())

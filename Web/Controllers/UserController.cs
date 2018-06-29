@@ -17,10 +17,11 @@ namespace IMS.Web.Controllers
     [AllowAnonymous]
     public class UserController : ApiController
     {
-        private string TokenSecret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+        private string TokenSecret = System.Configuration.ConfigurationManager.AppSettings["TokenSecret"];
         public IUserService userService { get; set; }
         public IUserTokenService userTokenService { get; set; }
         public IIdNameService idNameService { get; set; }
+        public IMessageService messageService { get; set; }
         [HttpPost]        
         public async Task<ApiResult> Register(UserRegisterModel model)
         {
@@ -48,10 +49,19 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "推荐人不存在" };
             }
-            //if (string.IsNullOrEmpty(code))
-            //{
-            //    return new ApiResult { status = 0, msg = "短信验证码不能为空" };
-            //}
+            if (string.IsNullOrEmpty(model.Code))
+            {
+                return new ApiResult { status = 0, msg = "短信验证码不能为空" };
+            }
+            object obj= CacheHelper.GetCache("App_User_SendMsg" + model.Mobile);
+            if(obj==null)
+            {
+                return new ApiResult { status = 0, msg = "该手机号没有发送短信" };
+            }
+            if(obj.ToString()!=model.Code)
+            {
+                return new ApiResult { status = 0, msg = "手机验证码错误" };
+            }
             long levelId= await idNameService.GetIdByNameAsync("会员等级");
             long id= await userService.AddAsync(model.Mobile, model.Password, levelId);
             if(id<=0)
@@ -129,5 +139,24 @@ namespace IMS.Web.Controllers
         //{
 
         //}
+        public async Task<ApiResult> SendMsg(UserSendMsgModel model)
+        {
+            if (string.IsNullOrEmpty(model.Mobile))
+            {
+                return new ApiResult { status = 0, msg = "登录手机号不能为空" };
+            }
+            if (!Regex.IsMatch(model.Mobile, @"^1\d{10}$"))
+            {
+                return new ApiResult { status = 0, msg = "登录手机号格式不正确" };
+            }
+            string state;
+            string msgState;
+            string code = CommonHelper.GetNumberCaptcha(4);
+            string stateCode= CommonHelper.SendMessage2(model.Mobile, code, out state, out msgState);
+            string content = string.Format(System.Configuration.ConfigurationManager.AppSettings["SMS_Template1"], code);
+            await messageService.AddAsync(0, model.Mobile, content+","+msgState,Convert.ToInt32(state));
+            CacheHelper.SetCache("App_User_SendMsg" + model.Mobile, code, DateTime.UtcNow.AddMinutes(2), TimeSpan.Zero);
+            return new ApiResult { status = 1, msg = "发送短信返回状态码："+stateCode+"；返回消息："+msgState };
+        }
     }    
 }

@@ -15,7 +15,7 @@ namespace IMS.IService
     public class TakeCashSearchResult
     {
         public TakeCashDTO[] TakeCashes { get; set; }
-        public long TotalCount { get; set; }
+        public long PageCount { get; set; }
         public long? GivingIntegralCount { get; set; }
         public long? UseIntegralCount { get; set; }
     }

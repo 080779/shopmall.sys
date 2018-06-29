@@ -21,7 +21,7 @@ namespace IMS.Web.App_Start.Filter
     public class ApiSYSAuthorizationFilter : AuthorizationFilterAttribute
     {
         public IUserTokenService userTokenService = new UserTokenService();
-        private string TokenSecret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+        private string TokenSecret = System.Configuration.ConfigurationManager.AppSettings["TokenSecret"];
         public override void OnAuthorization(HttpActionContext actionContext)
         {
             if (actionContext.ActionDescriptor.GetCustomAttributes<System.Web.Http.AllowAnonymousAttribute>().Any() || actionContext.ActionDescriptor.ControllerDescriptor.GetCustomAttributes<System.Web.Http.AllowAnonymousAttribute>().Any())
@@ -43,7 +43,7 @@ namespace IMS.Web.App_Start.Filter
             }
             string token = values.First();
             string res;
-            if (!CommonHelper.JwtDecrypt(token, TokenSecret, out res))
+            if (!JwtHelper.JwtDecrypt(token, TokenSecret, out res))
             {
                 actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError(res));
                 return;

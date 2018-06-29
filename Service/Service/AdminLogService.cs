@@ -80,7 +80,7 @@ namespace IMS.Service.Service
                 {
                     adminLogs = adminLogs.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
                 }
-                result.TotalCount = await adminLogs.LongCountAsync();
+                result.PageCount = (int)Math.Ceiling((await adminLogs.LongCountAsync()) * 1.0f / pageSize);
                 var adminLogsResult = await adminLogs.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 result.AdminLogs = adminLogsResult.Select(a => ToDTO(a)).ToArray();
                 return result;

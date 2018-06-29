@@ -73,8 +73,7 @@ namespace IMS.Service.Service
                 {
                     entities = entities.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
                 }
-                int pageCount = (int)Math.Ceiling(entities.LongCount() * 1.0f / pageSize);
-                result.TotalCount = pageCount;
+                result.PageCount = (int)Math.Ceiling((await entities.LongCountAsync()) * 1.0f / pageSize);
                 var noticesResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 result.Notices = noticesResult.Select(a => ToDTO(a)).ToArray();
                 return result;

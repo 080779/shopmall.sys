@@ -46,6 +46,7 @@
     <Compile Include="IGoodsAreaService.cs" />
     <Compile Include="IGoodsCarService.cs" />
     <Compile Include="IGoodsTypeService.cs" />
+    <Compile Include="IMessageService.cs" />
     <Compile Include="INoticeService.cs" />
     <Compile Include="IIdNameService.cs" />
     <Compile Include="IUserTokenService.cs" />
