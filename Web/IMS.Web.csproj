@@ -316,14 +316,16 @@
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\AdminLogController.cs" />
     <Compile Include="Areas\Admin\Controllers\LoginController.cs" />
+    <Compile Include="Areas\Admin\Controllers\GoodsController.cs" />
     <Compile Include="Areas\Admin\Controllers\SlideController.cs" />
     <Compile Include="Areas\Admin\Controllers\NoticeController.cs" />
     <Compile Include="Areas\Admin\Controllers\TakeCashController.cs" />
     <Compile Include="Areas\Admin\Controllers\UserController.cs" />
     <Compile Include="Areas\Admin\Models\Admin\GetListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Admin\ListViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Goods\GoodsListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\TakeCash\ListViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\User\ListViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\User\UserListViewModel.cs" />
     <Compile Include="Controllers\GoodsController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
@@ -360,6 +362,7 @@
     <Content Include="Areas\Admin\Views\Home\Permission.cshtml" />
     <Content Include="Areas\Admin\Views\Notice\List.cshtml" />
     <Content Include="Areas\Admin\Views\Slide\List.cshtml" />
+    <Content Include="Areas\Admin\Views\Goods\List.cshtml" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Views\Home\Index.cshtml" />
