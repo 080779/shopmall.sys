@@ -13,6 +13,7 @@ namespace IMS.Service.Config
             HasRequired(p => p.Buyer).WithMany().HasForeignKey(p => p.BuyerId).WillCascadeOnDelete(false);
             HasRequired(p => p.PayType).WithMany().HasForeignKey(p => p.PayTypeId).WillCascadeOnDelete(false);
             HasRequired(p => p.OrderState).WithMany().HasForeignKey(p => p.OrderStateId).WillCascadeOnDelete(false);
+            HasRequired(p => p.Address).WithMany().HasForeignKey(p => p.AddressId).WillCascadeOnDelete(false);
         }
     }
 }

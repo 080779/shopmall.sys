@@ -16,7 +16,9 @@ namespace IMS.Service.Entity
         public string Code { get; set; }
         public long BuyerId { get; set; }
         public virtual UserEntity Buyer { get; set; }
-        public decimal Amount { get; set; }
+        public long AddressId { get; set; }
+        public virtual AddressEntity Address { get; set; }
+        public decimal Amount { get; set; } = 0;
         public decimal PostFee { get; set; } = 0;//邮费
         public long PayTypeId { get; set; }
         public virtual PayCodeEntity PayType { get; set; }//支付方式

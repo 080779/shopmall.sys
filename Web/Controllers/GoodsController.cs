@@ -11,10 +11,12 @@ using System.Web.Http;
 
 namespace IMS.Web.Controllers
 {
+    [AllowAnonymous]
     public class GoodsController : ApiController
     {
         private string TokenSecret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
         public IGoodsCarService goodsCarService { get; set; }
+        public IGoodsTypeService goodsTypeService { get; set; }
         [HttpPost]
         public ApiResult List()
         {
@@ -23,9 +25,9 @@ namespace IMS.Web.Controllers
         [HttpPost]
         public async Task<ApiResult> AddCar()
         {
-           
-            //goodsCarService.AddAsync(1, 1, 1);
-            await goodsCarService.UpdateAsync(2,3);
+            await goodsTypeService.AddAsync("aaa", "sf");
+            //await goodsCarService.AddAsync(1, 1, 1);
+            //await goodsCarService.UpdateAsync(2,3);
             return new ApiResult { status = 1, msg="ok" };
         }
         [HttpPost]

@@ -233,6 +233,12 @@ namespace IMS.Common
                 //访问失败
             }
         }
+        public static string SendMessage(string PhoneNum, string content, out string state, out string msgState)
+        {
+            state = "111";
+            msgState = "123erqewqw";
+            return "9999";
+        }
 
         //<!--短信设置-->
         //<add key="SMS_USER" value="dlgxnn07"/>

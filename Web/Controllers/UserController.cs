@@ -56,13 +56,13 @@ namespace IMS.Web.Controllers
             object obj= CacheHelper.GetCache("App_User_SendMsg" + model.Mobile);
             if(obj==null)
             {
-                return new ApiResult { status = 0, msg = "该手机号没有发送短信" };
+                return new ApiResult { status = 0, msg = "注册手机号不一致" };
             }
             if(obj.ToString()!=model.Code)
             {
                 return new ApiResult { status = 0, msg = "手机验证码错误" };
             }
-            long levelId= await idNameService.GetIdByNameAsync("会员等级");
+            long levelId= await idNameService.GetIdByNameAsync("普通会员");
             long id= await userService.AddAsync(model.Mobile, model.Password, levelId);
             if(id<=0)
             {
@@ -143,20 +143,20 @@ namespace IMS.Web.Controllers
         {
             if (string.IsNullOrEmpty(model.Mobile))
             {
-                return new ApiResult { status = 0, msg = "登录手机号不能为空" };
+                return new ApiResult { status = 0, msg = "注册手机号不能为空" };
             }
             if (!Regex.IsMatch(model.Mobile, @"^1\d{10}$"))
             {
-                return new ApiResult { status = 0, msg = "登录手机号格式不正确" };
+                return new ApiResult { status = 0, msg = "注册手机号格式不正确" };
             }
             string state;
             string msgState;
-            string code = CommonHelper.GetNumberCaptcha(4);
-            string stateCode= CommonHelper.SendMessage2(model.Mobile, code, out state, out msgState);
+            string code = CommonHelper.GetNumberCaptcha(4);            
             string content = string.Format(System.Configuration.ConfigurationManager.AppSettings["SMS_Template1"], code);
-            await messageService.AddAsync(0, model.Mobile, content+","+msgState,Convert.ToInt32(state));
+            string stateCode = CommonHelper.SendMessage2(model.Mobile, content, out state, out msgState);
+            await messageService.AddAsync(0, model.Mobile, content + "," + msgState, Convert.ToInt32(state));
             CacheHelper.SetCache("App_User_SendMsg" + model.Mobile, code, DateTime.UtcNow.AddMinutes(2), TimeSpan.Zero);
-            return new ApiResult { status = 1, msg = "发送短信返回状态码："+stateCode+"；返回消息："+msgState };
+            return new ApiResult { status = Convert.ToInt32(stateCode), msg = "发送短信返回消息："+msgState };
         }
     }    
 }

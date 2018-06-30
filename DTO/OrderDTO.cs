@@ -11,6 +11,7 @@ namespace IMS.DTO
         public string Code { get; set; }
         public long BuyerId { get; set; }
         public string BuyerNickName { get; set; }
+        public string BuyerMobile { get; set; }
         public decimal Amount { get; set; }
         public decimal PostFee { get; set; }//邮费
         public long PayTypeId { get; set; }
