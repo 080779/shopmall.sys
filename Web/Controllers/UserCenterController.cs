@@ -17,14 +17,11 @@ namespace IMS.Web.Controllers
     public class UserCenterController : ApiController
     {        
         public IUserService userService { get; set; }
-        public IUserTokenService userTokenService { get; set; }
-        public IIdNameService idNameService { get; set; }
-        public IMessageService messageService { get; set; }
         public IBankAccountService bankAccountService { get; set; }
         public IPayCodeService payCodeService { get; set; }
         
         [HttpPost]
-        public async Task<ApiResult> Info()
+        public async Task<ApiResult> Detail()
         {
             User user= JwtHelper.JwtDecrypt<User>(ControllerContext);
             UserDTO userdto= await userService.GetModelAsync(user.UserId);

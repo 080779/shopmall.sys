@@ -331,11 +331,16 @@
     <Compile Include="Controllers\GoodsController.cs" />
     <Compile Include="Controllers\SlideController.cs" />
     <Compile Include="Controllers\NoticeController.cs" />
+    <Compile Include="Controllers\AddressController.cs" />
     <Compile Include="Controllers\UserCenterController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Address\AddressEditModel.cs" />
+    <Compile Include="Models\Address\AddressAddModel.cs" />
+    <Compile Include="Models\Address\AddressDetailModel.cs" />
+    <Compile Include="Models\Address\AddressListApiModel.cs" />
     <Compile Include="Models\Notice\NoticeListApiModel.cs" />
     <Compile Include="Models\Slide\SlideListApiModel.cs" />
     <Compile Include="Models\User\UserInfoApiModel.cs" />

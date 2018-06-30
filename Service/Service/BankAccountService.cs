@@ -16,7 +16,6 @@ namespace IMS.Service.Service
         public BankAccountDTO ToDTO(BankAccountEntity entity)
         {
             BankAccountDTO dto = new BankAccountDTO();
-            dto.Description = entity.Description;
             dto.Name = entity.Name;
             dto.CreateTime = entity.CreateTime;
             dto.Id = entity.Id;

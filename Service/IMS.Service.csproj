@@ -109,6 +109,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\AdminLogService.cs" />
     <Compile Include="Service\AdminService.cs" />
+    <Compile Include="Service\AddressService.cs" />
     <Compile Include="Service\PayCodeService.cs" />
     <Compile Include="Service\GoodsCarService.cs" />
     <Compile Include="Service\OrderService.cs" />
