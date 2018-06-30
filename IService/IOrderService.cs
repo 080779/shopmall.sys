@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace IMS.IService
 {
     /// <summary>
-    /// 商品管理接口
+    /// 订单管理接口
     /// </summary>
     public interface IOrderService : IServiceSupport
     {

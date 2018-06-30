@@ -17,5 +17,6 @@ namespace IMS.Service.Entity
         public UserEntity Recommend { get; set; }
         public string RecommendPath { get; set; }
         public int RecommendGenera { get; set; } = 1;
+        public bool IsNull { get; set; } = false;
     }
 }

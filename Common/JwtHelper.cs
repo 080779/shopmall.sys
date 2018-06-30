@@ -13,11 +13,12 @@ namespace IMS.Common
 {
     public static class JwtHelper
     {
+        private static string secret = System.Configuration.ConfigurationManager.AppSettings["TokenSecret"];
         /// <summary>
         /// jwt加密
         /// </summary>
         /// <returns></returns>
-        public static string JwtEncrypt(HttpControllerContext context, Dictionary<string, object> payload, string secret)
+        public static string JwtEncrypt(Dictionary<string, object> payload)
         {
             IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
             IJsonSerializer serializer = new JsonNetSerializer();
@@ -30,7 +31,7 @@ namespace IMS.Common
         /// jwt加密
         /// </summary>
         /// <returns></returns>
-        public static string JwtEncrypt<T>(HttpControllerContext context, T obj, string secret)
+        public static string JwtEncrypt<T>(T obj)
         {
             Dictionary<string, object> payload = new Dictionary<string, object>();
             Type type = obj.GetType();
@@ -50,7 +51,7 @@ namespace IMS.Common
         /// jwt解密
         /// </summary>
         /// <returns></returns>
-        public static bool JwtDecrypt(string token, string secret, out string res)
+        public static bool JwtDecrypt(string token, out string res)
         {
             try
             {
@@ -79,7 +80,7 @@ namespace IMS.Common
         /// jwt解密
         /// </summary>
         /// <returns></returns>
-        public static T JwtDecrypt<T>(HttpControllerContext context, string secret)
+        public static T JwtDecrypt<T>(HttpControllerContext context)
         {
             IEnumerable<string> values;
             context.Request.Headers.TryGetValues("token", out values);

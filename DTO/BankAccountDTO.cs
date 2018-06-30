@@ -8,11 +8,10 @@ namespace IMS.DTO
 {
     public class BankAccountDTO : BaseDTO
     {
+        public long UserId { get; set; }
         public string Name { get; set; }
         public string Account { get; set; }
         public string AccountName { get; set; }
-        public long PayCodeId { get; set; }
-        public string PayCodeName { get; set; }
         public string Description { get; set; }
     }
 }

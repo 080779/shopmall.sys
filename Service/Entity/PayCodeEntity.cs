@@ -11,8 +11,11 @@ namespace IMS.Service.Entity
     /// </summary>
     public class PayCodeEntity : BaseEntity
     {
+        public long UserId { get; set; }
+        public UserEntity User { get; set; }
         public string Name { get; set; }
         public string CodeUrl { get; set; }
         public string Description { get; set; }
+        public bool IsNull { get; set; } = false;
     }
 }

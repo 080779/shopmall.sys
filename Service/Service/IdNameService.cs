@@ -38,7 +38,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entities = dbc.GetAll<IdNameEntity>().Where(i => i.TypeName == typeName);
+                var entities = dbc.GetAll<IdNameEntity>().Where(i => i.TypeName == typeName && i.IsNull == false);
                 var result= await entities.OrderBy(i => i.Id).ToListAsync();
                 return result.Select(i => ToDTO(i)).ToArray();
             }

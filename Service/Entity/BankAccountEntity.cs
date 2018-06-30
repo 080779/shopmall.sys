@@ -16,8 +16,7 @@ namespace IMS.Service.Entity
         public string Name { get; set; }
         public string Account { get; set; }
         public string AccountName { get; set; }
-        public long PayCodeId { get; set; }
-        public virtual PayCodeEntity PayCode { get; set; }
         public string Description { get; set; }
+        public bool IsNull { get; set; } = false;
     }
 }

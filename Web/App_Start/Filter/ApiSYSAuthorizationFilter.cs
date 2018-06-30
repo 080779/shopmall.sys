@@ -43,7 +43,7 @@ namespace IMS.Web.App_Start.Filter
             }
             string token = values.First();
             string res;
-            if (!JwtHelper.JwtDecrypt(token, TokenSecret, out res))
+            if (!JwtHelper.JwtDecrypt(token, out res))
             {
                 actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError(res));
                 return;

@@ -26,7 +26,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entities = dbc.GetAll<PermissionTypeEntity>();
+                var entities = dbc.GetAll<PermissionTypeEntity>().Where(p=>p.IsNull == false);
                 var permissionTypes = await entities.ToListAsync();
                 return permissionTypes.Select(p => ToDTO(p)).ToArray();
             }

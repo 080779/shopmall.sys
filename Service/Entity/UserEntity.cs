@@ -29,5 +29,6 @@ namespace IMS.Service.Entity
         public bool IsEnabled { get; set; } = true;
         public bool IsReturned { get; set; } = false;//是否退过货
         public bool IsUpgraded { get; set; } = false;//是否升级退过货
+        public bool IsNull { get; set; } = false;
     }
 }

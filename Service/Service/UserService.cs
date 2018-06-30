@@ -119,18 +119,22 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<bool> ResetPasswordAsync(long id, string password)
+        public async Task<long> ResetPasswordAsync(long id, string password, string newPassword)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserEntity entity = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == id);
                 if (entity == null)
                 {
-                    return false;
+                    return -1;
                 }
-                entity.Password = CommonHelper.GetMD5(password+entity.Salt);
+                if (entity.Password != CommonHelper.GetMD5(password + entity.Salt))
+                {
+                    return -2;
+                }
+                entity.Password = CommonHelper.GetMD5(newPassword+entity.Salt);
                 await dbc.SaveChangesAsync();
-                return true;
+                return entity.Id;
             }
         }
 
@@ -196,7 +200,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserSearchResult result = new UserSearchResult();
-                var users = dbc.GetAll<UserEntity>();
+                var users = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false);
 
                 if(levelId!=null)
                 {
@@ -226,7 +230,7 @@ namespace IMS.Service.Service
             {
                 UserTeamSearchResult result = new UserTeamSearchResult();
                 RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(r => r.UserId == userId);
-                var recommends = dbc.GetAll<RecommendEntity>();
+                var recommends = dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false);
                 if (teamLevel!=null)
                 {
                     if(teamLevel==1)

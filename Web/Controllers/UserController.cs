@@ -13,16 +13,17 @@ using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace IMS.Web.Controllers
-{
-    [AllowAnonymous]
+{    
     public class UserController : ApiController
     {
-        private string TokenSecret = System.Configuration.ConfigurationManager.AppSettings["TokenSecret"];
         public IUserService userService { get; set; }
         public IUserTokenService userTokenService { get; set; }
         public IIdNameService idNameService { get; set; }
         public IMessageService messageService { get; set; }
-        [HttpPost]        
+        public IBankAccountService bankAccountService { get; set; }
+        public IPayCodeService payCodeService { get; set; }
+        [HttpPost]
+        [AllowAnonymous]
         public async Task<ApiResult> Register(UserRegisterModel model)
         {
             if(string.IsNullOrEmpty(model.Mobile))
@@ -76,19 +77,14 @@ namespace IMS.Web.Controllers
                     return new ApiResult { status = 0, msg = "添加推荐人失败" };
                 }
             }
-            UserDTO user= await userService.GetModelAsync(id);
             User setUser = new User();
-            setUser.HeadPic = user.HeadPic;
-            setUser.LevelName = user.LevelName;
-            setUser.Mobile = user.Mobile;
-            setUser.NickName = user.NickName;
-            setUser.UserId = user.Id;
-            string token=JwtHelper.JwtEncrypt<User>(ControllerContext,setUser,TokenSecret);
+            setUser.UserId = id;
+            string token=JwtHelper.JwtEncrypt<User>(setUser);
             if(string.IsNullOrEmpty(token))
             {
                 return new ApiResult { status = 0, msg = "生成token失败" };
             }
-            long tokenId = await userTokenService.AddAsync(user.Id, token);
+            long tokenId = await userTokenService.AddAsync(id, token);
             if(tokenId<=0)
             {
                 return new ApiResult { status = 0, msg = "添加token失败" };
@@ -96,6 +92,7 @@ namespace IMS.Web.Controllers
             return new ApiResult { status=1,msg="注册成功",data=new { token=token} };
         }
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ApiResult> Login(UserLoginModel model)
         {
             if (string.IsNullOrEmpty(model.Mobile))
@@ -115,19 +112,14 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "登录账号或密码错误" };
             }
-            UserDTO user = await userService.GetModelAsync(userId);
             User setUser = new User();
-            setUser.HeadPic = user.HeadPic;
-            setUser.LevelName = user.LevelName;
-            setUser.Mobile = user.Mobile;
-            setUser.NickName = user.NickName;
-            setUser.UserId = user.Id;
-            string token = JwtHelper.JwtEncrypt<User>(ControllerContext, setUser, TokenSecret);
+            setUser.UserId = userId;
+            string token = JwtHelper.JwtEncrypt<User>(setUser);
             if (string.IsNullOrEmpty(token))
             {
                 return new ApiResult { status = 0, msg = "生成token失败" };
             }
-            long tokenId = await userTokenService.UpdateAsync(user.Id, token);
+            long tokenId = await userTokenService.UpdateAsync(userId, token);
             if (tokenId <= 0)
             {
                 return new ApiResult { status = 0, msg = "更新token失败" };
@@ -139,6 +131,8 @@ namespace IMS.Web.Controllers
         //{
 
         //}
+        [HttpPost]
+        [AllowAnonymous]
         public async Task<ApiResult> SendMsg(UserSendMsgModel model)
         {
             if (string.IsNullOrEmpty(model.Mobile))
@@ -157,6 +151,6 @@ namespace IMS.Web.Controllers
             await messageService.AddAsync(0, model.Mobile, content + "," + msgState, Convert.ToInt32(state));
             CacheHelper.SetCache("App_User_SendMsg" + model.Mobile, code, DateTime.UtcNow.AddMinutes(2), TimeSpan.Zero);
             return new ApiResult { status = Convert.ToInt32(stateCode), msg = "发送短信返回消息："+msgState };
-        }
+        }        
     }    
 }

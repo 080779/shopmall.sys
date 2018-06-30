@@ -329,10 +329,17 @@
     <Compile Include="Areas\Admin\Models\TakeCash\ListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\User\UserListViewModel.cs" />
     <Compile Include="Controllers\GoodsController.cs" />
+    <Compile Include="Controllers\SlideController.cs" />
+    <Compile Include="Controllers\NoticeController.cs" />
+    <Compile Include="Controllers\UserCenterController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Notice\NoticeListApiModel.cs" />
+    <Compile Include="Models\Slide\SlideListApiModel.cs" />
+    <Compile Include="Models\User\UserInfoApiModel.cs" />
+    <Compile Include="Models\User\UserResetPwdModel.cs" />
     <Compile Include="Models\User\UserSendMsgModel.cs" />
     <Compile Include="Models\User\UserLoginModel.cs" />
     <Compile Include="Models\User\UserRegisterModel.cs" />

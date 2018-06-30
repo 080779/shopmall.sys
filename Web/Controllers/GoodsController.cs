@@ -34,7 +34,7 @@ namespace IMS.Web.Controllers
         public async Task<ApiResult> GetCars()
         {
 
-            var user= JwtHelper.JwtDecrypt<User>(ControllerContext, TokenSecret);
+            var user= JwtHelper.JwtDecrypt<User>(ControllerContext);
             //User user = new User();
             //user.UserId = 1;
             //user.UserName = "vz";

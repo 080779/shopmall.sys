@@ -21,7 +21,7 @@ namespace IMS.Service.Entity
         public decimal Amount { get; set; } = 0;
         public decimal PostFee { get; set; } = 0;//邮费
         public long PayTypeId { get; set; }
-        public virtual PayCodeEntity PayType { get; set; }//支付方式
+        public virtual IdNameEntity PayType { get; set; }//支付方式
         public long OrderStateId { get; set; }
         public virtual IdNameEntity OrderState { get; set; }//订单状态
         public DateTime? PayTime { get; set; }//支付时间

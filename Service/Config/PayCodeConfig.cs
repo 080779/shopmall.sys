@@ -11,6 +11,7 @@ namespace IMS.Service.Config
             Property(p => p.Name).HasMaxLength(30).IsRequired();
             Property(p => p.Description).HasMaxLength(256);
             Property(p => p.CodeUrl).HasMaxLength(256);
+            HasRequired(p => p.User).WithMany().HasForeignKey(p => p.UserId).WillCascadeOnDelete(false);
         }
     }
 }
