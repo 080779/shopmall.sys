@@ -149,6 +149,7 @@ namespace IMS.Web.Controllers
             string content = string.Format(System.Configuration.ConfigurationManager.AppSettings["SMS_Template1"], code);
             string stateCode = CommonHelper.SendMessage2(model.Mobile, content, out state, out msgState);
             await messageService.AddAsync(0, model.Mobile, content + "," + msgState, Convert.ToInt32(state));
+            //UserSendMsgCacheModel cacheModel = new UserSendMsgCacheModel();
             CacheHelper.SetCache("App_User_SendMsg" + model.Mobile, code, DateTime.UtcNow.AddMinutes(2), TimeSpan.Zero);
             return new ApiResult { status = Convert.ToInt32(stateCode), msg = "发送短信返回消息："+msgState };
         }        

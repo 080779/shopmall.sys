@@ -345,6 +345,7 @@
     <Compile Include="Models\Slide\SlideListApiModel.cs" />
     <Compile Include="Models\User\UserInfoApiModel.cs" />
     <Compile Include="Models\User\UserResetPwdModel.cs" />
+    <Compile Include="Models\User\UserSendMsgCacheModel.cs" />
     <Compile Include="Models\User\UserSendMsgModel.cs" />
     <Compile Include="Models\User\UserLoginModel.cs" />
     <Compile Include="Models\User\UserRegisterModel.cs" />
