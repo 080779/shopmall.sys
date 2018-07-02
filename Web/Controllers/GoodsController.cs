@@ -44,6 +44,7 @@ namespace IMS.Web.Controllers
             apiModel.goodsImgs = result.GoodsImgs.Select(g => new GoodsImg { id = g.Id, imgUrl = g.ImgUrl }).ToList();
             if (dto!=null)
             {
+                apiModel.id = dto.Id;
                 apiModel.description = dto.Description;
                 apiModel.inventory = dto.Inventory;
                 apiModel.name = dto.Name;

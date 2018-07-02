@@ -8,6 +8,7 @@ namespace IMS.Web.Models.Goods
     public class GoodsDetailApiModel
     {
         public List<GoodsImg> goodsImgs { get; set; }
+        public long id { get; set; }
         public string name { get; set; }
         public decimal price { get; set; }
         public decimal realityPrice { get; set; }

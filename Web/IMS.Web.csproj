@@ -328,6 +328,7 @@
     <Compile Include="Areas\Admin\Models\Order\OrderListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\TakeCash\ListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\User\UserListViewModel.cs" />
+    <Compile Include="Controllers\GoodsCarController.cs" />
     <Compile Include="Controllers\GoodsTypeController.cs" />
     <Compile Include="Controllers\GoodsController.cs" />
     <Compile Include="Controllers\SlideController.cs" />
@@ -348,6 +349,7 @@
     <Compile Include="Models\BankAccount\BankAccountInfoModel.cs" />
     <Compile Include="Models\BankAccount\BankAccountEditModel.cs" />
     <Compile Include="Models\BankAccount\BankAccountAddModel.cs" />
+    <Compile Include="Models\GoodsCar\GoodsCarAddModel.cs" />
     <Compile Include="Models\GoodsType\GoodsTypeSecondListModel.cs" />
     <Compile Include="Models\GoodsType\GoodsTypeListApiModel.cs" />
     <Compile Include="Models\Goods\GoodsDetailApiModel.cs" />
