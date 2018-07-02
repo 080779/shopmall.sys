@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace IMS.Web.App_Start.Filter
+namespace IMS.Web.Models.BankAccount
 {
-    public class User
+    public class BankAccountInfoModel
     {
         public long Id { get; set; }
     }

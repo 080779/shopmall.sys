@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace IMS.Web.Models.User
+namespace IMS.Web.Models.UserCenter
 {
-    public class UserInfoApiModel
+    public class UserCenterDetailApiModel
     {
-        public long id { get; set; }
         public string nickName { get; set; }
         public string headPic { get; set; }
         public string qrCode { get; set; }

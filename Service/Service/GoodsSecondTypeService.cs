@@ -49,12 +49,16 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<GoodsSecondTypeSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        public async Task<GoodsSecondTypeSearchResult> GetModelListAsync(long? goodTypeId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 GoodsSecondTypeSearchResult result = new GoodsSecondTypeSearchResult();
                 var entities = dbc.GetAll<GoodsSecondTypeEntity>().Where(g => g.IsNull == false);
+                if (goodTypeId != null)
+                {
+                    entities = entities.Where(a => a.GoodsTypeId == goodTypeId);
+                }
                 if (!string.IsNullOrEmpty(keyword))
                 {
                     entities = entities.Where(g => g.Name.Contains(keyword) || g.Description.Contains(keyword));

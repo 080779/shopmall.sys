@@ -107,6 +107,31 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<GoodsSearchResult> SearchAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                GoodsSearchResult result = new GoodsSearchResult();
+                var entities = dbc.GetAll<GoodsEntity>();
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    entities = entities.Where(g => g.Name.Contains(keyword) || g.Description.Contains(keyword) || g.GoodsSecondType.Name.Contains(keyword) || g.GoodsType.Name.Contains(keyword));
+                }
+                if (startTime != null)
+                {
+                    entities = entities.Where(a => a.CreateTime >= startTime);
+                }
+                if (endTime != null)
+                {
+                    entities = entities.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
+                }
+                result.PageCount = (int)Math.Ceiling((await entities.LongCountAsync()) * 1.0f / pageSize);
+                var goodsTypesResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                result.Goods = goodsTypesResult.Select(a => ToDTO(a)).ToArray();
+                return result;
+            }
+        }
+
         public async Task<bool> UpdateAsync(GoodsAddEditModel goods)
         {
             using (MyDbContext dbc = new MyDbContext())

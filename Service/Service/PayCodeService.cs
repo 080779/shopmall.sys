@@ -49,9 +49,19 @@ namespace IMS.Service.Service
                 {
                     return false;
                 }
-                entity.Name = name;
-                entity.CodeUrl = codeUrl;
-                entity.Description = description;
+                if(!string.IsNullOrEmpty(name))
+                {
+                    entity.Name = name;
+                }
+                if (!string.IsNullOrEmpty(codeUrl))
+                {
+                    entity.CodeUrl = codeUrl;
+
+                }
+                if (!string.IsNullOrEmpty(description))
+                {
+                    entity.Description = description;
+                }                
                 await dbc.SaveChangesAsync();
                 return true;
             }

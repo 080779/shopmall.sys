@@ -1,6 +1,7 @@
 ﻿using IMS.Common;
 using IMS.IService;
 using IMS.Web.App_Start.Filter;
+using IMS.Web.Models.Goods;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,7 @@ namespace IMS.Web.Controllers
     [AllowAnonymous]
     public class GoodsController : ApiController
     {
-        private string TokenSecret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
-        public IGoodsCarService goodsCarService { get; set; }
+        public IGoodsService goodsService { get; set; }
         public IGoodsTypeService goodsTypeService { get; set; }
         [HttpPost]
         public ApiResult List()
@@ -23,31 +23,15 @@ namespace IMS.Web.Controllers
             return new ApiResult { status = 1 };
         }
         [HttpPost]
-        public async Task<ApiResult> AddCar()
+        public async Task<ApiResult> Search(GoodsSearchModel model)
         {
-            await goodsTypeService.AddAsync("aaa", "sf");
-            //await goodsCarService.AddAsync(1, 1, 1);
-            //await goodsCarService.UpdateAsync(2,3);
-            return new ApiResult { status = 1, msg="ok" };
-        }
-        [HttpPost]
-        public async Task<ApiResult> GetCars()
-        {
-
-            var user= JwtHelper.JwtDecrypt<User>(ControllerContext);
-            //User user = new User();
-            //user.UserId = 1;
-            //user.UserName = "vz";
-            //string token=JwtHelper.JwtEncrypt(ControllerContext, user, TokenSecret);
-            //goodsCarService.AddAsync(1, 1, 1);
-            GoodsCarSearchResult result= await goodsCarService.GetModelListAsync(1,null,null,null,1,2);
-            var datasoure = result.GoodsCars.Select(g => new aa { id=g.Id}).ToList();
-            result.GoodsCars.Where(g => true);
-            return new ApiResult { status=1,data=result};
-        }
-        public class aa
-        {
-            public long id { get; set; }
-        }
+            GoodsSearchResult result= await goodsService.SearchAsync(model.KeyWord, null, null, model.PageIndex, model.PageSize);
+            List<SearchResultModel> lists;
+            lists = result.Goods.Select(g => new SearchResultModel { id = g.Id, name = g.Name, realityPrice = g.RealityPrice, saleNum = g.SaleNum }).ToList();
+            GoodsSearchApiModel apiModel = new GoodsSearchApiModel();
+            apiModel.goods = lists;
+            apiModel.pageCount = result.PageCount;
+            return new ApiResult { status = 1,data=apiModel };
+        }        
     }
 }

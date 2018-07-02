@@ -23,7 +23,7 @@ namespace IMS.Web.Controllers
         public async Task<ApiResult> List()
         {
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
-            AddressSearchResult result = await addressService.GetModelListAsync(user.UserId,null,null,null,1,100);
+            AddressSearchResult result = await addressService.GetModelListAsync(user.Id, null,null,null,1,100);
             List<AddressApiModel> model;
             model = result.Address.Select(a => new AddressApiModel { id = a.Id, address = a.Address, name = a.Name, mobile = a.Mobile }).ToList();
             return new ApiResult { status = 1, data = model };
@@ -66,7 +66,7 @@ namespace IMS.Web.Controllers
             return new ApiResult { status = 1, msg="收货地址添加成功" };
         }
         [HttpPost]
-        public async Task<ApiResult> Update(AddressEditModel model)
+        public async Task<ApiResult> Edit(AddressEditModel model)
         {
             if (string.IsNullOrEmpty(model.Name))
             {
@@ -87,9 +87,18 @@ namespace IMS.Web.Controllers
             bool flag= await addressService.UpdateAsync(model.Id, model.Name, model.Mobile, model.Address);
             if(!flag)
             {
-                return new ApiResult { status = 1, msg = "收货地址修改失败" };
+                return new ApiResult { status = 0, msg = "收货地址修改失败" };
             }
             return new ApiResult { status = 1, msg = "收货地址修改成功" };
+        }
+        public async Task<ApiResult> Delete(AddressDelModel model)
+        {
+            bool flag = await addressService.DeleteAsync(model.Id);
+            if(!flag)
+            {
+                return new ApiResult { status = 0, msg = "收货地址删除失败" };
+            }
+            return new ApiResult { status = 1, msg = "收货地址删除成功" };
         }
     }    
 }

@@ -53,6 +53,29 @@ namespace IMS.Service.Service
                 return user.Id;
             }
         }
+
+        public async Task<bool> UpdateInfoAsync(long id, string nickName, string headpic)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserEntity entity = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == id);
+                if (entity == null)
+                {
+                    return false;
+                }
+                if(nickName!=null)
+                {
+                    entity.NickName = nickName;
+                }
+                if(headpic!=null)
+                {
+                    entity.HeadPic = headpic;
+                }
+                await dbc.SaveChangesAsync();
+                return true;
+            }
+        }
+
         public async Task<long> AddRecommendAsync(long userId, string recommendMobile)
         {
             using (MyDbContext dbc = new MyDbContext())

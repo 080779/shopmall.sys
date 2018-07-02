@@ -15,6 +15,14 @@ namespace IMS.IService
         /// <returns></returns>
         Task<long> AddAsync(string mobile, string password, long levelTypeId);
         /// <summary>
+        /// 修改头像，昵称
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <param name="nickName">要修改的昵称（为null不修改）</param>
+        /// <param name="headpic">要修改的头像地址（为null不修改）</param>
+        /// <returns></returns>
+        Task<bool> UpdateInfoAsync(long id,string nickName, string headpic);
+        /// <summary>
         /// 添加推荐人
         /// </summary>
         /// <param name="userId">用户id</param>

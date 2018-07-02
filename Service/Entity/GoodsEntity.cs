@@ -30,6 +30,6 @@ namespace IMS.Service.Entity
         //public long GoodsImgId { get; set; }
         //public virtual GoodsImgEntity GoodsImg { get; set; }
         public long Inventory { get; set; }//库存
-        public long SaleNum { get; set; }
+        public long SaleNum { get; set; } = 0;//销售数量
     }
 }

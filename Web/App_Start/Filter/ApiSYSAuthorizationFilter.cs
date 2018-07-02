@@ -49,10 +49,10 @@ namespace IMS.Web.App_Start.Filter
                 return;
             }
             User user = JsonConvert.DeserializeObject<User>(res);
-            object cache = CacheHelper.GetCache("App_User_CheckToken" + user.UserId);
+            object cache = CacheHelper.GetCache("App_User_CheckToken" + user.Id);
             if ( cache != null)
             {
-                long idres =(long)CacheHelper.GetCache("App_User_CheckToken" + user.UserId);
+                long idres =(long)CacheHelper.GetCache("App_User_CheckToken" + user.Id);
                 if (idres == -1)
                 {
                     actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("用户不存在"));
@@ -71,9 +71,9 @@ namespace IMS.Web.App_Start.Filter
             }
             else
             {
-                long id = userTokenService.CheckToken(user.UserId, token);
-                CacheHelper.SetCache("App_User_CheckToken" + user.UserId, id, DateTime.UtcNow.AddSeconds(10), TimeSpan.Zero);
-                object cache1 = CacheHelper.GetCache("App_User_CheckToken" + user.UserId);
+                long id = userTokenService.CheckToken(user.Id, token);
+                CacheHelper.SetCache("App_User_CheckToken" + user.Id, id, DateTime.UtcNow.AddSeconds(10), TimeSpan.Zero);
+                object cache1 = CacheHelper.GetCache("App_User_CheckToken" + user.Id);
                 if (id == -1)
                 {
                     actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("用户不存在"));

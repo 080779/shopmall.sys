@@ -78,7 +78,7 @@ namespace IMS.Web.Controllers
                 }
             }
             User setUser = new User();
-            setUser.UserId = id;
+            setUser.Id = id;
             string token=JwtHelper.JwtEncrypt<User>(setUser);
             if(string.IsNullOrEmpty(token))
             {
@@ -113,7 +113,7 @@ namespace IMS.Web.Controllers
                 return new ApiResult { status = 0, msg = "登录账号或密码错误" };
             }
             User setUser = new User();
-            setUser.UserId = userId;
+            setUser.Id = userId;
             string token = JwtHelper.JwtEncrypt<User>(setUser);
             if (string.IsNullOrEmpty(token))
             {

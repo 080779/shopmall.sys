@@ -9,10 +9,11 @@ namespace IMS.IService
     /// </summary>
     public interface IBankAccountService : IServiceSupport
     {
-        Task<long> AddAsync(long userId,string name, string account,string accountName);
-        Task<bool> UpdateAsync(long id, string name, string account, string accountName);
+        Task<long> AddAsync(long userId, string name, string bankAccount, string bankName);
+        Task<bool> UpdateAsync(long id, string name, string bankAccount, string bankName);
         Task<bool> DeleteAsync(long id);
         Task<BankAccountDTO[]> GetModelByUserIdAsync(long id);
+        Task<BankAccountDTO> GetModelAsync(long id);
         Task<BankAccountSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
     }
     public class BankAccountSearchResult
