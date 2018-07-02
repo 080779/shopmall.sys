@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="IAdminLogService.cs" />
     <Compile Include="IAddressService.cs" />
+    <Compile Include="IGoodsImgService.cs" />
     <Compile Include="IPayCodeService.cs" />
     <Compile Include="IGoodsSecondTypeService.cs" />
     <Compile Include="IBankAccountService.cs" />
