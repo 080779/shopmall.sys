@@ -191,6 +191,25 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<long> BalancePayAsync(long id, decimal amount)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u=>u.Id==id);
+                if(user==null)
+                {
+                    return -1;
+                }
+                if(amount>user.Amount)
+                {
+                    return -2;
+                }
+                user.Amount = user.Amount - amount;
+                await dbc.SaveChangesAsync();
+                return 1;
+            }
+        }
+
         public async Task<UserDTO> GetModelAsync(long id)
         {
             using (MyDbContext dbc = new MyDbContext())

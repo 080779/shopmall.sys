@@ -9,9 +9,10 @@ namespace IMS.IService
     /// </summary>
     public interface IOrderService : IServiceSupport
     {
-        Task<long> AddAsync(long buyerId,long addressId,long payTypeId, long orderStateId);
-        Task<bool> UpdateAsync(long id,long addressId, long payTypeId, long orderStateId);
+        Task<long> AddAsync(long buyerId,long addressId,long payTypeId, long orderStateId, long goodsId, long number);
+        Task<bool> UpdateAsync(long id, long? addressId, long? payTypeId, long? orderStateId);
         Task<bool> DeleteAsync(long id);
+        Task<OrderDTO> GetModelAsync(long id);
         Task<OrderSearchResult> GetModelListAsync(long? buyerId,long? orderStateId ,string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
     }
     public class OrderSearchResult

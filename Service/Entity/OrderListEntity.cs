@@ -17,8 +17,10 @@ namespace IMS.Service.Entity
         public virtual GoodsEntity Goods { get; set; }
         public long OrderId { get; set; }
         public virtual OrderEntity Order { get; set; }
-        public int Number { get; set; }
+        public long Number { get; set; }
         public decimal Price { get; set; }
+        public decimal PostFee { get; set; } = 0;//邮费
+        public decimal Poundage { get; set; } = 0;//手续费
         public decimal TotalFee { get; set; }
         public string ImgUrl { get; set; }
     }

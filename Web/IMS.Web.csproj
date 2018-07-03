@@ -329,6 +329,7 @@
     <Compile Include="Areas\Admin\Models\TakeCash\ListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\User\UserListViewModel.cs" />
     <Compile Include="Controllers\GoodsCarController.cs" />
+    <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\GoodsTypeController.cs" />
     <Compile Include="Controllers\GoodsController.cs" />
     <Compile Include="Controllers\SlideController.cs" />
@@ -357,6 +358,7 @@
     <Compile Include="Models\Goods\GoodsDetailModel.cs" />
     <Compile Include="Models\Goods\GoodsSearchModel.cs" />
     <Compile Include="Models\Notice\NoticeListApiModel.cs" />
+    <Compile Include="Models\Order\OrderAddModel.cs" />
     <Compile Include="Models\Slide\SlideListApiModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterEditNickNameModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterEditQrCodeModel.cs" />

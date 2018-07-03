@@ -32,7 +32,7 @@ namespace IMS.Service.Service
             dto.ReceiverName = entity.Address.Name;
             return dto;
         }
-        public async Task<long> AddAsync(long buyerId, long addressId, long payTypeId, long orderStateId)
+        public async Task<long> AddAsync(long buyerId, long addressId, long payTypeId, long orderStateId, long goodsId, long number)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -43,6 +43,30 @@ namespace IMS.Service.Service
                 entity.PayTypeId = payTypeId;
                 entity.OrderStateId = orderStateId;
                 dbc.Orders.Add(entity);
+                await dbc.SaveChangesAsync();
+
+                GoodsEntity goods = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g => g.Id == goodsId);
+                if (goods == null)
+                {
+                    return -1;
+                }
+                OrderListEntity listEntity = new OrderListEntity();
+                listEntity.OrderId = entity.Id;
+                listEntity.GoodsId = goodsId;
+                listEntity.Number = number;
+                listEntity.Price = goods.RealityPrice;
+                GoodsImgEntity imgEntity = await dbc.GetAll<GoodsImgEntity>().FirstOrDefaultAsync(g => g.GoodsId == goodsId);
+                if (imgEntity == null)
+                {
+                    listEntity.ImgUrl = "";
+                }
+                else
+                {
+                    listEntity.ImgUrl = imgEntity.ImgUrl;
+                }
+                listEntity.TotalFee = listEntity.Price * number + listEntity.PostFee + listEntity.Poundage;
+                entity.Amount = listEntity.TotalFee;
+                dbc.OrderLists.Add(listEntity);
                 await dbc.SaveChangesAsync();
                 return entity.Id;
             }
@@ -60,6 +84,19 @@ namespace IMS.Service.Service
                 entity.IsDeleted = true;
                 await dbc.SaveChangesAsync();
                 return true;
+            }
+        }
+
+        public async Task<OrderDTO> GetModelAsync(long id)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                OrderEntity entity = await dbc.GetAll<OrderEntity>().SingleOrDefaultAsync(g => g.Id == id);
+                if (entity == null)
+                {
+                    return null;
+                }
+                return ToDTO(entity);
             }
         }
 
@@ -96,7 +133,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<bool> UpdateAsync(long id, long addressId, long payTypeId, long orderStateId)
+        public async Task<bool> UpdateAsync(long id, long? addressId, long? payTypeId, long? orderStateId)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -105,9 +142,18 @@ namespace IMS.Service.Service
                 {
                     return false;
                 }
-                entity.AddressId = addressId;
-                entity.PayTypeId = payTypeId;
-                entity.OrderStateId = orderStateId;
+                if(addressId!=null)
+                {
+                    entity.AddressId = addressId.Value;
+                }
+                if (payTypeId != null)
+                {
+                    entity.PayTypeId = payTypeId.Value;
+                }
+                if (orderStateId != null)
+                {
+                    entity.OrderStateId = orderStateId.Value;
+                }
                 await dbc.SaveChangesAsync();
                 return true;
             }           

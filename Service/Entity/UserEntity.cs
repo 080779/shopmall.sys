@@ -15,8 +15,9 @@ namespace IMS.Service.Entity
         public string Code { get; set; }
         public string NickName { get; set; }
         public string HeadPic { get; set; }
-        public decimal Amount { get; set; } = 0;
-        public decimal SalesAmount { get; set; } = 0;
+        public decimal Amount { get; set; } = 0;//账户金额
+        public decimal BonusAmount { get; set; } = 0;//累计佣金
+        public decimal SalesAmount { get; set; } = 0;//销售金额
         public virtual RecommendEntity Recommend { get; set; }
         public long LevelId { get; set; }
         public virtual IdNameEntity Level { get; set; }

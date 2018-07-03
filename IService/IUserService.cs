@@ -50,6 +50,7 @@ namespace IMS.IService
         Task<long> ResetPasswordAsync(long id, string password, string newPassword);
         Task<long> UserCheck(string mobile);
         Task<long> CheckLoginAsync(string mobile, string password);
+        Task<long> BalancePayAsync(long id, decimal amount);
         /// <summary>
         /// 根据id获得用户模型
         /// </summary>
