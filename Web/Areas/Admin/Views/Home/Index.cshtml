@@ -1,4 +1,4 @@
-﻿@*@model string*@
+﻿@model IMS.Web.Areas.Admin.Models.Home.HomeIndexViewModel
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -123,7 +123,7 @@
                 <ul class="nav ace-nav">
                     <li class="light-blue">
                         <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-                            <span class="time"><em id="time"></em></span><span class="user-info"><small>欢迎光临,</small>@Model	</span>
+                            <span class="time"><em id="time"></em></span><span class="user-info"><small>欢迎光临,</small>@Model.Mobile	</span>
                             <i class="icon-caret-down"></i>
                         </a>
                         <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
@@ -159,13 +159,10 @@
                 </div><!-- #sidebar-shortcuts -->
                 <ul class="nav nav-list" id="nav_list">
                     <li class="home"><a href="javascript:void(0)" name="/admin/home/home" class="iframeurl" title=""><i class="icon-dashboard"></i><span class="menu-text"> 系统首页 </span></a></li>
-                    <li class="home"><a href="javascript:void(0)" name="/admin/user/list" class="iframeurl" title=""><i class="icon-user"></i><span class="menu-text"> 用户管理 </span></a></li>
-                    <li class="home"><a href="javascript:void(0)" name="/admin/merchant/list" class="iframeurl" title=""><i class="icon-list"></i><span class="menu-text"> 商家管理 </span></a></li>
-                    <li class="home"><a href="javascript:void(0)" name="/admin/integral/list" class="iframeurl" title=""><i class="icon-edit"></i><span class="menu-text"> 积分管理 </span></a></li>
-                    <li class="home"><a href="javascript:void(0)" name="/admin/takecash/list" class="iframeurl" title=""><i class="icon-edit"></i><span class="menu-text"> 变现管理 </span></a></li>
-                    <li class="home"><a href="javascript:void(0)" name="/admin/journal/list" class="iframeurl" title=""><i class="icon-edit"></i><span class="menu-text"> 积分交易记录 </span></a></li>
-                    <li class="home"><a href="javascript:void(0)" name="/admin/admin/list" class="iframeurl" title=""><i class="icon-group"></i><span class="menu-text"> 管理员管理 </span></a></li>
-                    <li class="home"><a href="javascript:void(0)" name="/admin/log/list" class="iframeurl" title=""><i class="icon-cogs"></i><span class="menu-text"> 系统日志 </span></a></li>
+                    @foreach(var type in Model.PermissionTypes)
+                    {
+                        <li class="home"><a href="javascript:void(0)" name="@type.Description" class="iframeurl" title=""><i class="icon-cog"></i><span class="menu-text"> @type.Name </span></a></li>
+                    }                    
                 </ul>
                 <div class="sidebar-collapse" id="sidebar-collapse">
                     <i class="icon-double-angle-left" data-icon1="icon-double-angle-left" data-icon2="icon-double-angle-right"></i>

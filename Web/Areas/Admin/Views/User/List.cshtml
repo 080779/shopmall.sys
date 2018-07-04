@@ -51,6 +51,7 @@
                 <li>
                     <label class="l_f">会员等级</label>
                     <select v-model="levelId">
+                        <option value="">请选择</option>
                         <option v-for="level in levels" v-bind:value="level.id" v-html="level.name"></option>
                     </select>
                 </li>
