@@ -8,5 +8,6 @@ namespace IMS.Web.App_Start.Filter
     public class User
     {
         public long Id { get; set; }
+        public long IsLogin { get; set; }
     }
 }

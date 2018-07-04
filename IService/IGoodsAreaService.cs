@@ -12,6 +12,7 @@ namespace IMS.IService
         Task<long> AddAsync(string title,string decription,string note);
         Task<bool> UpdateAsync(long id, string title, string decription, string note);
         Task<bool> DeleteAsync(long id);
+        Task<long> GetIdByTitleAsync(string title);
         Task<GoodsAreaSearchResult> GetModelListAsync(string keyword,DateTime? startTime,DateTime? endTime,int pageIndex,int pageSize);
     }
     public class GoodsAreaSearchResult

@@ -34,7 +34,7 @@ namespace IMS.Service.Service
             return dto;
         }
 
-        public async Task<long> AddAsync(string mobile, string password, long levelTypeId)
+        public async Task<long> AddAsync(string mobile, string password, long levelTypeId ,string recommendMobile)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -49,6 +49,22 @@ namespace IMS.Service.Service
                 user.Salt = CommonHelper.GetCaptcha(4);
                 user.Password = CommonHelper.GetMD5(password + user.Salt);
                 dbc.Users.Add(user);
+                await dbc.SaveChangesAsync();
+
+                long recommendId = (await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Mobile == recommendMobile)).Id;
+                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(u => u.UserId == recommendId);
+
+                if (recommend == null)
+                {
+                    return -2;
+                }
+                RecommendEntity ruser = new RecommendEntity();
+                ruser.UserId = entity.Id;
+                ruser.RecommendId = recommendId;
+                ruser.RecommendGenera = recommend.RecommendGenera + 1;
+                ruser.RecommendPath = recommend.RecommendPath + "-" + entity.Id;
+
+                dbc.Recommends.Add(ruser);
                 await dbc.SaveChangesAsync();
                 return user.Id;
             }

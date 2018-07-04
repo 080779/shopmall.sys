@@ -10,26 +10,27 @@ using System.Threading.Tasks;
 
 namespace IMS.Service.Service
 {
-    public class GoodsTypeService : IGoodsTypeService
+    public class MainGoodsTypeService : IMainGoodsTypeService
     {
-        private GoodsTypeDTO ToDTO(GoodsTypeEntity entity)
+        private MainGoodsTypeDTO ToDTO(MainGoodsTypeEntity entity)
         {
-            GoodsTypeDTO dto = new GoodsTypeDTO();
+            MainGoodsTypeDTO dto = new MainGoodsTypeDTO();
             dto.CreateTime = entity.CreateTime;
-            dto.Description = entity.Description;
             dto.Id = entity.Id;
+            dto.Description = entity.Description;
             dto.Name = entity.Name;
             dto.ImgUrl = entity.ImgUrl;
             return dto;
         }
-        public async Task<long> AddAsync(string name, string description)
+        public async Task<long> AddAsync(string name, string imgUrl, string description)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                GoodsTypeEntity entity = new GoodsTypeEntity();
-                entity.Description = description;
+                MainGoodsTypeEntity entity = new MainGoodsTypeEntity();
                 entity.Name = name;
-                dbc.GoodsTypes.Add(entity);
+                entity.ImgUrl = imgUrl;
+                entity.Description = description;
+                dbc.MainGoodsTypes.Add(entity);
                 await dbc.SaveChangesAsync();
                 return entity.Id;
             }
@@ -39,7 +40,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                GoodsTypeEntity entity = await dbc.GetAll<GoodsTypeEntity>().SingleOrDefaultAsync(g => g.Id == id);
+                MainGoodsTypeEntity entity = await dbc.GetAll<MainGoodsTypeEntity>().SingleOrDefaultAsync(g => g.Id == id);
                 if (entity == null)
                 {
                     return false;
@@ -50,12 +51,12 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<GoodsTypeSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        public async Task<MainGoodsTypeSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                GoodsTypeSearchResult result = new GoodsTypeSearchResult();
-                var entities = dbc.GetAll<GoodsTypeEntity>().Where(g=>g.IsNull == false);
+                MainGoodsTypeSearchResult result = new MainGoodsTypeSearchResult();
+                var entities = dbc.GetAll<MainGoodsTypeEntity>();
                 if (!string.IsNullOrEmpty(keyword))
                 {
                     entities = entities.Where(g => g.Name.Contains(keyword) || g.Description.Contains(keyword));
@@ -69,22 +70,23 @@ namespace IMS.Service.Service
                     entities = entities.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
                 }
                 result.PageCount = (int)Math.Ceiling((await entities.LongCountAsync()) * 1.0f / pageSize);
-                var goodsTypesResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
-                result.GoodsTypes = goodsTypesResult.Select(a => ToDTO(a)).ToArray();
+                var mainGoodsTypesResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                result.MainGoodsTypes = mainGoodsTypesResult.Select(a => ToDTO(a)).ToArray();
                 return result;
             }
         }
 
-        public async Task<bool> UpdateAsync(long id, string name, string description)
+        public async Task<bool> UpdateAsync(long id, string name, string imgUrl, string description)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                GoodsTypeEntity entity = await dbc.GetAll<GoodsTypeEntity>().SingleOrDefaultAsync(g => g.Id == id);
+                MainGoodsTypeEntity entity = await dbc.GetAll<MainGoodsTypeEntity>().SingleOrDefaultAsync(g => g.Id == id);
                 if (entity == null)
                 {
                     return false;
                 }
                 entity.Name = name;
+                entity.ImgUrl = imgUrl;
                 entity.Description = description;
                 await dbc.SaveChangesAsync();
                 return true;

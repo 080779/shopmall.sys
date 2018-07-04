@@ -9,13 +9,12 @@ using System.Threading.Tasks;
 namespace IMS.Service.Entity
 {
     /// <summary>
-    /// 商品分类实体类
+    /// 首页商品分类实体类
     /// </summary>
-    public class GoodsTypeEntity : BaseEntity
+    public class MainGoodsTypeEntity : BaseEntity
     {
         public string Name { get; set; }
         public string ImgUrl { get; set; }
         public string Description { get; set; }
-        public bool IsNull { get; set; } = false;
     }
 }

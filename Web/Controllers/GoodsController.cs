@@ -19,10 +19,23 @@ namespace IMS.Web.Controllers
         public IGoodsService goodsService { get; set; }
         public IGoodsTypeService goodsTypeService { get; set; }
         public IGoodsImgService goodsImgService { get; set; }
+        public IGoodsAreaService goodsAreaService { get; set; }
         [HttpPost]
         public ApiResult List()
         {
             return new ApiResult { status = 1 };
+        }
+        [HttpPost]
+        public async Task<ApiResult> HotSales(GoodsHotSalesModel model)
+        {
+            long areaId= await goodsAreaService.GetIdByTitleAsync("热销区商品");
+            GoodsSearchResult result = await goodsService.GetModelListAsync(areaId, null,null,null, null, null, model.PageIndex, model.PageSize);
+            List<SearchResultModel> lists;
+            lists = result.Goods.Select(g => new SearchResultModel { id = g.Id, name = g.Name, realityPrice = g.RealityPrice, saleNum = g.SaleNum }).ToList();
+            GoodsSearchApiModel apiModel = new GoodsSearchApiModel();
+            apiModel.goods = lists;
+            apiModel.pageCount = result.PageCount;
+            return new ApiResult { status = 1, data = apiModel };
         }
         [HttpPost]
         public async Task<ApiResult> Search(GoodsSearchModel model)

@@ -17,12 +17,13 @@ namespace IMS.Web.Controllers
     {
         public IGoodsTypeService goodsTypeService { get; set; }
         public IGoodsSecondTypeService goodsSecondTypeService { get; set; }
+        public IMainGoodsTypeService mainGoodsTypeService { get; set; }
         [HttpPost]
         public async Task<ApiResult> List()
         {
             GoodsTypeSearchResult result= await goodsTypeService.GetModelListAsync(null, null, null, 1, 100);
             List<GoodsTypeListApiModel> model;
-            model= result.GoodsTypes.Select(g => new GoodsTypeListApiModel { id = g.Id, name = g.Name }).ToList();
+            model = result.GoodsTypes.Select(g => new GoodsTypeListApiModel { id = g.Id, name = g.Name, imgUrl = g.ImgUrl }).ToList();
             return new ApiResult { status = 1, data = model };
         }
         [HttpPost]
@@ -32,6 +33,14 @@ namespace IMS.Web.Controllers
             List<GoodsTypeListApiModel> listModel;
             listModel = result.GoodsSecondTypes.Select(g => new GoodsTypeListApiModel { id = g.Id, name = g.Name }).ToList();
             return new ApiResult { status = 1, data = listModel };
+        }
+        [HttpPost]
+        public async Task<ApiResult> MainList()
+        {
+            MainGoodsTypeSearchResult result = await mainGoodsTypeService.GetModelListAsync(null, null, null, 1, 100);
+            List<GoodsTypeMainListApiModel> model;
+            model = result.MainGoodsTypes.Select(g => new GoodsTypeMainListApiModel { id = g.Id, name = g.Name }).ToList();
+            return new ApiResult { status = 1, data = model };
         }
     }
 }

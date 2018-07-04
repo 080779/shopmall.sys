@@ -64,32 +64,25 @@ namespace IMS.Web.Controllers
                 return new ApiResult { status = 0, msg = "手机验证码错误" };
             }
             long levelId= await idNameService.GetIdByNameAsync("普通会员");
-            long id= await userService.AddAsync(model.Mobile, model.Password, levelId);
+            long id= await userService.AddAsync(model.Mobile, model.Password, levelId,model.RecommendMobile);
             if(id<=0)
             {
                 return new ApiResult { status = 0, msg = "注册失败" };
             }
-            else
-            {
-                long addRecommendId = await userService.AddRecommendAsync(id, model.RecommendMobile);
-                if(addRecommendId<=0)
-                {
-                    return new ApiResult { status = 0, msg = "添加推荐人失败" };
-                }
-            }
             User setUser = new User();
             setUser.Id = id;
-            string token=JwtHelper.JwtEncrypt<User>(setUser);
-            if(string.IsNullOrEmpty(token))
-            {
-                return new ApiResult { status = 0, msg = "生成token失败" };
-            }
+            setUser.IsLogin = 0;
+            string token = JwtHelper.JwtEncrypt<User>(setUser);
+            //if (string.IsNullOrEmpty(token))
+            //{
+            //    return new ApiResult { status = 0, msg = "生成token失败" };
+            //}
             long tokenId = await userTokenService.AddAsync(id, token);
-            if(tokenId<=0)
-            {
-                return new ApiResult { status = 0, msg = "添加token失败" };
-            }
-            return new ApiResult { status=1,msg="注册成功",data=new { token=token} };
+            //if (tokenId <= 0)
+            //{
+            //    return new ApiResult { status = 0, msg = "添加token失败" };
+            //}
+            return new ApiResult { status = 1, msg = "注册成功" };
         }
         [HttpPost]
         [AllowAnonymous]
@@ -114,20 +107,21 @@ namespace IMS.Web.Controllers
             }
             User setUser = new User();
             setUser.Id = userId;
+            setUser.IsLogin = 1;
             string token = JwtHelper.JwtEncrypt<User>(setUser);
-            if (string.IsNullOrEmpty(token))
-            {
-                return new ApiResult { status = 0, msg = "生成token失败" };
-            }
+            //if (string.IsNullOrEmpty(token))
+            //{
+            //    return new ApiResult { status = 0, msg = "生成token失败" };
+            //}
             long tokenId = await userTokenService.UpdateAsync(userId, token);
-            if (tokenId <= 0)
-            {
-                return new ApiResult { status = 0, msg = "更新token失败" };
-            }
-            return new ApiResult { status = 1 ,msg="登录成功",data=new { token=token} };
+            //if (tokenId <= 0)
+            //{
+            //    return new ApiResult { status = 0, msg = "更新token失败" };
+            //}
+            return new ApiResult { status = 1, msg = "登录成功", data = new { token = token } };
         }
         //[HttpPost]
-        //public async Task<ApiResult> Logout(UserRegisterModel model)
+        //public async Task<ApiResult> Logout()
         //{
 
         //}

@@ -22,7 +22,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         [HttpPost]
         public async Task<ActionResult> List(long? goodsTypeId, long? goodsSecondTypeId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
-            var result = await goodsService.GetModelListAsync(goodsTypeId,goodsSecondTypeId,keyword, startTime, endTime, pageIndex, pageSize);
+            var result = await goodsService.GetModelListAsync(null,goodsTypeId,goodsSecondTypeId,keyword, startTime, endTime, pageIndex, pageSize);
             GoodsListViewModel model = new GoodsListViewModel();
             model.Goods = result.Goods;
             model.PageCount = result.PageCount;

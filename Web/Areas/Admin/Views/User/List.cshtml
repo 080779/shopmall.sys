@@ -130,7 +130,7 @@
                 laydate({
                     elem: '#start',
                     choose: function (date) {
-                        that.time.startTime = date;
+                        that.searchs.startTime = date;
                     }
                 });
             },
@@ -139,7 +139,7 @@
                 laydate({
                     elem: '#end',
                     choose: function (date) {
-                        that.time.endTime = date;
+                        that.searchs.endTime = date;
                     }
                 });
             },
@@ -197,6 +197,7 @@
             this.$http.post('/admin/user/list', { levelId: this.levelId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
                 this.users = result.data.data.users;
                 this.pages.all = result.data.data.pageCount;
+                this.levels = result.data.data.levels;
             })
         }
     });

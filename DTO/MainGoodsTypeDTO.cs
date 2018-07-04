@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IMS.DTO
 {
-    public class GoodsTypeDTO : BaseDTO
+    public class MainGoodsTypeDTO : BaseDTO
     {
         public string Name { get; set; }
         public string ImgUrl { get; set; }

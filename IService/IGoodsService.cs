@@ -13,7 +13,7 @@ namespace IMS.IService
         Task<bool> UpdateAsync(GoodsAddEditModel goods);
         Task<bool> DeleteAsync(long id);
         Task<GoodsDTO> GetModelAsync(long id);
-        Task<GoodsSearchResult> GetModelListAsync(long? goodsTypeId, long? goodsSecondTypeId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
+        Task<GoodsSearchResult> GetModelListAsync(long? goodsAreaId, long? goodsTypeId, long? goodsSecondTypeId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
         Task<GoodsSearchResult> SearchAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
     }
     public class GoodsSearchResult

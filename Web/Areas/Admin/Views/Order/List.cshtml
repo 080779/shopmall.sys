@@ -38,19 +38,19 @@
     <div id="app">
         <div class="clearfix" style="margin-top:20px">
             <span class="l_f">
-                <a v-on:click="export" class="btn btn-success"><i class="icon-plus"></i>订单导出</a>
+                <a v-on:click="orderexport" class="btn btn-success"><i class="icon-plus"></i>订单导出</a>
             </span>
             <span class="l_f">
-                <a v-on:click="analysis" class="btn btn-success"><i class="icon-plus"></i>订单数据分析</a>
+                <a v-on:click="orderanalysis" class="btn btn-success"><i class="icon-plus"></i>订单数据分析</a>
             </span>
         </div>
         <div class="search_style">
             <ul class="search_content clearfix">
-                @*<li>
+                <li>
                     <label class="l_f">选择日期</label>
                     <input class="inline laydate-icon" id="start" style=" margin-left:10px;" v-on:focus='getstart' />至
                     <input class="inline laydate-icon" id="end" style=" margin-left:10px;" v-on:focus='getend' />
-                </li>*@
+                </li>
                 <li>
                     <label class="l_f">订单搜索：</label>
                     <select v-model="orderStateId">
@@ -137,7 +137,7 @@
                 laydate({
                     elem: '#start',
                     choose: function (date) {
-                        that.time.startTime = date;
+                        that.searchs.startTime = date;
                     }
                 });
             },
@@ -146,12 +146,12 @@
                 laydate({
                     elem: '#end',
                     choose: function (date) {
-                        that.time.endTime = date;
+                        that.searchs.endTime = date;
                     }
                 });
             },
             getpage: function () {
-                this.$http.post('/admin/orders/list', { orderStateId: this.orderStateId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
+                this.$http.post('/admin/order/list', { orderStateId: this.orderStateId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
                     this.orders = result.data.data.orders;
                     this.orderStates = result.data.data.orderStates;
                     this.pages.all = result.data.data.pageCount;
@@ -172,8 +172,9 @@
                 }
                 this.getpage();
             },
-            export: function () { },
-            analysis: function () { },
+            add: function () { },
+            orderexport: function () { },
+            orderanalysis: function () { },
             search: function () { },
             getorder : function(id) { }
         },
@@ -204,7 +205,7 @@
             }
         },
         mounted: function () {
-            this.$http.post('/admin/orders/list', { orderStateId: this.orderStateId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
+            this.$http.post('/admin/order/list', { orderStateId: this.orderStateId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
                 this.orders = result.data.data.orders;
                 this.orderStates = result.data.data.orderStates;
                 this.pages.all = result.data.data.pageCount;

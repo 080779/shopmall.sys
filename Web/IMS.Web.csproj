@@ -351,11 +351,13 @@
     <Compile Include="Models\BankAccount\BankAccountEditModel.cs" />
     <Compile Include="Models\BankAccount\BankAccountAddModel.cs" />
     <Compile Include="Models\GoodsCar\GoodsCarAddModel.cs" />
+    <Compile Include="Models\GoodsType\GoodsTypeMainListApiModel.cs" />
     <Compile Include="Models\GoodsType\GoodsTypeSecondListModel.cs" />
     <Compile Include="Models\GoodsType\GoodsTypeListApiModel.cs" />
     <Compile Include="Models\Goods\GoodsDetailApiModel.cs" />
     <Compile Include="Models\Goods\GoodsSearchApiModel.cs" />
     <Compile Include="Models\Goods\GoodsDetailModel.cs" />
+    <Compile Include="Models\Goods\GoodsHotSalesModel.cs" />
     <Compile Include="Models\Goods\GoodsSearchModel.cs" />
     <Compile Include="Models\Notice\NoticeListApiModel.cs" />
     <Compile Include="Models\Order\OrderAddModel.cs" />
@@ -399,6 +401,7 @@
     <Content Include="Areas\Admin\Views\Slide\List.cshtml" />
     <Content Include="Areas\Admin\Views\Goods\List.cshtml" />
     <Content Include="Areas\Admin\Views\Order\List.cshtml" />
+    <Content Include="doc\23接口文档.xls" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Views\Home\Index.cshtml" />

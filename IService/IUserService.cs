@@ -13,7 +13,7 @@ namespace IMS.IService
         /// <param name="password">密码</param>
         /// <param name="levelTypeId">等级id</param>
         /// <returns></returns>
-        Task<long> AddAsync(string mobile, string password, long levelTypeId);
+        Task<long> AddAsync(string mobile, string password, long levelTypeId, string recommendMobile);
         /// <summary>
         /// 修改头像，昵称
         /// </summary>

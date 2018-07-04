@@ -8,7 +8,7 @@ namespace IMS.Service.Config
         public GoodsSecondTypeConfig()
         {
             ToTable("tb_goodssecondtypes");
-            Property(p => p.Name).HasMaxLength(30).IsRequired();
+            Property(p => p.Name).HasMaxLength(50).IsRequired();
             Property(p => p.Description).HasMaxLength(100);
         }
     }

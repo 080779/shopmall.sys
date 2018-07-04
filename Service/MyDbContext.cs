@@ -53,5 +53,6 @@ namespace IMS.Service
         public DbSet<IdNameEntity> IdNames { get; set; }
         public DbSet<UserTokenEntity> UserTokens { get; set; }
         public DbSet<MessageEntity> Messages { get; set; }
+        public DbSet<MainGoodsTypeEntity> MainGoodsTypes { get; set; }
     }
 }

@@ -55,6 +55,8 @@ namespace IMS.Web.Controllers
                 {
                     return new ApiResult { status = 0, msg = "用户账户余额不足" };
                 }
+                long orderStateId= await idNameService.GetIdByNameAsync("待发货");
+                await orderService.UpdateAsync(id, null, null, orderStateId);
             }
             return new ApiResult { status = 1, msg = "生成订单成功" };
         }

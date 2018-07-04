@@ -5,7 +5,7 @@ using System.Web;
 
 namespace IMS.Web.Models.GoodsType
 {
-    public class GoodsTypeListApiModel
+    public class GoodsTypeMainListApiModel
     {
         public long id { get; set; }
         public string name { get; set; }
