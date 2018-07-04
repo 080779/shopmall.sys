@@ -145,7 +145,11 @@ namespace IMS.Web.Controllers
             await messageService.AddAsync(0, model.Mobile, content + "," + msgState, Convert.ToInt32(state));
             //UserSendMsgCacheModel cacheModel = new UserSendMsgCacheModel();
             CacheHelper.SetCache("App_User_SendMsg" + model.Mobile, code, DateTime.UtcNow.AddMinutes(2), TimeSpan.Zero);
-            return new ApiResult { status = Convert.ToInt32(stateCode), msg = "发送短信返回消息："+msgState };
+            if(stateCode!="0")
+            {
+                return new ApiResult { status = 0, msg = "发送短信返回消息：" + msgState };
+            }
+            return new ApiResult { status = 1, msg = "发送短信返回消息："+msgState };
         }        
     }    
 }
