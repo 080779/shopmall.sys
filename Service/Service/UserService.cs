@@ -38,35 +38,47 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                UserEntity entity= await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Mobile == mobile);
-                if(entity!=null)
+                using (var scope = dbc.Database.BeginTransaction())
                 {
-                    return -1;
-                }
-                UserEntity user = new UserEntity();
-                user.LevelId = levelTypeId;
-                user.Mobile = mobile;
-                user.Salt = CommonHelper.GetCaptcha(4);
-                user.Password = CommonHelper.GetMD5(password + user.Salt);
-                dbc.Users.Add(user);
-                await dbc.SaveChangesAsync();
+                    try
+                    {
+                        UserEntity entity = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Mobile == mobile);
+                        if (entity != null)
+                        {
+                            return -1;
+                        }
+                        UserEntity user = new UserEntity();
+                        user.LevelId = levelTypeId;
+                        user.Mobile = mobile;
+                        user.Salt = CommonHelper.GetCaptcha(4);
+                        user.Password = CommonHelper.GetMD5(password + user.Salt);
+                        dbc.Users.Add(user);
+                        await dbc.SaveChangesAsync();
 
-                long recommendId = (await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Mobile == recommendMobile)).Id;
-                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(u => u.UserId == recommendId);
+                        long recommendId = (await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Mobile == recommendMobile)).Id;
+                        RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(u => u.UserId == recommendId);
 
-                if (recommend == null)
-                {
-                    return -2;
-                }
-                RecommendEntity ruser = new RecommendEntity();
-                ruser.UserId = entity.Id;
-                ruser.RecommendId = recommendId;
-                ruser.RecommendGenera = recommend.RecommendGenera + 1;
-                ruser.RecommendPath = recommend.RecommendPath + "-" + entity.Id;
+                        if (recommend == null)
+                        {
+                            return -2;
+                        }
+                        RecommendEntity ruser = new RecommendEntity();
+                        ruser.UserId = user.Id;
+                        ruser.RecommendId = recommendId;
+                        ruser.RecommendGenera = recommend.RecommendGenera + 1;
+                        ruser.RecommendPath = recommend.RecommendPath + "-" + user.Id;
 
-                dbc.Recommends.Add(ruser);
-                await dbc.SaveChangesAsync();
-                return user.Id;
+                        dbc.Recommends.Add(ruser);
+                        await dbc.SaveChangesAsync();
+                        scope.Commit();
+                        return user.Id;
+                    }
+                    catch(Exception ex)
+                    {
+                        scope.Rollback();
+                        throw ex;
+                    }
+                }                
             }
         }
 
@@ -127,15 +139,20 @@ namespace IMS.Service.Service
                 {
                     return false;
                 }
-                AddressEntity address = await dbc.GetAll<AddressEntity>().SingleOrDefaultAsync(a=>a.UserId==id);
-                if(address!=null)
+                var address = dbc.GetAll<AddressEntity>().Where(a=>a.UserId==id);
+                if (address.LongCount() > 0)
                 {
-                    address.IsDeleted = true;
+                    await address.ForEachAsync(a => a.IsDeleted = true);
                 }
-                BankAccountEntity bankAccount = await dbc.GetAll<BankAccountEntity>().SingleOrDefaultAsync(a => a.UserId == id);
-                if (bankAccount != null)
+                var bankAccounts = dbc.GetAll<BankAccountEntity>().Where(a => a.UserId == id);
+                if (bankAccounts.LongCount()>0)
                 {
-                    bankAccount.IsDeleted = true;
+                    await bankAccounts.ForEachAsync(a => a.IsDeleted = true);
+                }
+                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(r=>r.UserId==id);
+                if(recommend!=null)
+                {
+                    recommend.IsDeleted = true;
                 }
                 entity.IsDeleted = true;
                 await dbc.SaveChangesAsync();
@@ -172,6 +189,21 @@ namespace IMS.Service.Service
                     return -2;
                 }
                 entity.Password = CommonHelper.GetMD5(newPassword+entity.Salt);
+                await dbc.SaveChangesAsync();
+                return entity.Id;
+            }
+        }
+
+        public async Task<long> ResetPasswordAsync(long id, string password)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserEntity entity = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == id);
+                if (entity == null)
+                {
+                    return -1;
+                }
+                entity.Password = CommonHelper.GetMD5(password + entity.Salt);
                 await dbc.SaveChangesAsync();
                 return entity.Id;
             }

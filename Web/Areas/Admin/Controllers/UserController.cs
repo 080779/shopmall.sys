@@ -32,5 +32,71 @@ namespace IMS.Web.Areas.Admin.Controllers
             model.Levels = await idNameService.GetByTypeNameAsync("会员等级");
             return Json(new AjaxResult { Status = 1, Data = model });
         }
+        public async Task<ActionResult> Add(string mobile,string recommendMobile,string password)
+        {
+            if(string.IsNullOrEmpty(mobile))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "会员账号不能为空" });
+            }
+            if (string.IsNullOrEmpty(recommendMobile))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "推荐人账号不能为空" });
+            }
+            if (string.IsNullOrEmpty(password))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "登录密码不能为空" });
+            }
+            long levelId= await idNameService.GetIdByNameAsync("普通会员");
+            long id= await userService.AddAsync(mobile,password,levelId,recommendMobile);
+            if(id<=0)
+            {
+                if (id == -1)
+                {
+                    return Json(new AjaxResult { Status = 0, Msg = "会员账号已经存在" });
+                }
+                if (id == -2)
+                {
+                    return Json(new AjaxResult { Status = 0, Msg = "推荐人不存在" });
+                }
+                return Json(new AjaxResult { Status = 0, Msg = "会员添加失败" });
+            }            
+            return Json(new AjaxResult { Status = 1, Msg = "会员添加成功" });
+        }
+        public async Task<ActionResult> ResetPwd(long id, string password)
+        {
+            if (string.IsNullOrEmpty(password))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "登录密码不能为空" });
+            }
+            long res = await userService.ResetPasswordAsync(id,password);
+            if (res <= 0)
+            {
+                if (id == -1)
+                {
+                    return Json(new AjaxResult { Status = 0, Msg = "会员不存在" });
+                }
+                return Json(new AjaxResult { Status = 0, Msg = "重置密码失败" });
+            }
+            return Json(new AjaxResult { Status = 1, Msg = "重置密码成功" });
+        }
+
+        public async Task<ActionResult> Frozen(long id)
+        {
+            bool res= await userService.FrozenAsync(id);
+            if (!res)
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "冻结用户失败" });
+            }
+            return Json(new AjaxResult { Status = 1, Msg = "冻结用户成功" });
+        }
+        public async Task<ActionResult> Delete(long id)
+        {
+            bool res = await userService.DeleteAsync(id);
+            if (!res)
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "删除用户失败" });
+            }
+            return Json(new AjaxResult { Status = 1, Msg = "删除用户成功" });
+        }
     }
 }

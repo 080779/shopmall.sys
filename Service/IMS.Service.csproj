@@ -113,6 +113,7 @@
     <Compile Include="Service\AdminService.cs" />
     <Compile Include="Service\AddressService.cs" />
     <Compile Include="Service\GoodsImgService.cs" />
+    <Compile Include="Service\SettingService.cs" />
     <Compile Include="Service\MainGoodsTypeService.cs" />
     <Compile Include="Service\OrderListService.cs" />
     <Compile Include="Service\PayCodeService.cs" />

@@ -48,6 +48,7 @@ namespace IMS.IService
         /// <param name="password">密码</param>
         /// <returns></returns>
         Task<long> ResetPasswordAsync(long id, string password, string newPassword);
+        Task<long> ResetPasswordAsync(long id, string password);
         Task<long> UserCheck(string mobile);
         Task<long> CheckLoginAsync(string mobile, string password);
         Task<long> BalancePayAsync(long id, decimal amount);
