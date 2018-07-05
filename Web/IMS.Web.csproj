@@ -328,6 +328,7 @@
     <Compile Include="Areas\Admin\Models\Home\HomeIndexViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Order\OrderListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\TakeCash\ListViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\User\UserBonusSetModel.cs" />
     <Compile Include="Areas\Admin\Models\User\UserListViewModel.cs" />
     <Compile Include="Controllers\GoodsCarController.cs" />
     <Compile Include="Controllers\OrderController.cs" />

@@ -12,5 +12,7 @@ namespace IMS.Web.Areas.Admin.Models.User
         public UserDTO[] Users { get; set; }
         public long PageCount { get; set; }
         public IdNameDTO[] Levels { get; set; }
+        public IdNameDTO[] SettingTypes { get; set; }
+        public List<SettingDTO> Settings { get; set; }
     }
 }

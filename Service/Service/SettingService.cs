@@ -20,6 +20,7 @@ namespace IMS.Service.Service
             dto.Name = entity.Name;
             dto.Description = entity.Description;
             dto.TypeName = entity.SettingType.Name;
+            dto.TypeDescription = entity.SettingType.Description;
             return dto;
         }
         public async Task<long> AddAsync(string name, long sttingTypeId, string description)
@@ -51,12 +52,16 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<SettingSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        public async Task<SettingSearchResult> GetModelListAsync(long[] settingTypeIds,string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 SettingSearchResult result = new SettingSearchResult();
                 var entities = dbc.GetAll<SettingEntity>();
+                if(settingTypeIds.Count()>0)
+                {
+                    entities = entities.Where(a => settingTypeIds.Contains(a.SettingTypeId));
+                }
                 if (!string.IsNullOrEmpty(keyword))
                 {
                     entities = entities.Where(g => g.Name.Contains(keyword) || g.Description.Contains(keyword));

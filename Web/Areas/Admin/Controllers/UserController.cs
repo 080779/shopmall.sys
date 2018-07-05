@@ -17,6 +17,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         private int pageSize = 10;
         public IUserService userService { get; set; }
         public IIdNameService idNameService { get; set; }
+        public ISettingService settingService { get; set; }
         public ActionResult List()
         {
             return View();
@@ -30,6 +31,9 @@ namespace IMS.Web.Areas.Admin.Controllers
             model.PageCount = result.PageCount;
             model.Users = result.Users;
             model.Levels = await idNameService.GetByTypeNameAsync("会员等级");
+            model.SettingTypes = await idNameService.GetByTypeNameAsync("推荐等级");
+            long settingTypeId;
+            model.Settings = (await settingService.GetModelListAsync(model.SettingTypes.Select(s=>settingTypeId= s.Id).ToArray(),null,null,null,1,100)).Settings.ToList();
             return Json(new AjaxResult { Status = 1, Data = model });
         }
         public async Task<ActionResult> Add(string mobile,string recommendMobile,string password)
@@ -62,6 +66,12 @@ namespace IMS.Web.Areas.Admin.Controllers
             }            
             return Json(new AjaxResult { Status = 1, Msg = "会员添加成功" });
         }
+
+        public ActionResult BonusSet(UserBonusSetModel model)
+        {
+            return Json(new AjaxResult { Status = 1, Msg = "重置密码成功" });
+        }
+
         public async Task<ActionResult> ResetPwd(long id, string password)
         {
             if (string.IsNullOrEmpty(password))
