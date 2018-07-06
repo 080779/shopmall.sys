@@ -3,6 +3,7 @@ using IMS.DTO;
 using IMS.IService;
 using IMS.Web.App_Start.Filter;
 using IMS.Web.Models.User;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace IMS.Web.Controllers
 {    
     public class UserController : ApiController
     {
+        private string appid = System.Configuration.ConfigurationManager.AppSettings["APPID"];
+        private string secret = System.Configuration.ConfigurationManager.AppSettings["SECRET"];
         public IUserService userService { get; set; }
         public IUserTokenService userTokenService { get; set; }
         public IIdNameService idNameService { get; set; }
@@ -71,7 +74,7 @@ namespace IMS.Web.Controllers
             }
             User setUser = new User();
             setUser.Id = id;
-            setUser.IsLogin = 0;
+            setUser.OpenId = "";
             string token = JwtHelper.JwtEncrypt<User>(setUser);
             //if (string.IsNullOrEmpty(token))
             //{
@@ -100,24 +103,32 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "密码不能为空" };
             }
+            if (string.IsNullOrEmpty(model.Code))
+            {
+                return new ApiResult { status = 0, msg = "微信code不能为空" };
+            }
             long userId= await userService.CheckLoginAsync(model.Mobile,model.Password);
             if(userId==-1 || userId==-2)
             {
                 return new ApiResult { status = 0, msg = "登录账号或密码错误" };
             }
+            HttpClient httpClient=new HttpClient();
+            List<KeyValuePair<string, string>> parmArray=new List<KeyValuePair<string, string>>();
+            parmArray.Add(new KeyValuePair<string, string>("appid", appid));
+            parmArray.Add(new KeyValuePair<string, string>("secret", secret));
+            parmArray.Add(new KeyValuePair<string, string>("js_code", model.Code));
+            string result= await HttpClientHelper.GetResponseByGetAsync(httpClient, parmArray, "https://api.weixin.qq.com/sns/jscode2session");
+            if (result.Contains("errcode"))
+            {
+                WeChatErrorResultModel errorModel= JsonConvert.DeserializeObject<WeChatErrorResultModel>(result);
+                return new ApiResult { status = 0, msg = "微信返回errcode：" + errorModel.errcode+ ",errmsg:" + errorModel.errmsg };
+            }
+            WeChatResultModel rightModel= JsonConvert.DeserializeObject<WeChatResultModel>(result);
             User setUser = new User();
             setUser.Id = userId;
-            setUser.IsLogin = 1;
+            setUser.OpenId = rightModel.OpenId;
             string token = JwtHelper.JwtEncrypt<User>(setUser);
-            //if (string.IsNullOrEmpty(token))
-            //{
-            //    return new ApiResult { status = 0, msg = "生成token失败" };
-            //}
             long tokenId = await userTokenService.UpdateAsync(userId, token);
-            //if (tokenId <= 0)
-            //{
-            //    return new ApiResult { status = 0, msg = "更新token失败" };
-            //}
             return new ApiResult { status = 1, msg = "登录成功", data = new { token = token } };
         }
         //[HttpPost]

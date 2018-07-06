@@ -33,7 +33,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             model.Levels = await idNameService.GetByTypeNameAsync("会员等级");
             model.SettingTypes = await idNameService.GetByTypeNameAsync("推荐等级");
             long settingTypeId;
-            model.Settings = (await settingService.GetModelListAsync(model.SettingTypes.Select(s=>settingTypeId= s.Id).ToArray(),null,null,null,1,100)).Settings.ToList();
+            model.Settings = (await settingService.GetModelListAsync(model.SettingTypes.Select(s=>settingTypeId= s.Id).ToArray())).Select(s=>new SettingModel { Id=s.Id,Parm=s.Parm}).ToList();
             return Json(new AjaxResult { Status = 1, Data = model });
         }
         public async Task<ActionResult> Add(string mobile,string recommendMobile,string password)
@@ -67,9 +67,15 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Msg = "会员添加成功" });
         }
 
-        public ActionResult BonusSet(UserBonusSetModel model)
+        public async Task<ActionResult> BonusSet(List<Setting> settings)
         {
-            return Json(new AjaxResult { Status = 1, Msg = "重置密码成功" });
+            SettingParm[] parms= settings.Select(s => new SettingParm { Id = s.Id, Parm = s.Parm }).ToArray();
+            bool flag= await settingService.UpdateAsync(parms);
+            if(!flag)
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "修改失败" });
+            }
+            return Json(new AjaxResult { Status = 1, Msg = "修改成功" });
         }
 
         public async Task<ActionResult> ResetPwd(long id, string password)

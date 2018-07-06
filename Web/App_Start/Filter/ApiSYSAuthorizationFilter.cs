@@ -54,9 +54,9 @@ namespace IMS.Web.App_Start.Filter
                 return;
             }
             User user = JsonConvert.DeserializeObject<User>(res);
-            if(user.IsLogin==0)
+            if(string.IsNullOrEmpty(user.OpenId))
             {
-                actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("用户未登录"));
+                actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("OpenId为空"));
                 return;
             }
             //object cache = CacheHelper.GetCache("App_User_CheckToken" + user.Id);

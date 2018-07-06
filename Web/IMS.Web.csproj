@@ -369,6 +369,8 @@
     <Compile Include="Models\UserCenter\UserCenterEditHeadPicModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterDetailApiModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterResetPwdModel.cs" />
+    <Compile Include="Models\User\WeChatErrorResultModel.cs" />
+    <Compile Include="Models\User\WeChatResultModel.cs" />
     <Compile Include="Models\User\UserSendMsgCacheModel.cs" />
     <Compile Include="Models\User\UserSendMsgModel.cs" />
     <Compile Include="Models\User\UserLoginModel.cs" />

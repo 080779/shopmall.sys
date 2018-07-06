@@ -11,6 +11,7 @@ namespace IMS.DTO
         public string TypeName { get; set; }
         public string TypeDescription { get; set; }
         public string Name { get; set; }
+        public string Parm { get; set; }
         public string Description { get; set; }
     }
 }

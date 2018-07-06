@@ -21,6 +21,7 @@ namespace IMS.Service.Service
             dto.Description = entity.Description;
             dto.TypeName = entity.SettingType.Name;
             dto.TypeDescription = entity.SettingType.Description;
+            dto.Parm = entity.Parm;
             return dto;
         }
         public async Task<long> AddAsync(string name, long sttingTypeId, string description)
@@ -49,6 +50,20 @@ namespace IMS.Service.Service
                 entity.IsDeleted = true;
                 await dbc.SaveChangesAsync();
                 return true;
+            }
+        }
+
+        public async Task<SettingDTO[]> GetModelListAsync(long[] settingTypeIds)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                var entities = dbc.GetAll<SettingEntity>();
+                if (settingTypeIds.Count() > 0)
+                {
+                    entities = entities.Where(a => settingTypeIds.Contains(a.SettingTypeId));
+                }
+                var settingsResult = await entities.ToListAsync();
+                return settingsResult.Select(a => ToDTO(a)).ToArray();
             }
         }
 
@@ -81,7 +96,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<bool> UpdateAsync(long id, string description)
+        public async Task<bool> UpdateAsync(long id, string parm)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -90,7 +105,25 @@ namespace IMS.Service.Service
                 {
                     return false;
                 }
-                entity.Description = description;
+                entity.Parm = parm;
+                await dbc.SaveChangesAsync();
+                return true;
+            }
+        }
+
+        public async Task<bool> UpdateAsync(params SettingParm[] parms)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                foreach(SettingParm parm in parms)
+                {
+                    SettingEntity entity = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(g => g.Id == parm.Id);
+                    if (entity == null)
+                    {
+                        return false;
+                    }
+                    entity.Parm = parm.Parm.ToString();
+                }
                 await dbc.SaveChangesAsync();
                 return true;
             }
