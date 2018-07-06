@@ -25,6 +25,18 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         public async Task<ActionResult> Add(string name, string url, string imgFile, bool isEnabled)
         {
+            if(string.IsNullOrEmpty(name))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "幻灯片名称不能为空" });
+            }
+            if (string.IsNullOrEmpty(url))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "转向连接不能为空" });
+            }
+            if (string.IsNullOrEmpty(imgFile))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "幻灯片图片必须上传" });
+            }
             string res;
             if(!ImageHelper.SaveBase64(imgFile, out res))
             {
@@ -32,6 +44,42 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             long id=  await slideService.AddAsync(name, url, res, isEnabled);
             if(id<=0)
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "添加幻灯片失败" });
+            }
+            return Json(new AjaxResult { Status = 1, Msg = "添加幻灯片成功" });
+        }
+
+        public async Task<ActionResult> Edit(long id,string name, string url, string imgFile, bool isEnabled)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "幻灯片名称不能为空" });
+            }
+            if (string.IsNullOrEmpty(url))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "转向连接不能为空" });
+            }
+            if (string.IsNullOrEmpty(imgFile))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "幻灯片图片必须上传" });
+            }
+            bool flag = true;
+            if (imgFile.Contains("upload/"))
+            {
+                flag = await slideService.UpdateAsync(id, name, url, imgFile, isEnabled);
+            }
+            else
+            {
+                string res;
+                if (!ImageHelper.SaveBase64(imgFile, out res))
+                {
+                    return Json(new AjaxResult { Status = 0, Msg = res });
+                }
+                flag = await slideService.UpdateAsync(id, name, url, res, isEnabled);
+            }
+            
+            if (!flag)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "添加幻灯片失败" });
             }
