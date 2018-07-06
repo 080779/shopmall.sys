@@ -74,7 +74,7 @@ namespace IMS.Web.Controllers
             }
             User setUser = new User();
             setUser.Id = id;
-            setUser.OpenId = "";
+            setUser.Code = "";
             string token = JwtHelper.JwtEncrypt<User>(setUser);
             //if (string.IsNullOrEmpty(token))
             //{
@@ -126,7 +126,11 @@ namespace IMS.Web.Controllers
             WeChatResultModel rightModel= JsonConvert.DeserializeObject<WeChatResultModel>(result);
             User setUser = new User();
             setUser.Id = userId;
-            setUser.OpenId = rightModel.OpenId;
+            if(string.IsNullOrEmpty(rightModel.OpenId))
+            {
+                setUser.Code = "";
+            }
+            setUser.Code = model.Code;
             string token = JwtHelper.JwtEncrypt<User>(setUser);
             long tokenId = await userTokenService.UpdateAsync(userId, token);
             return new ApiResult { status = 1, msg = "登录成功", data = new { token = token } };

@@ -54,7 +54,7 @@ namespace IMS.Web.App_Start.Filter
                 return;
             }
             User user = JsonConvert.DeserializeObject<User>(res);
-            if(string.IsNullOrEmpty(user.OpenId))
+            if(string.IsNullOrEmpty(user.Code))
             {
                 actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("OpenId为空"));
                 return;

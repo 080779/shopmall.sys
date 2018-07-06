@@ -8,6 +8,6 @@ namespace IMS.Web.App_Start.Filter
     public class User
     {
         public long Id { get; set; }
-        public string OpenId { get; set; }
+        public string Code { get; set; }
     }
 }
