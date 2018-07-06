@@ -13,6 +13,11 @@ namespace IMS.Common
     {
         public static bool SaveBase64(string file,out string res)
         {
+            if(!file.Contains(";base64"))
+            {
+                res = "不是base64图片文件";
+                return false;
+            }
             string[] strs = file.Split(',');
             string[] formats = strs[0].Replace(";base64", "").Split(':');
             string img = strs[1];

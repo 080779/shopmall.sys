@@ -254,6 +254,7 @@
     <Content Include="css\my_pagination.css" />
     <Content Include="css\page.css" />
     <Content Include="js\jquery.cookie.js" />
+    <Content Include="js\jquery.uploadimg.js" />
     <Content Include="js\my_pagination.js" />
     <Content Include="css\style.css" />
     <Content Include="font\css\font-awesome.css" />

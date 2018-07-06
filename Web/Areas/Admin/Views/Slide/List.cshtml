@@ -31,6 +31,7 @@
     <script type="text/javascript" src="~/js/H-ui.admin.js"></script>
     <script src="~/assets/layer/layer.js" type="text/javascript"></script>
     <script src="~/assets/laydate/laydate.js" type="text/javascript"></script>
+    <script src="~/js/jquery.uploadimg.js"></script>
     <title>幻灯片管理</title>
 </head>
 
@@ -44,8 +45,8 @@
         <div class="search_style">
             <ul class="search_content clearfix">
                 @*<li><label class="l_f">添加时间</label>
-            <input class="inline laydate-icon" id="start" style=" margin-left:10px;" v-on:focus='getstart' />至
-            <input class="inline laydate-icon" id="end" style=" margin-left:10px;" v-on:focus='getend' /></li>*@
+                    <input class="inline laydate-icon" id="start" style=" margin-left:10px;" v-on:focus='getstart' />至
+                    <input class="inline laydate-icon" id="end" style=" margin-left:10px;" v-on:focus='getend' /></li>*@
                 <li>
                     <label class="l_f">图片信息</label>
                     <input name="" v-model="searchs.keyword" type="text" class="text_add" placeholder="图片信息" style=" width:150px" />
@@ -97,6 +98,22 @@
                 <li><a>共<i><font v-html="pages.all"></font></i>页</a></li>
             </ul>
         </div>
+
+        <!--添加用户图层-->
+        <div class="add_menber" id="add" style="display:none">
+            <ul class="page-content">
+                <li><label class="label_name">幻灯片名称：</label><span class="add_name"><input value="" placeholder="幻灯片名称" v-model="adds.name" type="text" class="text_add" /></span><div class="prompt r_f"></div></li>
+                <li>
+                    <label class="label_name">启用状态：</label><span class="add_name">
+                        <input type="radio" name="isEnabled" v-model="adds.isEnabled" id="enabled" value="true" checked="checked" /><label for="enabled">启用</label>
+                        <input type="radio" name="isEnabled" v-model="adds.isEnabled" id="disabled" value="false" /><label for="disabled">停用</label>
+                    </span><div class="prompt r_f"></div>
+                </li>
+                <li><label class="label_name">转向连接：</label><span class="add_name"><input placeholder="转向连接" type="text" v-model="adds.url" class="text_add" /></span><div class="prompt r_f"></div></li>
+                <li><label class="label_name">上传幻灯片：</label><span class="add_name"><input placeholder="上传幻灯片" type="file" id="file1" class="text_add" /></span><div class="prompt r_f"></div></li>
+                <li><label class="label_name">&nbsp;</label><span class="add_name"><img id="img1" style="margin-top: 10px; max-width: 100px; max-height: 400px;" /></span><div class="prompt r_f"></div></li>
+            </ul>
+        </div>
     </div>
 </body>
 </html>
@@ -111,28 +128,13 @@
                 all: "", cur: 1, txtpage: ""
             },
             searchs: {
-                startTime: "", endTime: "",keyword:""
+                startTime: "", endTime: "", keyword: ""
+            },
+            adds: {
+                name: "", url: "Http://", imgUrl: "", isEnabled: true
             }
         },
         methods: {
-            getstart: function () {
-                var that = this;
-                laydate({
-                    elem: '#start',
-                    choose: function (date) {
-                        that.time.startTime = date;
-                    }
-                });                
-            },
-            getend: function () {
-                var that = this;
-                laydate({
-                    elem: '#end',
-                    choose: function (date) {
-                        that.time.endTime = date;
-                    }
-                });
-            },
             getpage: function () {
                 this.$http.post('/admin/slide/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
                     this.slides = result.data.data.slides;
@@ -154,8 +156,51 @@
                 }
                 this.getpage();
             },
-            add: function () { },
-            search: function () {}
+            add: function () {
+                var that = this;
+                layer.open({
+                    type: 1,
+                    title: '添加用户',
+                    maxmin: true,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['450px', '430px'],
+                    content: $('#add'),
+                    btn: ['确认', '取消'],
+                    yes: function (index, layero) {
+                        if (that.adds.name == "") {
+                            layer.alert('幻灯片名称不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        if (that.adds.url == "") {
+                            layer.alert('转向连接不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        var imgFile = $("#img1").attr("src");
+                        if (imgFile == "") {
+                            layer.alert('幻灯片图片不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }                     
+                        that.$http.post('/admin/slide/add', { name: that.adds.name, url: that.adds.url, imgFile: imgFile, isEnabled: that.adds.isEnabled }, { emulateJSON: true }).then(function (result) {
+                            if (result.data.status == 1) {
+                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                                layer.close(index);
+                                that.getpage();
+                            }
+                            else if (result.data.status == 0) {
+                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                                //that.msg = result.data.msg;
+                            }
+                            else if (result.data.status == 302) {
+                                window.location.href = result.data.data;
+                            }
+                            else if (result.data.status == 401) {
+                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                            }
+                        });
+                    }
+                });
+            },
+            search: function () { }
         },
         computed: {
             indexs: function () {
@@ -181,6 +226,9 @@
                     left++
                 }
                 return ar
+            },
+            upload: function () {
+                this.imgUrl= uploadpic("#file1");
             }
         },
         mounted: function () {
@@ -190,12 +238,14 @@
             })
         }
     });
-    laydate({
-        elem: '#start',
-        event: 'focus'
-    });
-    laydate({
-        elem: '#end',
-        event: 'focus'
-    });
+    uploadpic("#file1","#img1");
+    function uploadpic(fileid, img) {
+        var oUpload = new UploadPic();
+        oUpload.init({
+            input: $(fileid)[0],
+            callback: function (base64) {
+                $(img).attr('src', base64);
+            }
+        });
+    }
 </script>
