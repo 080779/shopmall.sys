@@ -1,4 +1,5 @@
 ﻿using IMS.Common;
+using IMS.DTO;
 using IMS.IService;
 using System;
 using System.Collections.Generic;
@@ -18,9 +19,9 @@ namespace IMS.Web.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<ActionResult> List(string mobile, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
+        public async Task<ActionResult> List(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
-            var result = await slideService.GetModelListAsync(mobile, startTime, endTime, pageIndex, pageSize);
+            var result = await slideService.GetModelListAsync(keyword, startTime, endTime, pageIndex, pageSize);
             return Json(new AjaxResult { Status = 1, Data = result });
         }
         public async Task<ActionResult> Add(string name, string url, string imgFile, bool isEnabled)
@@ -48,6 +49,12 @@ namespace IMS.Web.Areas.Admin.Controllers
                 return Json(new AjaxResult { Status = 0, Msg = "添加幻灯片失败" });
             }
             return Json(new AjaxResult { Status = 1, Msg = "添加幻灯片成功" });
+        }
+
+        public async Task<ActionResult> GetModel(long id)
+        {
+            SlideDTO model= await slideService.GetModelAsync(id);
+            return Json(new AjaxResult { Status = 1, Data= model });
         }
 
         public async Task<ActionResult> Edit(long id,string name, string url, string imgFile, bool isEnabled)
@@ -81,9 +88,18 @@ namespace IMS.Web.Areas.Admin.Controllers
             
             if (!flag)
             {
-                return Json(new AjaxResult { Status = 0, Msg = "添加幻灯片失败" });
+                return Json(new AjaxResult { Status = 0, Msg = "修改幻灯片失败" });
             }
-            return Json(new AjaxResult { Status = 1, Msg = "添加幻灯片成功" });
+            return Json(new AjaxResult { Status = 1, Msg = "修改幻灯片成功" });
+        }
+        public async Task<ActionResult> Del(long id)
+        {
+            bool flag = await slideService.DeleteAsync(id);
+            if(!flag)
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "删除幻灯片失败" });
+            }
+            return Json(new AjaxResult { Status = 1, Msg = "删除幻灯片成功" });
         }
     }
 }

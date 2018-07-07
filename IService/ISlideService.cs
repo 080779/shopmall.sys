@@ -12,6 +12,7 @@ namespace IMS.IService
         Task<long> AddAsync(string name,string url,string imgUrl,bool isEnabled);
         Task<bool> UpdateAsync(long id, string name, string url, string imgUrl, bool isEnabled);
         Task<bool> DeleteAsync(long id);
+        Task<SlideDTO> GetModelAsync(long id);
         Task<SlideSearchResult> GetModelListAsync(string keyword,DateTime? startTime,DateTime? endTime,int pageIndex,int pageSize);
     }
     public class SlideSearchResult

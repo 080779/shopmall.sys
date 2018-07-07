@@ -55,6 +55,19 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<SlideDTO> GetModelAsync(long id)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                SlideEntity entity = await dbc.GetAll<SlideEntity>().SingleOrDefaultAsync(g => g.Id == id);
+                if (entity == null)
+                {
+                    return null;
+                }               
+                return ToDTO(entity);
+            }
+        }
+
         public async Task<SlideSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())

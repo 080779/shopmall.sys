@@ -44,8 +44,8 @@
         <div class="search_style">
             <ul class="search_content clearfix">
                 @*<li><label class="l_f">添加时间</label>
-            <input class="inline laydate-icon" id="start" style=" margin-left:10px;" v-on:focus='getstart' />至
-            <input class="inline laydate-icon" id="end" style=" margin-left:10px;" v-on:focus='getend' /></li>*@
+                <input class="inline laydate-icon" id="start" style=" margin-left:10px;" v-on:focus='getstart' />至
+                <input class="inline laydate-icon" id="end" style=" margin-left:10px;" v-on:focus='getend' /></li>*@
                 <li>
                     <label class="l_f">公告信息</label>
                     <input name="" v-model="searchs.keyword" type="text" class="text_add" placeholder="公告信息" style=" width:150px" />
@@ -99,6 +99,40 @@
                 <li><a>共<i><font v-html="pages.all"></font></i>页</a></li>
             </ul>
         </div>
+
+        <!--添加用户图层-->
+        <div class="add_menber" id="add" style="display:none">
+            <ul class="page-content">
+                <li><label class="label_name">幻灯片名称：</label><span class="add_name"><input value="" placeholder="幻灯片名称" v-model="adds.name" type="text" class="text_add" /></span><div class="prompt r_f"></div></li>
+                <li>
+                    <label class="label_name">启用状态：</label><span class="add_name">
+                        <input type="radio" name="isEnabled" v-model="adds.isEnabled" id="enabled" value="true" checked="checked" /><label for="enabled">启用</label>
+                        <input type="radio" name="isEnabled" v-model="adds.isEnabled" id="disabled" value="false" /><label for="disabled">停用</label>
+                    </span><div class="prompt r_f"></div>
+                </li>
+                <li><label class="label_name">转向连接：</label><span class="add_name"><input placeholder="转向连接" type="text" v-model="adds.url" class="text_add" /></span><div class="prompt r_f"></div></li>
+                <li><label class="label_name">上传幻灯片：</label><span class="add_name"><input placeholder="上传幻灯片" type="file" id="file1" class="text_add" /></span><div class="prompt r_f"></div></li>
+                <li><label class="label_name">&nbsp;</label><span class="add_name"><img id="img1" style="margin-top: 10px; max-width: 100px; max-height: 400px;" /></span><div class="prompt r_f"></div></li>
+            </ul>
+        </div>
+
+        <!--修改用户图层-->
+        <div class="add_menber" id="edit" style="display:none">
+            <ul class="page-content">
+                <li><label class="label_name">幻灯片编号：</label><span class="add_name"><label v-html="edits.code"></label></span><div class="prompt r_f"></div></li>
+                <li><label class="label_name">幻灯片名称：</label><span class="add_name"><input value="" placeholder="幻灯片名称" v-model="edits.name" type="text" class="text_add" /></span><div class="prompt r_f"></div></li>
+                <li>
+                    <label class="label_name">启用状态：</label><span class="add_name">
+                        <input type="radio" name="isEnabled" v-model="edits.isEnabled" id="enabled" value="true" /><label for="enabled">启用</label>
+                        <input type="radio" name="isEnabled" v-model="edits.isEnabled" id="disabled" value="false" /><label for="disabled">停用</label>
+                    </span><div class="prompt r_f"></div>
+                </li>
+                <li><label class="label_name">转向连接：</label><span class="add_name"><input placeholder="转向连接" type="text" v-model="edits.url" class="text_add" /></span><div class="prompt r_f"></div></li>
+                <li><label class="label_name">上传幻灯片：</label><span class="add_name"><input placeholder="上传幻灯片" type="file" id="file2" class="text_add" /></span><div class="prompt r_f"></div></li>
+                <li><label class="label_name">&nbsp;</label><span class="add_name"><img id="img2" style="margin-top: 10px; max-width: 100px; max-height: 400px;" /></span><div class="prompt r_f"></div></li>
+            </ul>
+            <input type="hidden" v-model="edits.imgUrl" />
+        </div>
     </div>
 </body>
 </html>
@@ -111,6 +145,12 @@
             notices: [],
             pages: {
                 all: "", cur: 1, txtpage: ""
+            },
+            adds: {
+                content: "", url: "Http://", faliureTime: "", isEnabled: true
+            },
+            edits: {
+                code: "", content: "", url: "", faliureTime: "", isEnabled: true
             },
             searchs: {
                 startTime: "", endTime: "",keyword:""
@@ -156,8 +196,111 @@
                 }
                 this.getpage();
             },
-            add: function () { },
-            search: function () {}
+            add: function () {
+                var that = this;
+                layer.open({
+                    type: 1,
+                    title: '添加用户',
+                    maxmin: true,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['450px', '430px'],
+                    content: $('#add'),
+                    btn: ['确认', '取消'],
+                    yes: function (index, layero) {
+                        if (that.adds.content == "") {
+                            layer.alert('幻灯片名称不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        if (that.adds.url == "") {
+                            layer.alert('转向连接不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        that.$http.post('/admin/notice/add', { content: that.adds.content, url: that.adds.url, faliureTime: that.adds.faliureTime, isEnabled: that.adds.isEnabled }, { emulateJSON: true }).then(function (result) {
+                            if (result.data.status == 1) {
+                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                                layer.close(index);
+                                that.getpage();
+                            }
+                            else if (result.data.status == 0) {
+                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                                //that.msg = result.data.msg;
+                            }
+                            else if (result.data.status == 302) {
+                                window.location.href = result.data.data;
+                            }
+                            else if (result.data.status == 401) {
+                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                            }
+                        });
+                    }
+                });
+            },
+            edit: function (id) {
+                var that = this;
+                that.$http.post('/admin/notice/getmodel', { id: id }, { emulateJSON: true }).then(function (result) {
+                    that.edits = result.data.data;-
+                });
+                layer.open({
+                    type: 1,
+                    title: '修改用户',
+                    maxmin: true,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['450px', '430px'],
+                    content: $('#edit'),
+                    btn: ['确认', '取消'],
+                    yes: function (index, layero) {
+                        if (that.edits.content == "") {
+                            layer.alert('幻灯片名称不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        if (that.edits.url == "") {
+                            layer.alert('转向连接不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        that.$http.post('/admin/notice/edit', { id: id, content: that.edits.content, url: that.edits.url, faliureTime: that.adds.faliureTime, isEnabled: that.edits.isEnabled }, { emulateJSON: true }).then(function (result) {
+                            if (result.data.status == 1) {
+                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                                layer.close(index);
+                                that.getpage();
+                            }
+                            else if (result.data.status == 0) {
+                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                                //that.msg = result.data.msg;
+                            }
+                            else if (result.data.status == 302) {
+                                window.location.href = result.data.data;
+                            }
+                            else if (result.data.status == 401) {
+                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                            }
+                        });
+                    }
+                });
+            },
+            del: function (id) {
+                var that = this;
+                layer.confirm("幻灯片删除后无法恢复，确认删除吗？", { icon: 0, title: '是否删除幻灯片' }, function (index) {
+                    that.$http.post('/admin/notice/del', { id: id }, { emulateJSON: true }).then(function (result) {
+                        if (result.data.status == 1) {
+                            layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                            that.getpage();
+                        }
+                        else if (result.data.status == 0) {
+                            layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                            //that.msg = result.data.msg;
+                        }
+                        else if (result.data.status == 302) {
+                            window.location.href = result.data.data;
+                        }
+                        else if (result.data.status == 401) {
+                            layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                        }
+                    });
+                });
+            },
+            search: function () {
+                this.getpage();
+            }
         },
         computed: {
             indexs: function () {
