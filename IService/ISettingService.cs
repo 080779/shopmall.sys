@@ -13,6 +13,8 @@ namespace IMS.IService
         Task<bool> UpdateAsync(long id, string parm);
         Task<bool> UpdateAsync(params SettingParm[] parms);
         Task<bool> DeleteAsync(long id);
+        Task<SettingDTO> GetModelAsync(long id);
+        Task<string> GetParmByNameAsync(string name);
         Task<SettingDTO[]> GetModelListAsync(long[] settingTypeIds);
         Task<SettingSearchResult> GetModelListAsync(long[] settingTypeIds, string keyword,DateTime? startTime,DateTime? endTime,int pageIndex,int pageSize);
     }

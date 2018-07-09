@@ -22,12 +22,13 @@ namespace IMS.Service.Service
             dto.ImgUrl = entity.ImgUrl;
             return dto;
         }
-        public async Task<long> AddAsync(string name, string description)
+        public async Task<long> AddAsync(string name,string imgUrl, string description)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 GoodsTypeEntity entity = new GoodsTypeEntity();
                 entity.Description = description;
+                entity.ImgUrl = imgUrl;
                 entity.Name = name;
                 dbc.GoodsTypes.Add(entity);
                 await dbc.SaveChangesAsync();
@@ -47,6 +48,19 @@ namespace IMS.Service.Service
                 entity.IsDeleted = true;
                 await dbc.SaveChangesAsync();
                 return true;
+            }
+        }
+
+        public async Task<GoodsTypeDTO> GetModelAsync(long id)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                GoodsTypeEntity entity = await dbc.GetAll<GoodsTypeEntity>().SingleOrDefaultAsync(g => g.Id == id);
+                if (entity == null)
+                {
+                    return null;
+                }
+                return ToDTO(entity);
             }
         }
 
@@ -75,7 +89,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<bool> UpdateAsync(long id, string name, string description)
+        public async Task<bool> UpdateAsync(long id, string name, string imgUrl, string description)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -86,6 +100,7 @@ namespace IMS.Service.Service
                 }
                 entity.Name = name;
                 entity.Description = description;
+                entity.ImgUrl = imgUrl;
                 await dbc.SaveChangesAsync();
                 return true;
             }

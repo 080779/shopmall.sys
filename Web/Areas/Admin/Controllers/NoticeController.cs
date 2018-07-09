@@ -24,17 +24,17 @@ namespace IMS.Web.Areas.Admin.Controllers
             var result = await noticeService.GetModelListAsync(mobile, startTime, endTime, pageIndex, pageSize);
             return Json(new AjaxResult { Status = 1, Data = result });
         }
-        public async Task<ActionResult> Add(string content, string url, DateTime faliureTime)
+        public async Task<ActionResult> Add(string content, string url, DateTime failureTime)
         {
             if (string.IsNullOrEmpty(content))
             {
-                return Json(new AjaxResult { Status = 0, Msg = "幻灯片名称不能为空" });
+                return Json(new AjaxResult { Status = 0, Msg = "公告内容不能为空" });
             }
             if (string.IsNullOrEmpty(url))
             {
                 return Json(new AjaxResult { Status = 0, Msg = "转向连接不能为空" });
             }
-            long id = await noticeService.AddAsync(content, url, faliureTime);
+            long id = await noticeService.AddAsync(content, url, failureTime);
             if (id <= 0)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "添加公告失败" });
@@ -48,21 +48,21 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Data = model });
         }
 
-        public async Task<ActionResult> Edit(long id, string content, string url, DateTime faliureTime)
+        public async Task<ActionResult> Edit(long id, string content, string url, DateTime failureTime)
         {
             if (string.IsNullOrEmpty(content))
             {
-                return Json(new AjaxResult { Status = 0, Msg = "幻灯片名称不能为空" });
+                return Json(new AjaxResult { Status = 0, Msg = "公告内容不能为空" });
             }
             if (string.IsNullOrEmpty(url))
             {
                 return Json(new AjaxResult { Status = 0, Msg = "转向连接不能为空" });
             }
-            bool flag = await noticeService.UpdateAsync(id, content, url, faliureTime);
+            bool flag = await noticeService.UpdateAsync(id, content, url, failureTime);
 
             if (!flag)
             {
-                return Json(new AjaxResult { Status = 0, Msg = "修改幻灯片失败" });
+                return Json(new AjaxResult { Status = 0, Msg = "修改公告失败" });
             }
             return Json(new AjaxResult { Status = 1, Msg = "修改公告成功" });
         }

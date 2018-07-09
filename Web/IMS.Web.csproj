@@ -314,6 +314,9 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\AdminController.cs" />
+    <Compile Include="Areas\Admin\Controllers\GoodsSecondTypeController.cs" />
+    <Compile Include="Areas\Admin\Controllers\GoodsTypeController.cs" />
+    <Compile Include="Areas\Admin\Controllers\GoodsAreaController.cs" />
     <Compile Include="Areas\Admin\Controllers\OrderController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\AdminLogController.cs" />
@@ -370,6 +373,7 @@
     <Compile Include="Models\UserCenter\UserCenterEditHeadPicModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterDetailApiModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterResetPwdModel.cs" />
+    <Compile Include="Models\User\UserLoginModel1.cs" />
     <Compile Include="Models\User\WeChatErrorResultModel.cs" />
     <Compile Include="Models\User\WeChatResultModel.cs" />
     <Compile Include="Models\User\UserSendMsgCacheModel.cs" />
@@ -407,6 +411,9 @@
     <Content Include="Areas\Admin\Views\Goods\List.cshtml" />
     <Content Include="Areas\Admin\Views\Order\List.cshtml" />
     <Content Include="doc\23接口文档.xls" />
+    <Content Include="Areas\Admin\Views\GoodsArea\List.cshtml" />
+    <Content Include="Areas\Admin\Views\GoodsType\List.cshtml" />
+    <Content Include="Areas\Admin\Views\GoodsSecondType\List.cshtml" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">

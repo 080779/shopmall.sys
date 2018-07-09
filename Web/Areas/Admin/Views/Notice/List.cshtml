@@ -143,24 +143,6 @@
             }
         },
         methods: {
-            getstart: function () {
-                var that = this;
-                laydate({
-                    elem: '#start',
-                    choose: function (date) {
-                        that.searchs.startTime = date;
-                    }
-                });                
-            },
-            getend: function () {
-                var that = this;
-                laydate({
-                    elem: '#end',
-                    choose: function (date) {
-                        that.searchs.endTime = date;
-                    }
-                });
-            },
             getfailuretime: function () {
                 var that = this;
                 laydate({
@@ -201,6 +183,10 @@
                 this.getpage();
             },
             add: function () {
+                this.adds.content = "";
+                this.adds.url = "Http://";
+                this.adds.failureTime = "";
+                $("#failureTime").val("");
                 var that = this;
                 layer.open({
                     type: 1,
@@ -348,14 +334,6 @@
                 this.pages.all = result.data.data.pageCount;
             })
         }
-    });
-    laydate({
-        elem: '#start',
-        event: 'focus'
-    });
-    laydate({
-        elem: '#end',
-        event: 'focus'
     });
     laydate({
         elem: 'failureTime',

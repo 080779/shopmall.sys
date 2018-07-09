@@ -130,10 +130,36 @@ namespace IMS.Web.Controllers
             {
                 setUser.Code = "";
             }
-            setUser.Code = model.Code;
+            setUser.Code = CommonHelper.GetCaptcha(3) + rightModel.OpenId + CommonHelper.GetCaptcha(2);
             string token = JwtHelper.JwtEncrypt<User>(setUser);
             long tokenId = await userTokenService.UpdateAsync(userId, token);
             return new ApiResult { status = 1, msg = "登录成功", data = new { token = token } };
+        }
+        [HttpPost]
+        public async Task<ApiResult> CodeLogin(UserLoginModel1 model)
+        {
+            if (string.IsNullOrEmpty(model.Code))
+            {
+                return new ApiResult { status = 0, msg = "微信code不能为空" };
+            }
+            HttpClient httpClient = new HttpClient();
+            List<KeyValuePair<string, string>> parmArray = new List<KeyValuePair<string, string>>();
+            parmArray.Add(new KeyValuePair<string, string>("appid", appid));
+            parmArray.Add(new KeyValuePair<string, string>("secret", secret));
+            parmArray.Add(new KeyValuePair<string, string>("js_code", model.Code));
+            string result = await HttpClientHelper.GetResponseByGetAsync(httpClient, parmArray, "https://api.weixin.qq.com/sns/jscode2session");
+            if (result.Contains("errcode"))
+            {
+                WeChatErrorResultModel errorModel = JsonConvert.DeserializeObject<WeChatErrorResultModel>(result);
+                return new ApiResult { status = 0, msg = "微信返回errcode：" + errorModel.errcode + ",errmsg:" + errorModel.errmsg };
+            }
+            WeChatResultModel rightModel = JsonConvert.DeserializeObject<WeChatResultModel>(result);
+            User user= JwtHelper.JwtDecrypt<User>(ControllerContext);
+            if (rightModel.OpenId != user.Code.Substring(3, 30))
+            {
+                return new ApiResult { status = 0, msg = "登录失败" };
+            }
+            return new ApiResult { status = 1, msg = "登录成功" };
         }
         //[HttpPost]
         //public async Task<ApiResult> Logout()

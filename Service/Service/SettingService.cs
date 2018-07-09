@@ -53,6 +53,32 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<SettingDTO> GetModelAsync(long id)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                SettingEntity entity = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(g => g.Id == id);
+                if (entity == null)
+                {
+                    return null;
+                }                
+                return ToDTO(entity);
+            }
+        }
+
+        public async Task<string> GetParmByNameAsync(string name)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                SettingEntity entity = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(g => g.Name == name);
+                if (entity == null)
+                {
+                    return null;
+                }
+                return entity.Parm;
+            }
+        }
+
         public async Task<SettingDTO[]> GetModelListAsync(long[] settingTypeIds)
         {
             using (MyDbContext dbc = new MyDbContext())

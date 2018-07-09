@@ -64,6 +64,19 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<GoodsAreaDTO> GetModelAsync(long id)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                GoodsAreaEntity entity = await dbc.GetAll<GoodsAreaEntity>().SingleOrDefaultAsync(g => g.Id == id);
+                if (entity == null)
+                {
+                    return null;
+                }
+                return ToDTO(entity);
+            }
+        }
+
         public async Task<GoodsAreaSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
