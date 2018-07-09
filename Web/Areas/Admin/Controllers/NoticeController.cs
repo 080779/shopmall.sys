@@ -24,7 +24,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             var result = await noticeService.GetModelListAsync(mobile, startTime, endTime, pageIndex, pageSize);
             return Json(new AjaxResult { Status = 1, Data = result });
         }
-        public async Task<ActionResult> Add(string content, string url, DateTime faliureTime, bool isEnabled)
+        public async Task<ActionResult> Add(string content, string url, DateTime faliureTime)
         {
             if (string.IsNullOrEmpty(content))
             {
@@ -34,12 +34,12 @@ namespace IMS.Web.Areas.Admin.Controllers
             {
                 return Json(new AjaxResult { Status = 0, Msg = "转向连接不能为空" });
             }
-            long id = await noticeService.AddAsync(content, url, faliureTime, isEnabled);
+            long id = await noticeService.AddAsync(content, url, faliureTime);
             if (id <= 0)
             {
-                return Json(new AjaxResult { Status = 0, Msg = "添加幻灯片失败" });
+                return Json(new AjaxResult { Status = 0, Msg = "添加公告失败" });
             }
-            return Json(new AjaxResult { Status = 1, Msg = "添加幻灯片成功" });
+            return Json(new AjaxResult { Status = 1, Msg = "添加公告成功" });
         }
 
         public async Task<ActionResult> GetModel(long id)
@@ -48,7 +48,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Data = model });
         }
 
-        public async Task<ActionResult> Edit(long id, string content, string url, DateTime faliureTime, bool isEnabled)
+        public async Task<ActionResult> Edit(long id, string content, string url, DateTime faliureTime)
         {
             if (string.IsNullOrEmpty(content))
             {
@@ -58,22 +58,22 @@ namespace IMS.Web.Areas.Admin.Controllers
             {
                 return Json(new AjaxResult { Status = 0, Msg = "转向连接不能为空" });
             }
-            bool flag = await noticeService.UpdateAsync(id, content, url, faliureTime, isEnabled);
+            bool flag = await noticeService.UpdateAsync(id, content, url, faliureTime);
 
             if (!flag)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "修改幻灯片失败" });
             }
-            return Json(new AjaxResult { Status = 1, Msg = "修改幻灯片成功" });
+            return Json(new AjaxResult { Status = 1, Msg = "修改公告成功" });
         }
         public async Task<ActionResult> Del(long id)
         {
             bool flag = await noticeService.DeleteAsync(id);
             if (!flag)
             {
-                return Json(new AjaxResult { Status = 0, Msg = "删除幻灯片失败" });
+                return Json(new AjaxResult { Status = 0, Msg = "删除公告失败" });
             }
-            return Json(new AjaxResult { Status = 1, Msg = "删除幻灯片成功" });
+            return Json(new AjaxResult { Status = 1, Msg = "删除公告成功" });
         }
     }
 }

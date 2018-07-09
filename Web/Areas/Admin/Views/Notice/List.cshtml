@@ -103,33 +103,19 @@
         <!--添加用户图层-->
         <div class="add_menber" id="add" style="display:none">
             <ul class="page-content">
-                <li><label class="label_name">幻灯片名称：</label><span class="add_name"><input value="" placeholder="幻灯片名称" v-model="adds.name" type="text" class="text_add" /></span><div class="prompt r_f"></div></li>
-                <li>
-                    <label class="label_name">启用状态：</label><span class="add_name">
-                        <input type="radio" name="isEnabled" v-model="adds.isEnabled" id="enabled" value="true" checked="checked" /><label for="enabled">启用</label>
-                        <input type="radio" name="isEnabled" v-model="adds.isEnabled" id="disabled" value="false" /><label for="disabled">停用</label>
-                    </span><div class="prompt r_f"></div>
-                </li>
+                <li><label class="label_name">公告内容：</label><span class="add_name"><input value="" placeholder="公告内容" v-model="adds.content" type="text" class="text_add" /></span><div class="prompt r_f"></div></li>
                 <li><label class="label_name">转向连接：</label><span class="add_name"><input placeholder="转向连接" type="text" v-model="adds.url" class="text_add" /></span><div class="prompt r_f"></div></li>
-                <li><label class="label_name">上传幻灯片：</label><span class="add_name"><input placeholder="上传幻灯片" type="file" id="file1" class="text_add" /></span><div class="prompt r_f"></div></li>
-                <li><label class="label_name">&nbsp;</label><span class="add_name"><img id="img1" style="margin-top: 10px; max-width: 100px; max-height: 400px;" /></span><div class="prompt r_f"></div></li>
+                <li><label class="label_name">失效时间：</label><span class="add_name"><input class="inline laydate-icon" id="failureTime" style=" margin-left:10px;" v-on:focus='getfailuretime' /></span><div class="prompt r_f"></div></li>                
             </ul>
         </div>
 
         <!--修改用户图层-->
         <div class="add_menber" id="edit" style="display:none">
             <ul class="page-content">
-                <li><label class="label_name">幻灯片编号：</label><span class="add_name"><label v-html="edits.code"></label></span><div class="prompt r_f"></div></li>
-                <li><label class="label_name">幻灯片名称：</label><span class="add_name"><input value="" placeholder="幻灯片名称" v-model="edits.name" type="text" class="text_add" /></span><div class="prompt r_f"></div></li>
-                <li>
-                    <label class="label_name">启用状态：</label><span class="add_name">
-                        <input type="radio" name="isEnabled" v-model="edits.isEnabled" id="enabled" value="true" /><label for="enabled">启用</label>
-                        <input type="radio" name="isEnabled" v-model="edits.isEnabled" id="disabled" value="false" /><label for="disabled">停用</label>
-                    </span><div class="prompt r_f"></div>
-                </li>
+                <li><label class="label_name">公告编号：</label><span class="add_name"><label v-html="edits.code"></label></span><div class="prompt r_f"></div></li>
+                <li><label class="label_name">公告名称：</label><span class="add_name"><input value="" placeholder="公告名称" v-model="edits.content" type="text" class="text_add" /></span><div class="prompt r_f"></div></li>
                 <li><label class="label_name">转向连接：</label><span class="add_name"><input placeholder="转向连接" type="text" v-model="edits.url" class="text_add" /></span><div class="prompt r_f"></div></li>
-                <li><label class="label_name">上传幻灯片：</label><span class="add_name"><input placeholder="上传幻灯片" type="file" id="file2" class="text_add" /></span><div class="prompt r_f"></div></li>
-                <li><label class="label_name">&nbsp;</label><span class="add_name"><img id="img2" style="margin-top: 10px; max-width: 100px; max-height: 400px;" /></span><div class="prompt r_f"></div></li>
+                <li><label class="label_name">失效时间：</label><span class="add_name"><input class="inline laydate-icon" id="failureTime1" style=" margin-left:10px;" v-on:focus='getfailuretime1' /></span><div class="prompt r_f"></div></li>
             </ul>
             <input type="hidden" v-model="edits.imgUrl" />
         </div>
@@ -147,10 +133,10 @@
                 all: "", cur: 1, txtpage: ""
             },
             adds: {
-                content: "", url: "Http://", faliureTime: "", isEnabled: true
+                content: "", url: "Http://", failureTime: ""
             },
             edits: {
-                code: "", content: "", url: "", faliureTime: "", isEnabled: true
+                code: "", content: "", url: "", failureTime: ""
             },
             searchs: {
                 startTime: "", endTime: "",keyword:""
@@ -162,7 +148,7 @@
                 laydate({
                     elem: '#start',
                     choose: function (date) {
-                        that.time.startTime = date;
+                        that.searchs.startTime = date;
                     }
                 });                
             },
@@ -171,7 +157,25 @@
                 laydate({
                     elem: '#end',
                     choose: function (date) {
-                        that.time.endTime = date;
+                        that.searchs.endTime = date;
+                    }
+                });
+            },
+            getfailuretime: function () {
+                var that = this;
+                laydate({
+                    elem: '#failureTime',
+                    choose: function (date) {
+                        that.adds.failureTime = date;
+                    }
+                });
+            },
+            getfailuretime1: function () {
+                var that = this;
+                laydate({
+                    elem: '#failureTime1',
+                    choose: function (date) {
+                        that.edits.failureTime = date;
                     }
                 });
             },
@@ -208,14 +212,18 @@
                     btn: ['确认', '取消'],
                     yes: function (index, layero) {
                         if (that.adds.content == "") {
-                            layer.alert('幻灯片名称不能为空', { icon: 0, title: '提示框' });
+                            layer.alert('公告内容不能为空', { icon: 0, title: '提示框' });
                             return;
                         }
                         if (that.adds.url == "") {
                             layer.alert('转向连接不能为空', { icon: 0, title: '提示框' });
                             return;
                         }
-                        that.$http.post('/admin/notice/add', { content: that.adds.content, url: that.adds.url, faliureTime: that.adds.faliureTime, isEnabled: that.adds.isEnabled }, { emulateJSON: true }).then(function (result) {
+                        if (that.adds.faliureTime == "") {
+                            layer.alert('失效时间不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        that.$http.post('/admin/notice/add', { content: that.adds.content, url: that.adds.url, failureTime: that.adds.failureTime }, { emulateJSON: true }).then(function (result) {
                             if (result.data.status == 1) {
                                 layer.alert(result.data.msg, { icon: 6, title: '提示框' });
                                 layer.close(index);
@@ -238,7 +246,9 @@
             edit: function (id) {
                 var that = this;
                 that.$http.post('/admin/notice/getmodel', { id: id }, { emulateJSON: true }).then(function (result) {
-                    that.edits = result.data.data;-
+                    that.edits = result.data.data;
+                    console.log(result.data.data.failureTime);
+                    $("#failureTime1").val(that.edits.failureTime);
                 });
                 layer.open({
                     type: 1,
@@ -250,14 +260,18 @@
                     btn: ['确认', '取消'],
                     yes: function (index, layero) {
                         if (that.edits.content == "") {
-                            layer.alert('幻灯片名称不能为空', { icon: 0, title: '提示框' });
+                            layer.alert('公告内容不能为空', { icon: 0, title: '提示框' });
                             return;
                         }
                         if (that.edits.url == "") {
                             layer.alert('转向连接不能为空', { icon: 0, title: '提示框' });
                             return;
                         }
-                        that.$http.post('/admin/notice/edit', { id: id, content: that.edits.content, url: that.edits.url, faliureTime: that.adds.faliureTime, isEnabled: that.edits.isEnabled }, { emulateJSON: true }).then(function (result) {
+                        if (that.edits.failureTime == "") {
+                            layer.alert('失效时间不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        that.$http.post('/admin/notice/edit', { id: id, content: that.edits.content, url: that.edits.url, failureTime: that.edits.failureTime }, { emulateJSON: true }).then(function (result) {
                             if (result.data.status == 1) {
                                 layer.alert(result.data.msg, { icon: 6, title: '提示框' });
                                 layer.close(index);
@@ -341,6 +355,14 @@
     });
     laydate({
         elem: '#end',
+        event: 'focus'
+    });
+    laydate({
+        elem: 'failureTime',
+        event: 'focus'
+    });
+    laydate({
+        elem: 'failureTime1',
         event: 'focus'
     });
 </script>

@@ -24,16 +24,23 @@ namespace IMS.Service.Service
             dto.Url = entity.Url;
             return dto;
         }
-        public async Task<long> AddAsync(string content,string url, DateTime failureTime,bool isEnabled)
+        public async Task<long> AddAsync(string content,string url, DateTime failureTime)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 NoticeEntity entity = new NoticeEntity();
-                entity.Code = DateTime.Now.ToString("yyyyMMddHHmmss");
+                entity.Code = DateTime.Now.ToString("yyMMddHHmmss");
                 entity.Content = content;
                 entity.Url = url;
                 entity.FailureTime = failureTime;
-                entity.IsEnabled = isEnabled;
+                if(entity.FailureTime>DateTime.Now)
+                {
+                    entity.IsEnabled = true;
+                }
+                else
+                {
+                    entity.IsEnabled = true;
+                }
                 dbc.Notices.Add(entity);
                 await dbc.SaveChangesAsync();
                 return entity.Id;
@@ -93,7 +100,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<bool> UpdateAsync(long id,string content, string url, DateTime failureTime, bool isEnabled)
+        public async Task<bool> UpdateAsync(long id,string content, string url, DateTime failureTime)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -105,7 +112,14 @@ namespace IMS.Service.Service
                 entity.Content = content;
                 entity.Url = url;
                 entity.FailureTime = failureTime;
-                entity.IsEnabled = isEnabled;
+                if (entity.FailureTime > DateTime.Now)
+                {
+                    entity.IsEnabled = true;
+                }
+                else
+                {
+                    entity.IsEnabled = true;
+                }
                 await dbc.SaveChangesAsync();
                 return true;
             }
