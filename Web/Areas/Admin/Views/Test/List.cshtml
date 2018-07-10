@@ -55,7 +55,6 @@
                     <div class="upload_warp_img_div" v-for="(item,index) of imgList">
                         <div class="upload_warp_img_div_top">
                             <div class="upload_warp_img_div_text">
-                                {{item.file.name}}
                             </div>
                             <img src="~/images/del.png" class="upload_warp_img_div_del" v-on:click="fileDel(index)" />
                         </div>
@@ -75,7 +74,7 @@
             imgList: [],
             size: 0,
             img: {
-                img1:"34234",src:"34234"
+                "0":"file","1":"34234"
             }
         },
         methods: {
@@ -173,7 +172,8 @@
                     imgFiles.push(val.file.src);
                 })
                 console.log(imgFiles)
-                this.$http.post('/admin/test/upload', { imgFiles: imgFiles }, { emulateJSON: true }).then(function (result) {
+                console.log(this.imgList)
+                this.$http.post('/admin/test/upload', { imgList: this.imgList }, { emulateJSON: true }).then(function (result) {
 
                 })
             }

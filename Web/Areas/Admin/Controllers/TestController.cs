@@ -18,9 +18,21 @@ namespace IMS.Web.Areas.Admin.Controllers
         {
             return View();
         }
-        public ActionResult Upload(List<string> imgfiles)
+        public ActionResult Upload(listres imgList)
         {
             return View();
+        }
+        public ActionResult getres()
+        {
+            return Json(new AjaxResult { Status = 1 ,Data=new listres() });
+        }
+        public class file
+        {
+            public string src { get; set; }
+        }
+        public class listres
+        {
+            public List<file> imgList { get; set; }
         }
     }
 }
