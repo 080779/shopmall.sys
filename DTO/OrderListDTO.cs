@@ -8,6 +8,7 @@ namespace IMS.DTO
 {
     public class OrderListDTO : BaseDTO
     {
+        public string GoodsCode { get; set; }
         public long GoodsId { get; set; }
         public string GoodsName { get; set; }
         public long OrderId { get; set; }

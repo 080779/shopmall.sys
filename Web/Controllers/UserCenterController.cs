@@ -26,9 +26,7 @@ namespace IMS.Web.Controllers
         [HttpPost]
         public async Task<ApiResult> Detail()
         {
-            //User user= JwtHelper.JwtDecrypt<User>(ControllerContext);
-            User user = new User();
-            user.Id = 1;
+            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             UserDTO userdto = await userService.GetModelAsync(user.Id);
             PayCodeDTO[] payCodes = await payCodeService.GetModelByUserIdAsync(user.Id);
             BankAccountDTO[] bankAccounts = await bankAccountService.GetModelByUserIdAsync(user.Id);

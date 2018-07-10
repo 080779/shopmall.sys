@@ -15,6 +15,7 @@ namespace IMS.Web.Models.Goods
         public long id { get; set; }
         public string name { get; set; }
         public decimal realityPrice { get; set; }//现价
-        public long saleNum { get; set; } = 0;//销售数量
+        public long saleNum { get; set; } //销售数量
+        public string imgUrl { get; set; }
     }
 }

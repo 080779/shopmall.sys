@@ -45,8 +45,8 @@
         <div class="search_style">
             <ul class="search_content clearfix">
                 @*<li><label class="l_f">添加时间</label>
-                <input class="inline laydate-icon" id="start" style=" margin-left:10px;" v-on:focus='getstart' />至
-                <input class="inline laydate-icon" id="end" style=" margin-left:10px;" v-on:focus='getend' /></li>*@
+                    <input class="inline laydate-icon" id="start" style=" margin-left:10px;" v-on:focus='getstart' />至
+                    <input class="inline laydate-icon" id="end" style=" margin-left:10px;" v-on:focus='getend' /></li>*@
                 <li>
                     <label class="l_f">图片信息</label>
                     <input name="" v-model="searchs.keyword" type="text" class="text_add" placeholder="图片信息" style=" width:150px" />
@@ -76,7 +76,7 @@
                         <td v-html="slide.url"></td>
                         <td v-html="slide.isEnabled==true?'已启用':'停用'"></td>
                         <td>
-                            <a class="btn btn-xs btn-info" v-on:click="getnotices(slide.id)">查看图片</a>
+                            <a class="btn btn-xs btn-info" v-on:click="getpic(slide.imgUrl)">查看图片</a>
                             <a v-on:click="edit(slide.id)" href="javascript:;" title="修改公告" class="btn btn-xs btn-success">修改图片</a>
                             <a title="删除" href="javascript:;" v-on:click="del(slide.id)" class="btn btn-xs btn-warning">删除图片</a>
                         </td>
@@ -100,12 +100,17 @@
         </div>
 
         <!--添加用户图层-->
+        <div class="add_menber" id="pic" style="display:none">
+            <div><img v-bind:src="getpics.imgUrl" /></div>
+        </div>
+
+        <!--添加用户图层-->
         <div class="add_menber" id="add" style="display:none">
             <ul class="page-content">
                 <li><label class="label_name">幻灯片名称：</label><span class="add_name"><input value="" placeholder="幻灯片名称" v-model="adds.name" type="text" class="text_add" /></span><div class="prompt r_f"></div></li>
                 <li>
                     <label class="label_name">启用状态：</label><span class="add_name">
-                        <input type="radio" name="isEnabled" v-model="adds.isEnabled" id="enabled" value="true" checked="checked" /><label for="enabled">启用</label>
+                        <input type="radio" name="isEnabled" v-model="adds.isEnabled" id="enabled" value="true" /><label for="enabled">启用</label>
                         <input type="radio" name="isEnabled" v-model="adds.isEnabled" id="disabled" value="false" /><label for="disabled">停用</label>
                     </span><div class="prompt r_f"></div>
                 </li>
@@ -136,8 +141,6 @@
 </body>
 </html>
 <script type="text/javascript">
-    var startTime;
-    var endTime;
     var vue = new Vue({
         el: "#app",
         data: {
@@ -150,6 +153,9 @@
             },
             adds: {
                 name: "", url: "Http://", imgUrl: "", isEnabled: true
+            },
+            getpics: {
+                imgUrl: ""
             },
             edits: {
                 code: "", name: "", url: "Http://", imgUrl: "", isEnabled: true
@@ -221,12 +227,24 @@
                     }
                 });
             },
+            getpic: function (imgUrl) {
+                this.getpics.imgUrl = imgUrl;
+                layer.open({
+                    type: 1,
+                    title: '修改用户',
+                    maxmin: true,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['800px', '600px'],
+                    content: $('#pic'),
+                    btn: ['确认', '取消']
+                });
+            },
             edit: function (id) {
                 var that = this;
                 that.$http.post('/admin/slide/getmodel', { id: id }, { emulateJSON: true }).then(function (result) {
                     that.edits = result.data.data;
-                    $("#img2").attr("src", that.edits.imgUrl );
-                });                
+                    $("#img2").attr("src", that.edits.imgUrl);
+                });
                 layer.open({
                     type: 1,
                     title: '修改用户',

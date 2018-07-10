@@ -92,7 +92,7 @@
                         <td v-html="order.amount"></td>
                         <td v-html="order.orderStateName"></td>
                         <td>
-                            <a class="btn btn-xs btn-info" v-on:click="getorder(order.id)">查看详情</a>
+                            <a class="btn btn-xs btn-info" v-bind:href="'/admin/order/detail?id='+order.id">查看详情</a>
                         </td>
                     </tr>
                 </tbody>

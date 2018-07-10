@@ -1,0 +1,102 @@
+﻿@model long
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/style.css" />
+    <link href="~/assets/css/codemirror.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/assets/css/ace.min.css" />
+    <link rel="stylesheet" href="~/assets/css/font-awesome.min.css" />
+    <link href="~/css/page.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery.min.js"></script>
+    <!--[if IE]>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <![endif]-->
+    <!--[if !IE]> -->
+    <script type="text/javascript">
+        window.jQuery || document.write("<script src='/assets/js/jquery-2.0.3.min.js'>" + "<" + "/script>");
+    </script>
+    <!-- <![endif]-->
+    <script type="text/javascript">
+        if ("ontouchend" in document) document.write("<script src='/assets/js/jquery.mobile.custom.min.js'>" + "<" + "/script>");
+    </script>
+    <script type="text/javascript" src="~/js/vue.min2.5.16.js"></script>
+    <script type="text/javascript" src="~/js/vue-resource.min1.5.0.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/typeahead-bs2.min.js"></script>
+    <!-- page specific plugin scripts -->
+    <script src="~/assets/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/jquery.dataTables.bootstrap.js"></script>
+    <script type="text/javascript" src="~/js/H-ui.js"></script>
+    <script type="text/javascript" src="~/js/H-ui.admin.js"></script>
+    <script src="~/assets/layer/layer.js" type="text/javascript"></script>
+    <script src="~/assets/laydate/laydate.js" type="text/javascript"></script>
+    <title>订单详情</title>
+</head>
+
+<body>
+    <div id="app">
+        <input type="hidden" id="getId" value="@Model" />
+        <div class="form-group col-sm-11">
+            <div>订单详情 </div>
+            <div>
+                <div class="col-sm-2">基本信息</div>
+                <div class="form-group col-sm-9">
+                    <label class="col-sm-2">订单号：</label>
+                    <label class="col-sm-3" v-html="basicInfo.code"></label>
+                    <label class="col-sm-2">订单时间：</label>
+                    <label class="col-sm-2" v-html="basicInfo.createTime"></label>
+                    <label class="col-sm-2">订单状态：</label>
+                    <label class="col-sm-2" v-html="basicInfo.orderStateName"></label>
+                </div>
+                <div class="form-group col-sm-9">
+                    <label class="col-sm-2">订单金额：</label>
+                    <label class="col-sm-3" v-html="basicInfo.amount"></label>
+                    <label class="col-sm-2">支付方式：</label>
+                    <label class="col-sm-2" v-html="basicInfo.payTypeName"></label>
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-2">买家信息</div>
+                <div class="form-group col-sm-9">
+                    <label class="col-sm-2">买家账号：</label>
+                    <label class="col-sm-3" v-html="buyerInfo.buyerMobile"></label>
+                    <label class="col-sm-2">收货人姓名：</label>
+                    <label class="col-sm-2" v-html="buyerInfo.name"></label>
+                    <label class="col-sm-2">收货人电话：</label>
+                    <label class="col-sm-2" v-html="buyerInfo.mobile"></label>
+                </div>
+                <div class="form-group col-sm-9">
+                    <label class="col-sm-2">快递类型：</label>
+                    <label class="col-sm-3" v-html=""></label>
+                    <label class="col-sm-2">收获人地址：</label>
+                    <label class="col-sm-2" v-html="buyerInfo.address"></label>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var startTime;
+    var endTime;
+    var vue = new Vue({
+        el: "#app",
+        data: {
+            id: "",
+            basicInfo: [],
+            buyerInfo: []
+        },
+        methods: {
+
+        },
+        mounted: function () {
+            this.id = $("#getId").val();
+            this.$http.post('/admin/order/getdetail', { id: this.id }, { emulateJSON: true }).then(function (result) {
+                this.basicInfo = result.data.data.basicInfo;
+                this.buyerInfo = result.data.data.buyerInfo;
+            })
+        }
+    });
+</script>

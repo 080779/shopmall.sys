@@ -18,12 +18,14 @@ namespace IMS.Web.Controllers
         public IGoodsTypeService goodsTypeService { get; set; }
         public IGoodsSecondTypeService goodsSecondTypeService { get; set; }
         public IMainGoodsTypeService mainGoodsTypeService { get; set; }
+        public ISettingService settingService { get; set; }
         [HttpPost]
         public async Task<ApiResult> List()
         {
+            string parm = await settingService.GetParmByNameAsync("网站域名");
             GoodsTypeSearchResult result= await goodsTypeService.GetModelListAsync(null, null, null, 1, 100);
             List<GoodsTypeListApiModel> model;
-            model = result.GoodsTypes.Select(g => new GoodsTypeListApiModel { id = g.Id, name = g.Name, imgUrl = g.ImgUrl }).ToList();
+            model = result.GoodsTypes.Select(g => new GoodsTypeListApiModel { id = g.Id, name = g.Name, imgUrl = parm + g.ImgUrl }).ToList();
             return new ApiResult { status = 1, data = model };
         }
         [HttpPost]

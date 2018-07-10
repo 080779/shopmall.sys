@@ -22,9 +22,19 @@ namespace IMS.Service.Service
             dto.ImgUrl = entity.ImgUrl;
             return dto;
         }
-        public Task<long> AddAsync(string name, string imgUrl, string description)
+        public async Task<long> AddAsync(long goodsId,string name, string imgUrl, string description)
         {
-            throw new NotImplementedException();
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                GoodsImgEntity entity = new GoodsImgEntity();
+                entity.Name = name;
+                entity.GoodsId = goodsId;
+                entity.ImgUrl = imgUrl;
+                entity.Description = description;
+                dbc.GoodsImgs.Add(entity);
+                await dbc.SaveChangesAsync();
+                return entity.Id;
+            }
         }
 
         public Task<bool> DeleteAsync(long id)
@@ -32,12 +42,42 @@ namespace IMS.Service.Service
             throw new NotImplementedException();
         }
 
-        public async Task<GoodsImgSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        public string GetFirstImg(long? goodsId)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                var entities = dbc.GetAll<GoodsImgEntity>();
+                if(entities.Count()<=0)
+                {
+                    return "";
+                }
+                return entities.First().ImgUrl;
+            }
+        }
+
+        public GoodsImgDTO[] GetModelList(long? goodsId)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                var entities = dbc.GetAll<GoodsImgEntity>();
+                if (goodsId != null)
+                {
+                    entities = entities.Where(a => a.GoodsId == goodsId);
+                }
+                return entities.Select(g => ToDTO(g)).ToArray();
+            }
+        }
+
+        public async Task<GoodsImgSearchResult> GetModelListAsync(long? goodsId,string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 GoodsImgSearchResult result = new GoodsImgSearchResult();
                 var entities = dbc.GetAll<GoodsImgEntity>();
+                if(goodsId!=null)
+                {
+                    entities = entities.Where(a => a.GoodsId == goodsId);
+                }
                 if (!string.IsNullOrEmpty(keyword))
                 {
                     entities = entities.Where(g => g.Name.Contains(keyword) || g.Description.Contains(keyword));

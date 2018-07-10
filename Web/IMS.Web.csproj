@@ -253,6 +253,9 @@
     <Content Include="css\login.css" />
     <Content Include="css\my_pagination.css" />
     <Content Include="css\page.css" />
+    <Content Include="css\vueupload.css" />
+    <Content Include="images\del.png" />
+    <Content Include="images\upload.png" />
     <Content Include="js\jquery.cookie.js" />
     <Content Include="js\jquery.uploadimg.js" />
     <Content Include="js\my_pagination.js" />
@@ -299,6 +302,7 @@
     <Content Include="js\respond.min.js" />
     <Content Include="js\vue-resource.min1.5.0.js" />
     <Content Include="js\vue.min2.5.16.js" />
+    <Content Include="js\wangEditor.min.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -325,15 +329,18 @@
     <Compile Include="Areas\Admin\Controllers\SlideController.cs" />
     <Compile Include="Areas\Admin\Controllers\NoticeController.cs" />
     <Compile Include="Areas\Admin\Controllers\TakeCashController.cs" />
+    <Compile Include="Areas\Admin\Controllers\TestController.cs" />
     <Compile Include="Areas\Admin\Controllers\UserController.cs" />
     <Compile Include="Areas\Admin\Models\Admin\GetListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Admin\ListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Goods\GoodsListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Home\HomeIndexViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Order\OrderDetailViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Order\OrderListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\TakeCash\ListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\User\UserBonusSetModel.cs" />
     <Compile Include="Areas\Admin\Models\User\UserListViewModel.cs" />
+    <Compile Include="Controllers\GoodsAreaController.cs" />
     <Compile Include="Controllers\GoodsCarController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\GoodsTypeController.cs" />
@@ -356,11 +363,14 @@
     <Compile Include="Models\BankAccount\BankAccountInfoModel.cs" />
     <Compile Include="Models\BankAccount\BankAccountEditModel.cs" />
     <Compile Include="Models\BankAccount\BankAccountAddModel.cs" />
+    <Compile Include="Models\GoodsArea\GoodsAreaListApiModel.cs" />
     <Compile Include="Models\GoodsCar\GoodsCarAddModel.cs" />
+    <Compile Include="Models\GoodsCar\GoodsCarListApiModel.cs" />
     <Compile Include="Models\GoodsType\GoodsTypeMainListApiModel.cs" />
     <Compile Include="Models\GoodsType\GoodsTypeSecondListModel.cs" />
     <Compile Include="Models\GoodsType\GoodsTypeListApiModel.cs" />
     <Compile Include="Models\Goods\GoodsDetailApiModel.cs" />
+    <Compile Include="Models\Goods\GoodsListModel.cs" />
     <Compile Include="Models\Goods\GoodsSearchApiModel.cs" />
     <Compile Include="Models\Goods\GoodsDetailModel.cs" />
     <Compile Include="Models\Goods\GoodsHotSalesModel.cs" />
@@ -414,6 +424,8 @@
     <Content Include="Areas\Admin\Views\GoodsArea\List.cshtml" />
     <Content Include="Areas\Admin\Views\GoodsType\List.cshtml" />
     <Content Include="Areas\Admin\Views\GoodsSecondType\List.cshtml" />
+    <Content Include="Areas\Admin\Views\Order\Detail.cshtml" />
+    <Content Include="Areas\Admin\Views\Test\List.cshtml" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">

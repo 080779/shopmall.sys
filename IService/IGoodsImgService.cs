@@ -9,10 +9,12 @@ namespace IMS.IService
     /// </summary>
     public interface IGoodsImgService : IServiceSupport
     {
-        Task<long> AddAsync(string name,string imgUrl, string description);
+        Task<long> AddAsync(long goodsId, string name,string imgUrl, string description);
         Task<bool> UpdateAsync(long id, string name, string imgUrl, string description);
         Task<bool> DeleteAsync(long id);
-        Task<GoodsImgSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
+        string GetFirstImg(long? goodsId);
+        GoodsImgDTO[] GetModelList(long? goodsId);
+        Task<GoodsImgSearchResult> GetModelListAsync(long? goodsId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
     }
     public class GoodsImgSearchResult
     {

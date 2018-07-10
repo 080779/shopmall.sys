@@ -28,6 +28,7 @@ namespace IMS.Service.Service
             dto.Poundage = entity.Poundage;
             dto.Price = entity.Price;
             dto.TotalFee = entity.TotalFee;
+            dto.GoodsCode = entity.Goods.Code;
             return dto;
         }
         public async Task<long> AddAsync(long orderId, long goodsId, long number)

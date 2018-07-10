@@ -14,14 +14,16 @@ using System.Web.Http;
 
 namespace IMS.Web.Controllers
 {
-    [AllowAnonymous]
     public class GoodsCarController : ApiController
     {
         public IGoodsCarService goodsCarService { get; set; }
         [HttpPost]
-        public ApiResult List()
+        public async Task<ApiResult> List()
         {
-            return new ApiResult { status = 1 };
+            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
+            GoodsCarSearchResult result= await goodsCarService.GetModelListAsync(user.Id, null, null, null, 1, 100);
+            List<GoodsCarListApiModel> lists=result.GoodsCars.Select(g => new GoodsCarListApiModel { id = g.Id, name = g.Name, realityPrice = g.RealityPrice, number = g.Number }).ToList();
+            return new ApiResult { status = 1, data = lists };
         }        
         [HttpPost]
         public async Task<ApiResult> Add(GoodsCarAddModel model)

@@ -30,14 +30,14 @@ namespace IMS.Web.Areas.Admin.Controllers
         {
             if (string.IsNullOrEmpty(name))
             {
-                return Json(new AjaxResult { Status = 0, Msg = "商品类别名不能为空" });
+                return Json(new AjaxResult { Status = 0, Msg = "商品二级分类名不能为空" });
             }
             long id = await goodsSecondTypeService.AddAsync(name, description);
             if (id <= 0)
             {
-                return Json(new AjaxResult { Status = 0, Msg = "添加商品类别失败" });
+                return Json(new AjaxResult { Status = 0, Msg = "添加商品二级分类失败" });
             }
-            return Json(new AjaxResult { Status = 1, Msg = "添加商品类别成功" });
+            return Json(new AjaxResult { Status = 1, Msg = "添加商品二级分类成功" });
         }
 
         public async Task<ActionResult> GetModel(long id)
@@ -50,23 +50,23 @@ namespace IMS.Web.Areas.Admin.Controllers
         {
             if (string.IsNullOrEmpty(name))
             {
-                return Json(new AjaxResult { Status = 0, Msg = "商品类别名不能为空" });
+                return Json(new AjaxResult { Status = 0, Msg = "商品二级分类名不能为空" });
             }
             bool flag = await goodsSecondTypeService.UpdateAsync(id, name, description);
             if (!flag)
             {
-                return Json(new AjaxResult { Status = 0, Msg = "编辑商品类别失败" });
+                return Json(new AjaxResult { Status = 0, Msg = "编辑商品二级分类失败" });
             }
-            return Json(new AjaxResult { Status = 1, Msg = "编辑商品类别成功" });
+            return Json(new AjaxResult { Status = 1, Msg = "编辑商品二级分类成功" });
         }
         public async Task<ActionResult> Del(long id)
         {
             bool flag = await goodsSecondTypeService.DeleteAsync(id);
             if (!flag)
             {
-                return Json(new AjaxResult { Status = 0, Msg = "删除商品类别失败" });
+                return Json(new AjaxResult { Status = 0, Msg = "删除商品二级分类失败" });
             }
-            return Json(new AjaxResult { Status = 1, Msg = "删除商品类别成功" });
+            return Json(new AjaxResult { Status = 1, Msg = "删除商品二级分类成功" });
         }
     }
 }
