@@ -37,6 +37,25 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<long> AddAsync(long goodsId, List<string> imgUrls)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                await dbc.GetAll<GoodsImgEntity>().Where(g => g.GoodsId == goodsId).ForEachAsync(g => g.IsDeleted = true);
+                foreach(string imgUrl in imgUrls)
+                {
+                    GoodsImgEntity entity = new GoodsImgEntity();
+                    entity.Name = "";
+                    entity.GoodsId = goodsId;
+                    entity.ImgUrl = imgUrl;
+                    entity.Description = "";
+                    dbc.GoodsImgs.Add(entity);            
+                }
+                await dbc.SaveChangesAsync();
+                return 1;
+            }
+        }
+
         public Task<bool> DeleteAsync(long id)
         {
             throw new NotImplementedException();
@@ -65,6 +84,20 @@ namespace IMS.Service.Service
                     entities = entities.Where(a => a.GoodsId == goodsId);
                 }
                 return entities.Select(g => ToDTO(g)).ToArray();
+            }
+        }
+
+        public async Task<GoodsImgDTO[]> GetModelListAsync(long? goodsId)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                var entities = dbc.GetAll<GoodsImgEntity>();
+                if (goodsId != null)
+                {
+                    entities = entities.Where(a => a.GoodsId == goodsId);
+                }
+                var res= await entities.ToListAsync();
+                return res.Select(g => ToDTO(g)).ToArray();
             }
         }
 

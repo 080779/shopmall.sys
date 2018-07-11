@@ -1,5 +1,6 @@
 ﻿using IMS.DTO;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace IMS.IService
@@ -10,10 +11,12 @@ namespace IMS.IService
     public interface IGoodsImgService : IServiceSupport
     {
         Task<long> AddAsync(long goodsId, string name,string imgUrl, string description);
+        Task<long> AddAsync(long goodsId, List<string> imgUrls);
         Task<bool> UpdateAsync(long id, string name, string imgUrl, string description);
         Task<bool> DeleteAsync(long id);
         string GetFirstImg(long? goodsId);
         GoodsImgDTO[] GetModelList(long? goodsId);
+        Task<GoodsImgDTO[]> GetModelListAsync(long? goodsId);
         Task<GoodsImgSearchResult> GetModelListAsync(long? goodsId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
     }
     public class GoodsImgSearchResult

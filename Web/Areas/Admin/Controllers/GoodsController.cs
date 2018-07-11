@@ -32,23 +32,45 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Upload(long id,string imgFile)
+        public async Task<ActionResult> Upload(long id,string[] imgFiles)
         {
-            if (string.IsNullOrEmpty(imgFile))
+            if (imgFiles.Count()<=0)
             {
-                return Json(new AjaxResult { Status = 0, Msg = "商品图片必须上传" });
+                return Json(new AjaxResult { Status = 0, Msg = "请选择上传的图片" });
             }
-            string res;
-            if (!ImageHelper.SaveBase64(imgFile, out res))
+            List<string> lists = new List<string>();
+            foreach(string imgFile in imgFiles)
             {
-                return Json(new AjaxResult { Status = 0, Msg = res });
+                if(imgFile.Contains("upload/"))
+                {
+                    lists.Add(imgFile);
+                }
+                else
+                {
+                    string res;
+                    if (!ImageHelper.SaveBase64(imgFile, out res))
+                    {
+                        return Json(new AjaxResult { Status = 0, Msg = res });
+                    }
+                    lists.Add(res);
+                }
             }
-            long resid= await goodsImgService.AddAsync(id,"", res, "");
+            List<string> imgUrls = lists.Distinct().ToList();
+            long resid= await goodsImgService.AddAsync(id,imgUrls);
             if(resid<=0)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "上传失败" });
             }
             return Json(new AjaxResult { Status = 1, Msg="上传成功" });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetImg(long id)
+        {
+            var res= await goodsImgService.GetModelListAsync(id);
+            string imgUrl;
+            List<string> lists = res.Select(g => imgUrl = g.ImgUrl).ToList();
+            return Json(new AjaxResult { Status = 1, Data= lists });
         }
     }
 }
