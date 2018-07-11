@@ -17,5 +17,6 @@ namespace IMS.Service.Entity
         public string Mobile { get; set; }//收货人手机号
         public string Address { get; set; }//收货人地址
         public string Description { get; set; }
+        public bool IsDefault { get; set; } = false;
     }
 }

@@ -17,18 +17,22 @@ namespace IMS.Web.Controllers
     public class GoodsCarController : ApiController
     {
         public IGoodsCarService goodsCarService { get; set; }
+        public ISettingService settingService { get; set; }
         [HttpPost]
         public async Task<ApiResult> List()
         {
+            string parm = await settingService.GetParmByNameAsync("网站域名");
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
-            GoodsCarSearchResult result= await goodsCarService.GetModelListAsync(user.Id, null, null, null, 1, 100);
-            List<GoodsCarListApiModel> lists=result.GoodsCars.Select(g => new GoodsCarListApiModel { id = g.Id, name = g.Name, realityPrice = g.RealityPrice, number = g.Number }).ToList();
-            return new ApiResult { status = 1, data = lists };
-        }        
+            GoodsCarSearchResult result = await goodsCarService.GetModelListAsync(user.Id, null, null, null, 1, 100);
+            GoodsCarListApiModel model = new GoodsCarListApiModel();
+            model.goodsCars = result.GoodsCars.Select(g => new GoodsCarModel { id = g.Id, goodsId = g.GoodsId, goodsName = g.Name, realityPrice = g.RealityPrice, number = g.Number, goodsAmount = g.GoodsAmount, imgUrl = parm + g.ImgUrl, isSelected = g.IsSelected }).ToList();
+            model.totalAmount = result.TotalAmount;
+            return new ApiResult { status = 1, data = model };
+        }
         [HttpPost]
         public async Task<ApiResult> Add(GoodsCarAddModel model)
         {
-            if(model.Id<=0)
+            if (model.Id <= 0)
             {
                 return new ApiResult { status = 0, msg = "商品id错误" };
             }
@@ -37,12 +41,65 @@ namespace IMS.Web.Controllers
                 return new ApiResult { status = 0, msg = "商品数量错误" };
             }
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
-            long id= await goodsCarService.AddAsync(user.Id, model.Id, model.Number);
+            long id = await goodsCarService.AddAsync(user.Id, model.Id, model.Number);
+            if (id <= 0)
+            {
+                if(id==-1)
+                {
+                    return new ApiResult { status = 0, msg = "商品不存在" };
+                }
+                if (id == -2)
+                {
+                    return new ApiResult { status = 0, msg = "商品库存不足" };
+                }
+                return new ApiResult { status = 0, msg = "添加商品到购物车失败" };
+            }
+            return new ApiResult { status = 1, msg = "添加商品到购物车成功" };
+        }
+        [HttpPost]
+        public async Task<ApiResult> Edit(GoodsCarEditModel model)
+        {
+            if (model.Id <= 0)
+            {
+                return new ApiResult { status = 0, msg = "购物车id错误" };
+            }
+            if (model.Number <= 0)
+            {
+                return new ApiResult { status = 0, msg = "商品数量错误" };
+            }
+            long id = await goodsCarService.UpdateAsync(model.Id, model.Number, model.IsSelected);
             if (id<=0)
             {
-                return new ApiResult { status = 0, msg = "添加购物车失败" };
+                if(id==-1)
+                {
+                    return new ApiResult { status = 0, msg = "购物车商品记录不存在" };
+                }
+                if (id == -2)
+                {
+                    return new ApiResult { status = 0, msg = "商品不存在" };
+                }
+                if (id == -3)
+                {
+                    return new ApiResult { status = 0, msg = "商品库存不足" };
+                }
+                return new ApiResult { status = 0, msg = "更新购物车商品失败" };
             }
-            return new ApiResult { status = 1, msg = "添加购物车成功" };
+            return new ApiResult { status = 1, msg = "更新购物车商品成功" };
+        }
+
+        [HttpPost]
+        public async Task<ApiResult> Del(GoodsCarDelModel model)
+        {
+            if (model.Id <= 0)
+            {
+                return new ApiResult { status = 0, msg = "购物车id错误" };
+            }
+            bool flag = await goodsCarService.DeleteAsync(model.Id);
+            if (!flag)
+            {
+                return new ApiResult { status = 0, msg = "删除购物车商品失败" };
+            }
+            return new ApiResult { status = 1, msg = "删除购物车商品成功" };
         }
     }
 }

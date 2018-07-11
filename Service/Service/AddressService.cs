@@ -68,6 +68,19 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<AddressDTO> GetDefaultModelAsync(long userId)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                var entity = await dbc.GetAll<AddressEntity>().SingleOrDefaultAsync(a => a.UserId == userId && a.IsDefault==true);
+                if (entity == null)
+                {
+                    return null;
+                }
+                return ToDTO(entity);
+            }
+        }
+
         public async Task<AddressSearchResult> GetModelListAsync(long? userId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())

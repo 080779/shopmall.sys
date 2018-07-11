@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GoodsSecondTypeDTO.cs" />
+    <Compile Include="OrderApplyDTO.cs" />
     <Compile Include="SettingDTO.cs" />
     <Compile Include="MainGoodsTypeDTO.cs" />
     <Compile Include="IdNameDTO.cs" />

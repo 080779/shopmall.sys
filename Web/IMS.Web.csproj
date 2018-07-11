@@ -345,6 +345,7 @@
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\GoodsTypeController.cs" />
     <Compile Include="Controllers\GoodsController.cs" />
+    <Compile Include="Controllers\PayTypeController.cs" />
     <Compile Include="Controllers\SlideController.cs" />
     <Compile Include="Controllers\NoticeController.cs" />
     <Compile Include="Controllers\AddressController.cs" />
@@ -364,6 +365,8 @@
     <Compile Include="Models\BankAccount\BankAccountEditModel.cs" />
     <Compile Include="Models\BankAccount\BankAccountAddModel.cs" />
     <Compile Include="Models\GoodsArea\GoodsAreaListApiModel.cs" />
+    <Compile Include="Models\GoodsCar\GoodsCarDelModel.cs" />
+    <Compile Include="Models\GoodsCar\GoodsCarEditModel.cs" />
     <Compile Include="Models\GoodsCar\GoodsCarAddModel.cs" />
     <Compile Include="Models\GoodsCar\GoodsCarListApiModel.cs" />
     <Compile Include="Models\GoodsType\GoodsTypeMainListApiModel.cs" />
@@ -376,7 +379,13 @@
     <Compile Include="Models\Goods\GoodsHotSalesModel.cs" />
     <Compile Include="Models\Goods\GoodsSearchModel.cs" />
     <Compile Include="Models\Notice\NoticeListApiModel.cs" />
+    <Compile Include="Models\Order\WeChatPay.cs" />
+    <Compile Include="Models\Order\OrderApplysModel.cs" />
+    <Compile Include="Models\Order\OrderPlaceListApiModel.cs" />
+    <Compile Include="Models\Order\OrderApplyModel.cs" />
+    <Compile Include="Models\Order\OrderPlaceModel.cs" />
     <Compile Include="Models\Order\OrderAddModel.cs" />
+    <Compile Include="Models\PayType\PayTypeListApiModel.cs" />
     <Compile Include="Models\Slide\SlideListApiModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterEditNickNameModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterEditQrCodeModel.cs" />

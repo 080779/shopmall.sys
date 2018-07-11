@@ -72,6 +72,41 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<long> AddAsync(long buyerId, long addressId, long payTypeId, long orderStateId, params OrderApplyDTO[] orderApplies)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                OrderEntity entity = new OrderEntity();
+                entity.Code = CommonHelper.GetRandom3();
+                entity.BuyerId = buyerId;
+                entity.AddressId = addressId;
+                entity.PayTypeId = payTypeId;
+                entity.OrderStateId = orderStateId;
+                dbc.Orders.Add(entity);
+                await dbc.SaveChangesAsync();
+
+                foreach(var orderApply in orderApplies)
+                {
+                    GoodsEntity goods = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g => g.Id == orderApply.GoodsId);
+                    if (goods == null)
+                    {
+                        return -1;
+                    }
+                    OrderListEntity listEntity = new OrderListEntity();
+                    listEntity.OrderId = entity.Id;
+                    listEntity.GoodsId = orderApply.GoodsId;
+                    listEntity.Number = orderApply.Number;
+                    listEntity.Price = goods.RealityPrice;
+                    listEntity.ImgUrl = orderApply.ImgUrl;
+                    listEntity.TotalFee = listEntity.Price * orderApply.Number + listEntity.PostFee + listEntity.Poundage;
+                    entity.Amount = entity.Amount+listEntity.TotalFee;
+                    dbc.OrderLists.Add(listEntity);
+                }
+                await dbc.SaveChangesAsync();
+                return entity.Id;
+            }
+        }
+
         public async Task<bool> DeleteAsync(long id)
         {
             using (MyDbContext dbc = new MyDbContext())

@@ -11,14 +11,17 @@ namespace IMS.IService
     public interface IGoodsCarService : IServiceSupport
     {
         Task<long> AddAsync(long userId,long goodsId,long num);
-        Task<bool> UpdateAsync(long id,long num);
+        Task<long> UpdateAsync(long id,long? num, bool? isSelected);
+        Task<long> UpdateAsync(long userId,long goodsId, long? num,bool? isSelected);
         Task<bool> DeleteAsync(long id);
+        Task<GoodsCarDTO[]> GetModelListAsync(long? userId);
         Task<GoodsCarSearchResult> GetModelListAsync(long? userId,string keyword,DateTime? startTime,DateTime? endTime,int pageIndex,int pageSize);
     }
     public class GoodsCarSearchResult
     {
         public GoodsCarDTO[] GoodsCars { get; set; }
         public long PageCount { get; set; }
+        public decimal TotalAmount { get; set; }
     }
     public class Goods
     {

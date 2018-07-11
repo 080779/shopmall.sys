@@ -9,7 +9,6 @@ namespace IMS.Web.Models.Order
     {
         public long AddressId { get; set; }
         public long PayTypeId { get; set; }
-        public long OrderStateId { get; set; }
         public long GoodsId { get; set; }
         public long Number { get; set; }
     }

@@ -17,5 +17,6 @@ namespace IMS.Service.Entity
         public long UserId { get; set; }
         public virtual GoodsEntity Goods { get; set; }
         public long Number { get; set; }
+        public bool IsSelected { get; set; } = false;
     }
 }

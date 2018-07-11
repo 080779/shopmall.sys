@@ -40,6 +40,25 @@ namespace IMS.Web.Controllers
             return new ApiResult { status = 1, data = apiModel };
         }
         [HttpPost]
+        public async Task<ApiResult> Default()
+        {
+            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
+            AddressDTO result = await addressService.GetDefaultModelAsync(user.Id);
+            if(result==null)
+            {
+                return new ApiResult { status = 1};
+            }
+            else
+            {
+                AddressApiModel apiModel = new AddressApiModel();
+                apiModel.address = result.Address;
+                apiModel.id = result.Id;
+                apiModel.mobile = result.Mobile;
+                apiModel.name = result.Name;
+                return new ApiResult { status = 1, data = apiModel };
+            }            
+        }
+        [HttpPost]
         public async Task<ApiResult> Add(AddressAddModel model)
         {
             if(string.IsNullOrEmpty(model.Name))

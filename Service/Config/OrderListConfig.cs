@@ -12,7 +12,6 @@ namespace IMS.Service.Config
             Property(p => p.ImgUrl).HasMaxLength(156).IsRequired();
 
             HasRequired(p => p.Goods).WithMany().HasForeignKey(p => p.GoodsId).WillCascadeOnDelete(false);
-            HasRequired(p => p.Order).WithMany().HasForeignKey(p => p.OrderId).WillCascadeOnDelete(false);
         }
     }
 }

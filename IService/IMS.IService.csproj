@@ -44,6 +44,7 @@
     <Compile Include="IAddressService.cs" />
     <Compile Include="IGoodsImgService.cs" />
     <Compile Include="IMainGoodsTypeService.cs" />
+    <Compile Include="IOrderApplyService.cs" />
     <Compile Include="IOrderListService.cs" />
     <Compile Include="IPayCodeService.cs" />
     <Compile Include="IGoodsSecondTypeService.cs" />

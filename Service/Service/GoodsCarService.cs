@@ -22,12 +22,20 @@ namespace IMS.Service.Service
             dto.CreateTime = entity.CreateTime;
             dto.Description = entity.Goods.Description;
             dto.Id = entity.Id;
-            dto.ImgUrl = imgUrl;
+            if(string.IsNullOrEmpty(imgUrl))
+            {
+                dto.ImgUrl = "";
+            }
+            else
+            {
+                dto.ImgUrl = imgUrl;
+            }
             dto.Name = entity.Goods.Name;
             dto.Price = entity.Goods.Price;
             dto.RealityPrice = entity.Goods.RealityPrice;
             dto.Standard = entity.Goods.Standard;
             dto.Number = entity.Number;
+            dto.IsSelected = entity.IsSelected;
             dto.GoodsAmount = entity.Goods.RealityPrice * entity.Number;
             return dto;
         }
@@ -35,13 +43,34 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc=new MyDbContext())
             {
-                GoodsCarEntity entity = new GoodsCarEntity();
-                entity.GoodsId = goodsId;
-                entity.UserId = userId;
-                entity.Number = num;
-                dbc.GoodsCars.Add(entity);
+                var goodsCar= await dbc.GetAll<GoodsCarEntity>().SingleOrDefaultAsync(g => g.UserId == userId && g.GoodsId == goodsId);
+                var goods = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g => g.Id == goodsId);
+                if(goods==null)
+                {
+                    return -1;
+                }
+                if(goodsCar!=null)
+                {
+                    if(goods.Inventory<goodsCar.Number + num)
+                    {
+                        return -2;
+                    }
+                    goodsCar.Number = goodsCar.Number + num;
+                }
+                else
+                {
+                    if (goods.Inventory < num)
+                    {
+                        return -2;
+                    }
+                    goodsCar = new GoodsCarEntity();
+                    goodsCar.GoodsId = goodsId;
+                    goodsCar.UserId = userId;
+                    goodsCar.Number = num;
+                    dbc.GoodsCars.Add(goodsCar);
+                }                
                 await dbc.SaveChangesAsync();
-                return entity.Id;
+                return goodsCar.Id;
             }
         }
 
@@ -57,6 +86,21 @@ namespace IMS.Service.Service
                 entity.IsDeleted = true;
                 await dbc.SaveChangesAsync();
                 return true;
+            }
+        }
+
+        public async Task<GoodsCarDTO[]> GetModelListAsync(long? userId)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                var entities = dbc.GetAll<GoodsCarEntity>().Where(g => g.IsSelected == true);
+                if (userId != null)
+                {
+                    entities = entities.Where(g => g.UserId == userId);
+                }                
+                var goodsCarResult = await entities.ToListAsync();
+                var imgUrls = dbc.GetAll<GoodsImgEntity>();
+                return goodsCarResult.Select(a => ToDTO(a, imgUrls.FirstOrDefault(g => g.GoodsId == a.GoodsId) == null ? null : imgUrls.FirstOrDefault(g => g.GoodsId == a.GoodsId).ImgUrl)).ToArray();
             }
         }
 
@@ -85,23 +129,70 @@ namespace IMS.Service.Service
                 result.PageCount = (int)Math.Ceiling((await entities.LongCountAsync()) * 1.0f / pageSize);
                 var goodsAreaResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 var imgUrls = dbc.GetAll<GoodsImgEntity>();
-                result.GoodsCars = goodsAreaResult.Select(a => ToDTO(a,imgUrls.First(g=>g.GoodsId==a.GoodsId).ImgUrl)).ToArray();
+                result.GoodsCars = goodsAreaResult.Select(a => ToDTO(a,imgUrls.FirstOrDefault(g=>g.GoodsId==a.GoodsId)==null?null: imgUrls.FirstOrDefault(g => g.GoodsId == a.GoodsId).ImgUrl)).ToArray();
+                result.TotalAmount = result.GoodsCars.Where(g => g.IsSelected == true).Sum(g => g.GoodsAmount);
                 return result;
             }
         }
 
-        public async Task<bool> UpdateAsync(long id,long num)
+        public async Task<long> UpdateAsync(long id, long? num, bool? isSelected)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 GoodsCarEntity entity = await dbc.GetAll<GoodsCarEntity>().SingleOrDefaultAsync(g=>g.Id==id);
                 if (entity==null)
                 {
-                    return false;
+                    return -1;
                 }
-                entity.Number = num;
+                GoodsEntity goods = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g=>g.Id==entity.GoodsId);
+                if(goods==null)
+                {
+                    return -2;
+                }
+                if(num!=null)
+                {
+                    if(goods.Inventory<num)
+                    {
+                        return -3;
+                    }
+                    entity.Number = num.Value;
+                }
+                if(isSelected!=null)
+                {
+                    entity.IsSelected = isSelected.Value;
+                }
                 await dbc.SaveChangesAsync();
-                return true;
+                return 1;
+            }
+        }
+        public async Task<long> UpdateAsync(long userId, long goodsId, long? num, bool? isSelected)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                GoodsCarEntity entity = await dbc.GetAll<GoodsCarEntity>().SingleOrDefaultAsync(g => g.UserId == userId && g.GoodsId==goodsId);
+                if (entity == null)
+                {
+                    return -1;
+                }
+                GoodsEntity goods = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g => g.Id == entity.GoodsId);
+                if (goods == null)
+                {
+                    return -2;
+                }
+                if (num != null)
+                {
+                    if (goods.Inventory < num)
+                    {
+                        return -3;
+                    }
+                    entity.Number = num.Value;
+                }
+                if (isSelected != null)
+                {
+                    entity.IsSelected = isSelected.Value;
+                }
+                await dbc.SaveChangesAsync();
+                return 1;
             }
         }
     }
