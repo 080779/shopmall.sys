@@ -119,7 +119,7 @@ namespace IMS.Common
             {
                 foreach (var item in lists)
                 {
-                    values.Add(new KeyValuePair<string, string>(Encode(item.Name, encode), Encode(item.GetValue(obj).ToString())));
+                    values.Add(new KeyValuePair<string, string>(Encode(item.Name, encode), Encode(item.GetValue(obj).ToString(),encode)));
                 }              
             }
             return values;
