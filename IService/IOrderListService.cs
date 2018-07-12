@@ -14,6 +14,7 @@ namespace IMS.IService
         Task<long> AddListAsync(List<OrderListAdd> goodsLists);
         Task<bool> UpdateAsync(long id, long number);
         Task<bool> DeleteAsync(long id);
+        OrderListDTO[] GetModelList(long? orderId);
         Task<OrderListSearchResult> GetModelListAsync(long? orderId,string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
     }
     public class OrderListSearchResult

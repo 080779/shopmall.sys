@@ -333,6 +333,7 @@
     <Compile Include="Areas\Admin\Controllers\UserController.cs" />
     <Compile Include="Areas\Admin\Models\Admin\GetListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Admin\ListViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Goods\GoodsAddModel.cs" />
     <Compile Include="Areas\Admin\Models\Goods\GoodsListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Home\HomeIndexViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Order\OrderDetailViewModel.cs" />
@@ -379,6 +380,8 @@
     <Compile Include="Models\Goods\GoodsHotSalesModel.cs" />
     <Compile Include="Models\Goods\GoodsSearchModel.cs" />
     <Compile Include="Models\Notice\NoticeListApiModel.cs" />
+    <Compile Include="Models\Order\OrderListApiModel.cs" />
+    <Compile Include="Models\Order\OrderListModel.cs" />
     <Compile Include="Models\Order\WeChatPay.cs" />
     <Compile Include="Models\Order\OrderApplysModel.cs" />
     <Compile Include="Models\Order\OrderPlaceListApiModel.cs" />
@@ -387,6 +390,8 @@
     <Compile Include="Models\Order\OrderAddModel.cs" />
     <Compile Include="Models\PayType\PayTypeListApiModel.cs" />
     <Compile Include="Models\Slide\SlideListApiModel.cs" />
+    <Compile Include="Models\UserCenter\UserCenterEditBankAccountModel.cs" />
+    <Compile Include="Models\UserCenter\UserCenterInfoApiModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterEditNickNameModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterEditQrCodeModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterEditHeadPicModel.cs" />

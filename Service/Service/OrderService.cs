@@ -145,7 +145,7 @@ namespace IMS.Service.Service
                 {
                     entities = entities.Where(a => a.BuyerId ==buyerId);
                 }
-                if (buyerId != null)
+                if (orderStateId != null)
                 {
                     entities = entities.Where(a => a.OrderStateId ==orderStateId);
                 }

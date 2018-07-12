@@ -42,7 +42,7 @@ namespace IMS.Common
             }
 
             string md5 = CommonHelper.GetMD5(imgBytes);
-            string path = "/upload/" + DateTime.Now.ToString("yyyy/MM/dd") + "/" + md5 + ext;
+            string path = "/upload/" + DateTime.Now.ToString("yyyy") + "/" + md5 + ext;
             string fullPath = HttpContext.Current.Server.MapPath("~" + path);
             new FileInfo(fullPath).Directory.Create();
 

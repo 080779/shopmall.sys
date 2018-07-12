@@ -16,6 +16,10 @@ namespace IMS.Web.Areas.Admin.Controllers
     {
         public ActionResult List()
         {
+            WeChatPay w = new WeChatPay();
+            var sd= HttpClientHelper.ToKeyValue(w);
+
+            var df = HttpClientHelper.BuildParam(w);
             return View();
         }
         public ActionResult Upload(listres imgList)

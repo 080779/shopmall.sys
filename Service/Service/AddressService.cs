@@ -23,9 +23,10 @@ namespace IMS.Service.Service
             dto.Address = entity.Address;
             dto.Mobile = entity.Mobile;
             dto.UserId = entity.UserId;
+            dto.IsDefault = entity.IsDefault;
             return dto;
         }
-        public async Task<long> AddAsync(long userId, string name, string mobile, string address)
+        public async Task<long> AddAsync(long userId, string name, string mobile, string address,bool isDefault)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -34,6 +35,15 @@ namespace IMS.Service.Service
                 entity.Name = name;
                 entity.Mobile = mobile;
                 entity.Address = address;
+                if(isDefault)
+                {
+                    await dbc.GetAll<AddressEntity>().Where(a => a.UserId == userId).ForEachAsync(a => a.IsDefault = false);
+                    entity.IsDefault = isDefault;
+                }
+                else
+                {
+                    entity.IsDefault = isDefault;
+                }
                 dbc.Addresses.Add(entity);
                 await dbc.SaveChangesAsync();
                 return entity.Id;
@@ -110,7 +120,7 @@ namespace IMS.Service.Service
             }
         }       
 
-        public async Task<bool> UpdateAsync(long id, string name, string mobile, string address)
+        public async Task<bool> UpdateAsync(long id, string name, string mobile, string address, bool isDefault)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -122,6 +132,15 @@ namespace IMS.Service.Service
                 entity.Name = name;
                 entity.Mobile = mobile;
                 entity.Address = address;
+                if (!entity.IsDefault && isDefault)
+                {
+                    await dbc.GetAll<AddressEntity>().Where(a => a.UserId == entity.UserId).ForEachAsync(a => a.IsDefault = false);
+                    entity.IsDefault = isDefault;
+                }
+                else
+                {
+                    entity.IsDefault = isDefault;
+                }
                 await dbc.SaveChangesAsync();
                 return true;
             }

@@ -28,9 +28,10 @@ namespace IMS.Service.Service
             dto.LevelName = entity.Level.Name;
             dto.Mobile = entity.Mobile;
             dto.NickName = entity.NickName;
-            dto.SalesAmount = entity.SalesAmount;
+            dto.BuyAmount = entity.BuyAmount;
             dto.IsReturned = entity.IsReturned;
             dto.IsUpgraded = entity.IsUpgraded;
+            dto.BonusAmount = entity.BonusAmount;
             return dto;
         }
 
@@ -67,6 +68,7 @@ namespace IMS.Service.Service
                         ruser.RecommendId = recommendId;
                         ruser.RecommendGenera = recommend.RecommendGenera + 1;
                         ruser.RecommendPath = recommend.RecommendPath + "-" + user.Id;
+                        ruser.RecommendMobile = recommend.User.Mobile;
 
                         dbc.Recommends.Add(ruser);
                         await dbc.SaveChangesAsync();
@@ -253,6 +255,80 @@ namespace IMS.Service.Service
                     return -2;
                 }
                 user.Amount = user.Amount - amount;
+                user.BuyAmount = user.BuyAmount + amount;
+
+                JournalEntity journal = new JournalEntity();
+                journal.UserId = user.Id;
+                journal.BalanceAmount = user.Amount;
+                journal.OutAmount = amount;
+                journal.Remark = "购买商品";
+                journal.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "购物")).Id;
+                dbc.Journals.Add(journal);
+                decimal one;
+                decimal two;
+                decimal three;
+                if (user.Level.Name=="普通会员")
+                {
+                    one = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "一级分销佣金比例")).Parm) / 100;
+                    two = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "二级分销佣金比例")).Parm) / 100;
+                    three = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "三级分销佣金比例")).Parm) / 100;
+                }
+                else if(user.Level.Name == "黄金会员")
+                {
+                    one = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "一级分销佣金比例")).Parm) / 100;
+                    two = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "二级分销佣金比例")).Parm) / 100;
+                    three = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "三级分销佣金比例")).Parm) / 100;
+                }
+                else
+                {
+                    one = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "一级分销佣金比例")).Parm) / 100;
+                    two = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "二级分销佣金比例")).Parm) / 100;
+                    three = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "三级分销佣金比例")).Parm) / 100;
+                }
+                UserEntity oneer = dbc.GetAll<UserEntity>().SingleOrDefault(u => u.Id == user.Recommend.RecommendId);
+                if (oneer.Recommend.RecommendPath!= "0")
+                {
+                    oneer.Amount = oneer.Amount + amount * one;
+                    oneer.BonusAmount = oneer.BonusAmount + amount * one;
+
+                    JournalEntity journal1 = new JournalEntity();
+                    journal1.UserId = oneer.Id;
+                    journal1.BalanceAmount = oneer.Amount;
+                    journal1.InAmount = amount * one;
+                    journal1.Remark = "佣金收入";
+                    journal1.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "佣金收入")).Id;
+                    dbc.Journals.Add(journal1);
+
+                    UserEntity twoer= dbc.GetAll<UserEntity>().SingleOrDefault(u => u.Id == oneer.Recommend.RecommendId);
+                    if(twoer.Recommend.RecommendPath != "0")
+                    {
+                        twoer.Amount = twoer.Amount + amount * two;
+                        twoer.BonusAmount = twoer.BonusAmount + amount * two;
+
+                        JournalEntity journal2 = new JournalEntity();
+                        journal2.UserId = twoer.Id;
+                        journal2.BalanceAmount = twoer.Amount;
+                        journal2.InAmount = amount * two;
+                        journal2.Remark = "佣金收入";
+                        journal2.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "佣金收入")).Id;
+                        dbc.Journals.Add(journal2);
+
+                        UserEntity threer= dbc.GetAll<UserEntity>().SingleOrDefault(u => u.Id == twoer.Recommend.RecommendId);
+                        if(threer.Recommend.RecommendPath != "0")
+                        {
+                            threer.Amount = threer.Amount + amount * three;
+                            threer.BonusAmount = threer.BonusAmount + amount * three;
+
+                            JournalEntity journal3 = new JournalEntity();
+                            journal3.UserId = threer.Id;
+                            journal3.BalanceAmount = threer.Amount;
+                            journal3.InAmount = amount * three;
+                            journal3.Remark = "佣金收入";
+                            journal3.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "佣金收入")).Id;
+                            dbc.Journals.Add(journal3);
+                        }
+                    }
+                }
                 await dbc.SaveChangesAsync();
                 return 1;
             }

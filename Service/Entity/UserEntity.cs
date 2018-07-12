@@ -17,7 +17,10 @@ namespace IMS.Service.Entity
         public string HeadPic { get; set; }
         public decimal Amount { get; set; } = 0;//账户金额
         public decimal BonusAmount { get; set; } = 0;//累计佣金
-        public decimal SalesAmount { get; set; } = 0;//销售金额
+        /// <summary>
+        /// 消费金额(BuyAmount),后面改
+        /// </summary>
+        public decimal BuyAmount { get; set; } = 0;//消费金额(BuyAmount)
         public virtual RecommendEntity Recommend { get; set; }
         public long LevelId { get; set; }
         public virtual IdNameEntity Level { get; set; }

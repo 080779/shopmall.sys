@@ -89,6 +89,16 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<bool> DeleteListAsync(long userId)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                await dbc.GetAll<GoodsCarEntity>().Where(g => g.UserId == userId && g.IsSelected == true).ForEachAsync(g => g.IsDeleted = true);
+                await dbc.SaveChangesAsync();
+                return true;
+            }
+        }
+
         public async Task<GoodsCarDTO[]> GetModelListAsync(long? userId)
         {
             using (MyDbContext dbc = new MyDbContext())

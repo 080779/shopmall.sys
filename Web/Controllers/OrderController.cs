@@ -25,6 +25,37 @@ namespace IMS.Web.Controllers
         public IGoodsService goodsService { get; set; }
         public IGoodsImgService goodsImgService { get; set; }
         public IGoodsCarService goodsCarService { get; set; }
+
+        [HttpPost]
+        public async Task<ApiResult> List(OrderListModel model)
+        {
+            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
+            OrderSearchResult result= await orderService.GetModelListAsync(user.Id, model.OrderStateId, null, null, null, model.PageIndex, model.PageSize);
+            OrderListApiModel res = new OrderListApiModel();
+            res.PageCount = result.PageCount;
+            res.Orders = result.Orders.Select(o => new Order
+            {
+                amount = o.Amount,
+                code = o.Code,
+                createTime = o.CreateTime,
+                deliveryCode = o.DeliveryCode,
+                deliveryName = o.DeliveryName,
+                id = o.Id,
+                orderStateId = o.OrderStateId,
+                orderStateName = o.OrderStateName,
+                payTypeId = o.PayTypeId,
+                payTypeName = o.PayTypeName,
+                OrderGoods = orderListService.GetModelList(o.Id).Select(l => new OrderGoods {
+                    name= l.GoodsName,
+                    number= l.Number,
+                    price= l.Price,
+                    realityPrice= l.RealityPrice,
+                    totalFee= l.TotalFee
+                }).ToList()
+            }).ToList();
+            return new ApiResult { status = 1, data=res };
+        }
+
         [HttpPost]
         public async Task<ApiResult> Add(OrderAddModel model)
         {
@@ -163,6 +194,8 @@ namespace IMS.Web.Controllers
                 orderStateId = await idNameService.GetIdByNameAsync("待发货");
                 await orderService.UpdateAsync(id, null, null, orderStateId);
             }
+            await goodsCarService.DeleteListAsync(user.Id);
+            await orderApplyService.DeleteAsync(user.Id);
             return new ApiResult { status = 1, msg = "支付成功" };
         }
     }

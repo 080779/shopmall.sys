@@ -36,13 +36,19 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserTokenEntity userToken = await dbc.GetAll<UserTokenEntity>().SingleOrDefaultAsync(u => u.UserId == userId);
-                if (userToken == null)
+                if (userToken != null)
                 {
-                    return -1;
+                    userToken.Token = token;
                 }
-                userToken.Token = token;
+                else
+                {
+                    UserTokenEntity entity = new UserTokenEntity();
+                    entity.UserId = userId;
+                    entity.Token = token;
+                    dbc.UserTokens.Add(entity);
+                }
                 await dbc.SaveChangesAsync();
-                return userToken.Id;
+                return 1;
             }
         }
 

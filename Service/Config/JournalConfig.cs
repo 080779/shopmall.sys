@@ -3,20 +3,15 @@ using System.Data.Entity.ModelConfiguration;
 
 namespace IMS.Service.Config
 {
-    class JournalConfig:EntityTypeConfiguration<JournalEntity>
+    class JournalConfig : EntityTypeConfiguration<JournalEntity>
     {
         public JournalConfig()
         {
-            ToTable("T_Journals");
-            HasRequired(j => j.PlatformUser).WithMany().HasForeignKey(j => j.PlatformUserId).WillCascadeOnDelete(false);
-            HasRequired(j => j.ToPlatformUser).WithMany().HasForeignKey(j => j.ToPlatformUserId).WillCascadeOnDelete(false);
-            HasRequired(j => j.FormPlatformUser).WithMany().HasForeignKey(j => j.FormPlatformUserId).WillCascadeOnDelete(false);
-            HasRequired(j => j.IntegralType).WithMany().HasForeignKey(j => j.IntegralTypeId).WillCascadeOnDelete(false);
-            HasRequired(j => j.ToIntegralType).WithMany().HasForeignKey(j => j.ToIntegralTypeId).WillCascadeOnDelete(false);
-            HasRequired(j => j.JournalType).WithMany().HasForeignKey(j => j.JournalTypeId).WillCascadeOnDelete(false);
-            Property(j => j.Journal01).HasMaxLength(100);
-            Property(j => j.Description).HasMaxLength(100);
-            Property(j => j.Tip).HasMaxLength(100);
+            ToTable("tb_journals");
+            Property(s => s.Remark).HasMaxLength(100);
+            Property(s => s.RemarkEn).HasMaxLength(100);
+            HasRequired(s => s.JournalType).WithMany().HasForeignKey(s => s.JournalTypeId).WillCascadeOnDelete(false);
+            HasRequired(s => s.User).WithMany().HasForeignKey(s => s.UserId).WillCascadeOnDelete(false);
         }
     }
 }

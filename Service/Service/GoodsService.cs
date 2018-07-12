@@ -41,7 +41,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 GoodsEntity entity = new GoodsEntity();
-                entity.Code = CommonHelper.GetRandom4();
+                entity.Code = goods.Code;
                 entity.Description = goods.Description;
                 entity.GoodsAreaId = goods.GoodsAreaId;
                 entity.GoodsSecondTypeId = goods.GoodsSecondTypeId;

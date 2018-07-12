@@ -58,6 +58,30 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<bool> UpdateByUserIdAsync(long id, string name, string bankAccount, string bankName)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                BankAccountEntity entity = await dbc.GetAll<BankAccountEntity>().SingleOrDefaultAsync(b => b.UserId == id);
+                if (entity == null)
+                {
+                    entity = new BankAccountEntity();
+                    entity.Name = name;
+                    entity.BankAccount = bankAccount;
+                    entity.BankName = bankName;
+                    dbc.BankAccounts.Add(entity);
+                }
+                else
+                {
+                    entity.Name = name;
+                    entity.BankAccount = bankAccount;
+                    entity.BankName = bankName;
+                }                
+                await dbc.SaveChangesAsync();
+                return true;
+            }
+        }
+
         public async Task<bool> DeleteAsync(long id)
         {
             using (MyDbContext dbc = new MyDbContext())

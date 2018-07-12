@@ -14,6 +14,7 @@ namespace IMS.IService
         Task<long> UpdateAsync(long id,long? num, bool? isSelected);
         Task<long> UpdateAsync(long userId,long goodsId, long? num,bool? isSelected);
         Task<bool> DeleteAsync(long id);
+        Task<bool> DeleteListAsync(long userId);
         Task<GoodsCarDTO[]> GetModelListAsync(long? userId);
         Task<GoodsCarSearchResult> GetModelListAsync(long? userId,string keyword,DateTime? startTime,DateTime? endTime,int pageIndex,int pageSize);
     }

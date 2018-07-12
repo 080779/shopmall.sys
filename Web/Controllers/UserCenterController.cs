@@ -16,12 +16,31 @@ using System.Web.Http;
 
 namespace IMS.Web.Controllers
 {
-    [AllowAnonymous]
     public class UserCenterController : ApiController
     {
         public IUserService userService { get; set; }
         public IBankAccountService bankAccountService { get; set; }
         public IPayCodeService payCodeService { get; set; }
+
+        [HttpPost]
+        public async Task<ApiResult> Info()
+        {
+            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
+            UserDTO result = await userService.GetModelAsync(user.Id);
+            UserCenterInfoApiModel model = new UserCenterInfoApiModel();
+            model.amount = result.Amount;
+            model.bonusAmount = result.BonusAmount;
+            model.buyAmount = result.BuyAmount;
+            model.createTime = result.CreateTime;
+            model.headPic = result.HeadPic;
+            model.id = result.Id;
+            model.levelId = result.LevelId;
+            model.levelName = result.LevelName;
+            model.mobile = result.Mobile;
+            model.nickName = result.NickName;
+
+            return new ApiResult { status = 1, data = model };
+        }
 
         [HttpPost]
         public async Task<ApiResult> Detail()
@@ -117,6 +136,31 @@ namespace IMS.Web.Controllers
             }
             return new ApiResult { status = 1, msg = "昵称添加修改成功" };
         }
+
+        [HttpPost]
+        public async Task<ApiResult> EditBankAccount(UserCenterEditBankAccountModel model)
+        {
+            if (string.IsNullOrEmpty(model.BankAccount))
+            {
+                return new ApiResult { status = 0, msg = "银行卡号不能为空" };
+            }
+            if (string.IsNullOrEmpty(model.BankName))
+            {
+                return new ApiResult { status = 0, msg = "开卡银行不能为空" };
+            }
+            if (string.IsNullOrEmpty(model.Name))
+            {
+                return new ApiResult { status = 0, msg = "持卡人姓名不能为空" };
+            }
+            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
+            bool flag = await bankAccountService.UpdateByUserIdAsync(user.Id, model.Name, model.BankAccount, model.BankName);
+            if (!flag)
+            {
+                return new ApiResult { status = 0, msg = "银行卡添加修改失败" };
+            }
+            return new ApiResult { status = 1, msg = "银行卡添加修改成功" };
+        }
+
         [HttpPost]
         public async Task<ApiResult> ResetPwd(UserCenterResetPwdModel model)
         {

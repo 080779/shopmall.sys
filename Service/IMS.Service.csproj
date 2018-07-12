@@ -66,6 +66,7 @@
     <Compile Include="Config\OrderApplyConfig.cs" />
     <Compile Include="Config\OrderListConfig.cs" />
     <Compile Include="Config\RecommendConfig.cs" />
+    <Compile Include="Config\JournalConfig.cs" />
     <Compile Include="Config\UserTokenConfig.cs" />
     <Compile Include="Config\UserConfig.cs" />
     <Compile Include="Config\OrderConfig.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Entity\GoodsAreaEntity.cs" />
     <Compile Include="Entity\LogisticsEntity.cs" />
     <Compile Include="Entity\AddressEntity.cs" />
+    <Compile Include="Entity\JournalEntity.cs" />
     <Compile Include="Entity\SlideEntity.cs" />
     <Compile Include="Entity\NoticeEntity.cs" />
     <Compile Include="Entity\AdminEntity.cs" />
@@ -115,6 +117,7 @@
     <Compile Include="Service\AdminService.cs" />
     <Compile Include="Service\AddressService.cs" />
     <Compile Include="Service\GoodsImgService.cs" />
+    <Compile Include="Service\JournalService.cs" />
     <Compile Include="Service\OrderApplyService.cs" />
     <Compile Include="Service\SettingService.cs" />
     <Compile Include="Service\MainGoodsTypeService.cs" />

@@ -13,7 +13,8 @@ namespace IMS.DTO
         public string NickName { get; set; }
         public string HeadPic { get; set; }
         public decimal Amount { get; set; }
-        public decimal SalesAmount { get; set; }
+        public decimal BonusAmount { get; set; }
+        public decimal BuyAmount { get; set; }
         public long LevelId { get; set; }
         public string LevelName { get; set; }
         public string Description { get; set; }

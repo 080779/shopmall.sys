@@ -11,6 +11,7 @@ namespace IMS.IService
     {
         Task<long> AddAsync(long userId, string name, string bankAccount, string bankName);
         Task<bool> UpdateAsync(long id, string name, string bankAccount, string bankName);
+        Task<bool> UpdateByUserIdAsync(long id, string name, string bankAccount, string bankName);
         Task<bool> DeleteAsync(long id);
         Task<BankAccountDTO[]> GetModelByUserIdAsync(long id);
         Task<BankAccountDTO> GetModelAsync(long id);

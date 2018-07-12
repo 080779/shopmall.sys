@@ -14,18 +14,18 @@ using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace IMS.Web.Controllers
-{    
+{
     public class AddressController : ApiController
-    {        
+    {
         public IAddressService addressService { get; set; }
-        
+
         [HttpPost]
         public async Task<ApiResult> List()
         {
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
-            AddressSearchResult result = await addressService.GetModelListAsync(user.Id, null,null,null,1,100);
+            AddressSearchResult result = await addressService.GetModelListAsync(user.Id, null, null, null, 1, 100);
             List<AddressApiModel> model;
-            model = result.Address.Select(a => new AddressApiModel { id = a.Id, address = a.Address, name = a.Name, mobile = a.Mobile }).ToList();
+            model = result.Address.Select(a => new AddressApiModel { id = a.Id, address = a.Address, name = a.Name, mobile = a.Mobile, isDefault = a.IsDefault }).ToList();
             return new ApiResult { status = 1, data = model };
         }
         [HttpPost]
@@ -37,6 +37,7 @@ namespace IMS.Web.Controllers
             apiModel.id = result.Id;
             apiModel.mobile = result.Mobile;
             apiModel.name = result.Name;
+            apiModel.isDefault = result.IsDefault;
             return new ApiResult { status = 1, data = apiModel };
         }
         [HttpPost]
@@ -44,9 +45,9 @@ namespace IMS.Web.Controllers
         {
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             AddressDTO result = await addressService.GetDefaultModelAsync(user.Id);
-            if(result==null)
+            if (result == null)
             {
-                return new ApiResult { status = 1};
+                return new ApiResult { status = 1 };
             }
             else
             {
@@ -56,12 +57,12 @@ namespace IMS.Web.Controllers
                 apiModel.mobile = result.Mobile;
                 apiModel.name = result.Name;
                 return new ApiResult { status = 1, data = apiModel };
-            }            
+            }
         }
         [HttpPost]
         public async Task<ApiResult> Add(AddressAddModel model)
         {
-            if(string.IsNullOrEmpty(model.Name))
+            if (string.IsNullOrEmpty(model.Name))
             {
                 return new ApiResult { status = 0, msg = "收货人姓名不能为空" };
             }
@@ -77,12 +78,13 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "收货人地址不能为空" };
             }
-            long id= await addressService.AddAsync(1, model.Name, model.Mobile, model.Address);
-            if(id<=0)
+            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
+            long id = await addressService.AddAsync(user.Id, model.Name, model.Mobile, model.Address, model.IsDefault);
+            if (id <= 0)
             {
                 return new ApiResult { status = 1, msg = "收货地址添加失败" };
             }
-            return new ApiResult { status = 1, msg="收货地址添加成功" };
+            return new ApiResult { status = 1, msg = "收货地址添加成功" };
         }
         [HttpPost]
         public async Task<ApiResult> Edit(AddressEditModel model)
@@ -103,8 +105,8 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "收货人地址不能为空" };
             }
-            bool flag= await addressService.UpdateAsync(model.Id, model.Name, model.Mobile, model.Address);
-            if(!flag)
+            bool flag = await addressService.UpdateAsync(model.Id, model.Name, model.Mobile, model.Address, model.IsDefault);
+            if (!flag)
             {
                 return new ApiResult { status = 0, msg = "收货地址修改失败" };
             }
@@ -113,11 +115,11 @@ namespace IMS.Web.Controllers
         public async Task<ApiResult> Delete(AddressDelModel model)
         {
             bool flag = await addressService.DeleteAsync(model.Id);
-            if(!flag)
+            if (!flag)
             {
                 return new ApiResult { status = 0, msg = "收货地址删除失败" };
             }
             return new ApiResult { status = 1, msg = "收货地址删除成功" };
         }
-    }    
+    }
 }

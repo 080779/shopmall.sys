@@ -26,7 +26,8 @@ namespace IMS.Service.Service
             dto.OrderId = entity.OrderId;
             dto.PostFee = entity.PostFee;
             dto.Poundage = entity.Poundage;
-            dto.Price = entity.Price;
+            dto.Price = entity.Goods.Price;
+            dto.RealityPrice = entity.Goods.RealityPrice;
             dto.TotalFee = entity.TotalFee;
             dto.GoodsCode = entity.Goods.Code;
             return dto;
@@ -106,6 +107,20 @@ namespace IMS.Service.Service
                 entity.IsDeleted = true;
                 await dbc.SaveChangesAsync();
                 return true;
+            }
+        }
+
+        public OrderListDTO[] GetModelList(long? orderId)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                OrderListSearchResult result = new OrderListSearchResult();
+                var entities = dbc.GetAll<OrderListEntity>();
+                if (orderId != null)
+                {
+                    entities = entities.Where(a => a.OrderId == orderId);
+                }
+                return entities.ToList().Select(o => ToDTO(o)).ToArray();
             }
         }
 

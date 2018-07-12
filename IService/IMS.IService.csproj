@@ -43,6 +43,7 @@
     <Compile Include="IAdminLogService.cs" />
     <Compile Include="IAddressService.cs" />
     <Compile Include="IGoodsImgService.cs" />
+    <Compile Include="IJournalService.cs" />
     <Compile Include="IMainGoodsTypeService.cs" />
     <Compile Include="IOrderApplyService.cs" />
     <Compile Include="IOrderListService.cs" />
