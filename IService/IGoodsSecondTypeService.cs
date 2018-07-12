@@ -13,6 +13,7 @@ namespace IMS.IService
         Task<bool> UpdateAsync(long id, string name, string description);
         Task<bool> DeleteAsync(long id);
         Task<GoodsSecondTypeDTO> GetModelAsync(long id);
+        Task<long> GetIdByNameAsync(string name);
         Task<GoodsSecondTypeSearchResult> GetModelListAsync(long? goodTypeId,string keyword,DateTime? startTime,DateTime? endTime,int pageIndex,int pageSize);
     }
     public class GoodsSecondTypeSearchResult

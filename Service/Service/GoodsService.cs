@@ -21,8 +21,8 @@ namespace IMS.Service.Service
             dto.Description = entity.Description;
             dto.GoodsAreaId = entity.GoodsAreaId;
             dto.GoodsAreaTitle = entity.GoodsArea.Title;
-            dto.GoodsSecondTypeId = entity.GoodsSecondTypeId;
-            dto.GoodsSecondTypeName = entity.GoodsSecondType.Name;
+            dto.GoodsSecondTypeId = entity.GoodsSecondType.Name == "空类型" ? (long?)null : entity.GoodsSecondTypeId;
+            dto.GoodsSecondTypeName = entity.GoodsSecondType.Name == "空类型" ? "" : entity.GoodsSecondType.Name;
             dto.GoodsTypeId = entity.GoodsTypeId;
             dto.GoodsTypeName = entity.GoodsType.Name;
             dto.Id = entity.Id;
@@ -44,7 +44,7 @@ namespace IMS.Service.Service
                 entity.Code = goods.Code;
                 entity.Description = goods.Description;
                 entity.GoodsAreaId = goods.GoodsAreaId;
-                entity.GoodsSecondTypeId = goods.GoodsSecondTypeId;
+                entity.GoodsSecondTypeId = goods.GoodsSecondTypeId.Value;
                 entity.GoodsTypeId = goods.GoodsTypeId;
                 entity.Inventory = goods.Inventory;
                 entity.IsPutaway = goods.IsPutaway;
@@ -160,7 +160,7 @@ namespace IMS.Service.Service
                 }
                 entity.Description = goods.Description;
                 entity.GoodsAreaId = goods.GoodsAreaId;
-                entity.GoodsSecondTypeId = goods.GoodsSecondTypeId;
+                entity.GoodsSecondTypeId = goods.GoodsSecondTypeId.Value;
                 entity.GoodsTypeId = goods.GoodsTypeId;
                 entity.Inventory = goods.Inventory;
                 entity.IsPutaway = goods.IsPutaway;

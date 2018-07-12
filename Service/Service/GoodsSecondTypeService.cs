@@ -62,6 +62,19 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<long> GetIdByNameAsync(string name)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                GoodsSecondTypeEntity entity = await dbc.GetAll<GoodsSecondTypeEntity>().SingleOrDefaultAsync(g => g.Name == name);
+                if (entity == null)
+                {
+                    return 0;
+                }
+                return entity.Id;
+            }
+        }
+
         public async Task<GoodsSecondTypeSearchResult> GetModelListAsync(long? goodTypeId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())

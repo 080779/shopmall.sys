@@ -47,12 +47,12 @@
             <ul class="search_content clearfix">
                 <li>
                     <label class="l_f">商品搜索：</label>
-                    <select v-on:change="getsec" v-model="goodsTypeId">
+                    <select v-on:change="getsec(goodsTypeId)" v-model="goodsTypeId">
                         <option value="">请选择商品大类</option>
                         <option v-for="goodsType in goodsTypes" v-bind:value="goodsType.id" v-html="goodsType.name"></option>
                     </select>
                     <select v-model="goodsSecondTypeId">
-                        <option value="">请选择商品二分类</option>
+                        <option value="">请选择商品二级分类</option>
                         <option v-for="goodsSecondType in goodsSecondTypes" v-bind:value="goodsSecondType.id" v-html="goodsSecondType.name"></option>
                     </select>
                 </li>
@@ -127,12 +127,69 @@
                 <li>
                     <label class="label_name">商品货号：</label><span class="add_name"><input value="" placeholder="商品货号" v-model="adds.code" type="text" class="text_add" /></span><div class="prompt r_f"></div>
                     <label class="label_name">商品规格：</label><span class="add_name"><input value="" placeholder="商品规格" v-model="adds.standard" type="text" class="text_add" /></span><div class="prompt r_f"></div>
-                    <label class="label_name">商品分区：</label><span class="add_name"><input value="" placeholder="商品分区" v-model="adds.goodsAreaId" type="text" class="text_add" /></span><div class="prompt r_f"></div>
+                    <label class="label_name">商品分区：</label><span class="add_name">
+                        <select v-model="adds.goodsAreaId">
+                            <option value="">请选择</option>
+                            <option v-for="goodsArea in goodsAreas" v-bind:value="goodsArea.id" v-html="goodsArea.title"></option>
+                        </select>
+                    </span><div class="prompt r_f"></div>
                 </li>
                 <li>
-                    <label class="label_name">商品分类：</label><span class="add_name"><input value="" placeholder="商品分类" v-model="adds.goodsTypeId" type="text" class="text_add" /></span><div class="prompt r_f"></div>
-                    <label class="label_name">商品二级分类：</label><span class="add_name"><input value="" placeholder="商品二级分类" v-model="adds.goodsSecondTypeId" type="text" class="text_add" /></span><div class="prompt r_f"></div>
+                    <label class="label_name">商品分类：</label><span class="add_name">
+                        <select v-on:change="getsec(adds.goodsTypeId)" v-model="adds.goodsTypeId">
+                            <option value="">请选择</option>
+                            <option v-for="goodsType in goodsTypes" v-bind:value="goodsType.id" v-html="goodsType.name"></option>
+                        </select>
+                    </span><div class="prompt r_f"></div>
+                    <label class="label_name">商品二级分类：</label><span class="add_name">
+                        <select v-model="adds.goodsSecondTypeId">
+                            <option value="">请选择商品二级分类</option>
+                            <option v-for="goodsSecondType in goodsSecondTypes" v-bind:value="goodsSecondType.id" v-html="goodsSecondType.name"></option>
+                        </select>
+                    </span><div class="prompt r_f"></div>
                     <label class="label_name"><input type="checkbox" v-model="adds.isPutaway" />上架</label><span class="add_name"><input type="checkbox" v-model="adds.isRecommend" />推荐</span><div class="prompt r_f"></div>
+                </li>
+                <li>
+                    <label class="label_name">商品描述：</label><span class="add_name"></span><div class="prompt r_f"></div>
+                </li>
+                <li>
+                    <div id="description" style="width:1000px"></div>
+                </li>
+            </ul>
+        </div>
+        <!--添加商品图层-->
+        <div class="add_menber" id="edit" style="display:none">
+            <ul class="page-content">
+                <li><label class="label_name">商品名称：</label><span class="add_name"><input value="" placeholder="商品名称" v-model="edits.name" type="text" class="text_add" /></span><div class="prompt r_f"></div></li>
+                <li>
+                    <label class="label_name">商品原价：</label><span class="add_name"><input value="" placeholder="商品原价" v-model="edits.price" type="text" class="text_add" /></span><div class="prompt r_f"></div>
+                    <label class="label_name">商品现价：</label><span class="add_name"><input value="" placeholder="商品现价" v-model="edits.realityPrice" type="text" class="text_add" /></span><div class="prompt r_f"></div>
+                    <label class="label_name">商品库存：</label><span class="add_name"><input value="" placeholder="商品库存" v-model="edits.inventory" type="text" class="text_add" /></span><div class="prompt r_f"></div>
+                </li>
+                <li>
+                    <label class="label_name">商品货号：</label><span class="add_name"><input value="" placeholder="商品货号" v-model="edits.code" type="text" class="text_add" /></span><div class="prompt r_f"></div>
+                    <label class="label_name">商品规格：</label><span class="add_name"><input value="" placeholder="商品规格" v-model="edits.standard" type="text" class="text_add" /></span><div class="prompt r_f"></div>
+                    <label class="label_name">商品分区：</label><span class="add_name">
+                        <select v-model="edits.goodsAreaId">
+                            <option value="">请选择</option>
+                            <option v-for="goodsArea in goodsAreas" v-bind:value="goodsArea.id" v-html="goodsArea.title"></option>
+                        </select>
+                    </span><div class="prompt r_f"></div>
+                </li>
+                <li>
+                    <label class="label_name">商品分类：</label><span class="add_name">
+                        <select v-on:change="getsec(edits.goodsTypeId)" v-model="edits.goodsTypeId">
+                            <option value="">请选择</option>
+                            <option v-for="goodsType in goodsTypes" v-bind:value="goodsType.id" v-html="goodsType.name"></option>
+                        </select>
+                    </span><div class="prompt r_f"></div>
+                    <label class="label_name">商品二级分类：</label><span class="add_name">
+                        <select v-model="edits.goodsSecondTypeId">
+                            <option value="">请选择商品二级分类</option>
+                            <option v-for="goodsSecondType in goodsSecondTypes" v-bind:value="goodsSecondType.id" v-html="goodsSecondType.name"></option>
+                        </select>
+                    </span><div class="prompt r_f"></div>
+                    <label class="label_name"><input type="checkbox" v-model="edits.isPutaway" />上架</label><span class="add_name"><input type="checkbox" v-model="edits.isRecommend" />推荐</span><div class="prompt r_f"></div>
                 </li>
                 <li>
                     <label class="label_name">商品描述：</label><span class="add_name"></span><div class="prompt r_f"></div>
@@ -163,9 +220,9 @@
                 </div>
             </div>
             @*<ul class="page-content">
-                    <li><label class="label_name">上传商品图片：</label><span class="add_name"><input placeholder="上传商品图片" type="file" id="file1" class="text_add" /></span><div class="prompt r_f"></div></li>
-                    <li><label class="label_name">&nbsp;</label><span class="add_name"><img id="img1" style="margin-top: 10px; max-width: 100px; max-height: 400px;" /></span><div class="prompt r_f"></div></li>
-                </ul>*@
+                <li><label class="label_name">上传商品图片：</label><span class="add_name"><input placeholder="上传商品图片" type="file" id="file1" class="text_add" /></span><div class="prompt r_f"></div></li>
+                <li><label class="label_name">&nbsp;</label><span class="add_name"><img id="img1" style="margin-top: 10px; max-width: 100px; max-height: 400px;" /></span><div class="prompt r_f"></div></li>
+            </ul>*@
         </div>
     </div>
 </body>
@@ -181,6 +238,7 @@
             goodsTypeId: "",
             goodsSecondTypes: [],
             goodsSecondTypeId: "",
+            goodsAreas: [],
             pages: {
                 all: "", cur: 1, txtpage: ""
             },
@@ -188,7 +246,10 @@
                 startTime: "", endTime: "", keyword: ""
             },
             adds: {
-                code: "", name: "", standard: "", price: "", realityPrice: "", goodsAreaId: "", goodsTypeId: "", goodsSecondTypeId: "", isPutaway: "", isRecommend: "", inventory: "", description:""
+                code: "", name: "", standard: "", price: "", realityPrice: "", goodsAreaId: "", goodsTypeId: "", goodsSecondTypeId: "", isPutaway: "", isRecommend: "", inventory: "", description: ""
+            },
+            edits: {
+                id: "", code: "", name: "", standard: "", price: "", realityPrice: "", goodsAreaId: "", goodsTypeId: "", goodsSecondTypeId: "", isPutaway: "", isRecommend: "", inventory: "", description: ""
             }
         },
         methods: {
@@ -278,13 +339,13 @@
                 }
                 this.getpage();
             },
-            getsec: function () {
-                console.log(this.goodsTypeId);
-                this.$http.post('/admin/goods/getsecondtype', { id: this.goodsTypeId }, { emulateJSON: true }).then(function (result) {
+            getsec: function (typeId) {
+                this.$http.post('/admin/goods/getsecondtype', { id: typeId }, { emulateJSON: true }).then(function (result) {
                     this.goodsSecondTypes = result.data.data;
                 });
             },
             add: function () {
+                var that = this;
                 layer.open({
                     type: 1,
                     title: '添加用户',
@@ -294,23 +355,68 @@
                     content: $('#add'),
                     btn: ['确认', '取消'],
                     yes: function (index, layero) {
-                        that.$http.post('/admin/goods/add', { id: id, imgFile: that.imgUrl }, { emulateJSON: true }).then(function (result) {
-                            if (result.data.status == 1) {
-                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
-                                layer.close(index);
-                                that.getpage();
-                            }
-                            else if (result.data.status == 0) {
-                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                                //that.msg = result.data.msg;
-                            }
-                            else if (result.data.status == 302) {
-                                window.location.href = result.data.data;
-                            }
-                            else if (result.data.status == 401) {
-                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
-                            }
-                        });
+                        that.$http.post('/admin/goods/add',
+                            {
+                                code: that.adds.code, name: that.adds.name, standard: that.adds.standard, price: that.adds.price, realityPrice: that.adds.realityPrice,
+                                goodsAreaId: that.adds.goodsAreaId, goodsTypeId: that.adds.goodsTypeId, goodsSecondTypeId: that.adds.goodsSecondTypeId,
+                                isPutaway: that.adds.isPutaway, isRecommend: that.adds.isRecommend, inventory: that.adds.inventory, description: that.adds.description
+                            }, { emulateJSON: true }).then(function (result) {
+                                if (result.data.status == 1) {
+                                    layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                                    layer.close(index);
+                                    that.getpage();
+                                }
+                                else if (result.data.status == 0) {
+                                    layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                                    //that.msg = result.data.msg;
+                                }
+                                else if (result.data.status == 302) {
+                                    window.location.href = result.data.data;
+                                }
+                                else if (result.data.status == 401) {
+                                    layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                                }
+                            });
+                    }
+                });
+            },
+            edit: function (id) {
+                var that = this;
+                that.$http.post('/admin/goods/getmodel', { id: id }, { emulateJSON: true }).then(function (result) {
+                    that.edits = result.data.data;
+                });
+                //that.getsec(that.edits.goodsTypeId);
+                layer.open({
+                    type: 1,
+                    title: '添加用户',
+                    maxmin: true,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['1200px', '600px'],
+                    content: $('#edit'),
+                    btn: ['确认', '取消'],
+                    yes: function (index, layero) {
+                        that.$http.post('/admin/goods/edit',
+                            {
+                                id: id, code: that.edits.code, name: that.edits.name, standard: that.edits.standard, price: that.edits.price, realityPrice: that.edits.realityPrice,
+                                goodsAreaId: that.edits.goodsAreaId, goodsTypeId: that.edits.goodsTypeId, goodsSecondTypeId: that.edits.goodsSecondTypeId,
+                                isPutaway: that.edits.isPutaway, isRecommend: that.edits.isRecommend, inventory: that.edits.inventory, description: that.edits.description
+                            }, { emulateJSON: true }).then(function (result) {
+                                if (result.data.status == 1) {
+                                    layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                                    layer.close(index);
+                                    that.getpage();
+                                }
+                                else if (result.data.status == 0) {
+                                    layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                                    //that.msg = result.data.msg;
+                                }
+                                else if (result.data.status == 302) {
+                                    window.location.href = result.data.data;
+                                }
+                                else if (result.data.status == 401) {
+                                    layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                                }
+                            });
                     }
                 });
             },
@@ -321,7 +427,7 @@
                 that.$http.post('/admin/goods/getimg', { id: id }, { emulateJSON: true }).then(function (result) {
                     that.imgList = result.data.data;
                 });
-
+                //that.edits.goodsSecondTypeId = "";
                 layer.open({
                     type: 1,
                     title: '添加用户',
@@ -386,22 +492,11 @@
             this.$http.post('/admin/goods/list', { levelId: this.levelId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
                 this.goods = result.data.data.goods;
                 this.goodsTypes = result.data.data.goodsTypes;
+                this.goodsAreas = result.data.data.goodsAreas;
                 this.pages.all = result.data.data.pageCount;
             })
         }
     });
-
-    //uploadpic("#file1", "#img1");
-
-    //function uploadpic(fileid, img) {
-    //    var oUpload = new UploadPic();
-    //    oUpload.init({
-    //        input: $(fileid)[0],
-    //        callback: function (base64) {
-    //            $(img).attr('src', base64);
-    //        }
-    //    });
-    //}
 
     $(function () {
         //编辑器

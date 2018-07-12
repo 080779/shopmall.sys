@@ -1,4 +1,5 @@
 ﻿using IMS.Common;
+using IMS.DTO;
 using IMS.IService;
 using IMS.Web.Areas.Admin.Models.Goods;
 using System;
@@ -17,6 +18,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         public IGoodsTypeService goodsTypeService { get; set; }
         public IGoodsSecondTypeService goodsSecondTypeService { get; set; }
         public IGoodsImgService goodsImgService { get; set; }
+        public IGoodsAreaService goodsAreaService { get; set; }
         public ActionResult List()
         {
             return View();
@@ -29,6 +31,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             model.Goods = result.Goods;
             model.PageCount = result.PageCount;
             model.GoodsTypes = (await goodsTypeService.GetModelListAsync(null, null, null, 1, 100)).GoodsTypes;
+            model.GoodsAreas = (await goodsAreaService.GetModelListAsync(null, null, null, 1, 100)).GoodsAreas;
             return Json(new AjaxResult { Status = 1, Data = model });
         }
 
@@ -84,12 +87,44 @@ namespace IMS.Web.Areas.Admin.Controllers
         [HttpPost]
         public async Task<ActionResult> Add(GoodsAddEditModel model)
         {
+            if(string.IsNullOrEmpty(model.Description))
+            {
+                model.Description = "";
+            }
+            if(model.GoodsSecondTypeId==null)
+            {
+                model.GoodsSecondTypeId = await goodsSecondTypeService.GetIdByNameAsync("空类型");
+            }
             long id = await goodsService.AddAsync(model);
             if(id<=0)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "商品添加失败" });
             }
             return Json(new AjaxResult { Status = 1, Msg = "商品添加成功" });
+        }
+        [HttpPost]
+        public async Task<ActionResult> Edit(GoodsAddEditModel model)
+        {
+            if (string.IsNullOrEmpty(model.Description))
+            {
+                model.Description = "";
+            }
+            if (model.GoodsSecondTypeId == null)
+            {
+                model.GoodsSecondTypeId = await goodsSecondTypeService.GetIdByNameAsync("空类型");
+            }
+            bool flag = await goodsService.UpdateAsync(model);
+            if (!flag)
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "商品编辑失败" });
+            }
+            return Json(new AjaxResult { Status = 1, Msg = "商品编辑成功" });
+        }
+        [HttpPost]
+        public async Task<ActionResult> GetModel(long id)
+        {            
+            GoodsDTO res = await goodsService.GetModelAsync(id);
+            return Json(new AjaxResult { Status = 1, Data=res });
         }
     }
 }

@@ -32,7 +32,7 @@ namespace IMS.IService
         public string Standard { get; set; }//规格
         public long GoodsAreaId { get; set; }
         public long GoodsTypeId { get; set; }
-        public long GoodsSecondTypeId { get; set; }
+        public long? GoodsSecondTypeId { get; set; }
         public bool IsPutaway { get; set; }//是否上架
         public bool IsRecommend { get; set; }//是否推荐
         public string Description { get; set; }

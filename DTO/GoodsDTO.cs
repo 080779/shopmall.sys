@@ -17,7 +17,7 @@ namespace IMS.DTO
         public string GoodsAreaTitle { get; set; }
         public long GoodsTypeId { get; set; }
         public string GoodsTypeName { get; set; }
-        public long GoodsSecondTypeId { get; set; }
+        public long? GoodsSecondTypeId { get; set; }
         public string GoodsSecondTypeName { get; set; }
         public bool IsPutaway { get; set; }//是否上架
         public bool IsRecommend { get; set; }//是否推荐

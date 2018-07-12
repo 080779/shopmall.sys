@@ -13,5 +13,6 @@ namespace IMS.Web.Areas.Admin.Models.Goods
         public long PageCount { get; set; }
         public GoodsTypeDTO[] GoodsTypes { get; set; }
         public GoodsSecondTypeDTO[] GoodsSecondTypes { get; set; }
+        public GoodsAreaDTO[] GoodsAreas { get; set; }
     }
 }
