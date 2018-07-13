@@ -32,6 +32,7 @@ namespace IMS.Service.Service
             dto.IsReturned = entity.IsReturned;
             dto.IsUpgraded = entity.IsUpgraded;
             dto.BonusAmount = entity.BonusAmount;
+            dto.Recommonder = entity.Recommend.RecommendMobile;
             return dto;
         }
 
@@ -390,6 +391,80 @@ namespace IMS.Service.Service
                 return result;
             }
         }
+        public async Task<UserTeamSearchResult> GetModelTeamListAsync(string mobile, long? teamLevel, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserTeamSearchResult result = new UserTeamSearchResult();
+                RecommendEntity user = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(r => r.User.Mobile == mobile);
+                var recommends = dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false);
+                if (teamLevel != null)
+                {
+                    if (user.RecommendMobile == "superhero" && user.RecommendPath == "1")
+                    {
+                        if (teamLevel == 1)
+                        {
+                            recommends = recommends.Where(a => a.RecommendId == user.UserId);
+                        }
+                        else if (teamLevel == 2)
+                        {
+                            recommends = recommends.Where(a => a.RecommendPath.Contains(user.UserId.ToString() + "-") && a.RecommendGenera == user.RecommendGenera + 2);
+                        }
+                        else if (teamLevel == 3)
+                        {
+                            recommends = recommends.Where(a => a.RecommendPath.Contains(user.UserId.ToString() + "-") && a.RecommendGenera == user.RecommendGenera + 3);
+                        }
+                    }
+                    else
+                    {
+                        if (teamLevel == 1)
+                        {
+                            recommends = recommends.Where(a => a.RecommendId == user.UserId);
+                        }
+                        else if (teamLevel == 2)
+                        {
+                            recommends = recommends.Where(a => a.RecommendPath.Contains("-" + user.UserId.ToString() + "-") && a.RecommendGenera == user.RecommendGenera + 2);
+                        }
+                        else if (teamLevel == 3)
+                        {
+                            recommends = recommends.Where(a => a.RecommendPath.Contains("-" + user.UserId.ToString() + "-") && a.RecommendGenera == user.RecommendGenera + 3);
+                        }
+                    }
+                }
+                else
+                {
+                    if (user.RecommendMobile == "superhero" && user.RecommendGenera == 1)
+                    {
+                        recommends = recommends.Where(a => a.RecommendId == user.UserId ||
+                     (a.RecommendPath.Contains(user.UserId.ToString() + "-") && a.RecommendGenera == user.RecommendGenera + 2) ||
+                     (a.RecommendPath.Contains(user.UserId.ToString() + "-") && a.RecommendGenera == user.RecommendGenera + 3));
+                    }
+                    else
+                    {
+                        recommends = recommends.Where(a => a.RecommendId == user.UserId ||
+                     (a.RecommendPath.Contains("-" + user.UserId.ToString() + "-") && a.RecommendGenera == user.RecommendGenera + 2) ||
+                     (a.RecommendPath.Contains("-" + user.UserId.ToString() + "-") && a.RecommendGenera == user.RecommendGenera + 3));
+                    }
+                }
+                if (keyword != null)
+                {
+                    recommends = recommends.Where(a => a.User.Mobile.Contains(keyword) || a.User.Code.Contains(keyword) || a.User.NickName.Contains(keyword));
+                }
+                if (startTime != null)
+                {
+                    recommends = recommends.Where(a => a.User.CreateTime >= startTime);
+                }
+                if (endTime != null)
+                {
+                    recommends = recommends.Where(a => a.User.CreateTime.Year <= endTime.Value.Year && a.User.CreateTime.Month <= endTime.Value.Month && a.User.CreateTime.Day <= endTime.Value.Day);
+                }
+                result.PageCount = (int)Math.Ceiling(recommends.LongCount() * 1.0f / pageSize);
+                var lists = recommends.ToList();
+                var userResult = await recommends.OrderByDescending(a => a.User.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                result.Users = userResult.Select(a => ToDTO(a.User)).ToArray();
+                return result;
+            }
+        }
         public async Task<UserTeamSearchResult> GetModelTeamListAsync(long userId, long? teamLevel, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
@@ -399,18 +474,51 @@ namespace IMS.Service.Service
                 var recommends = dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false);
                 if (teamLevel!=null)
                 {
-                    if(teamLevel==1)
+                    if (recommend.RecommendMobile == "superhero" && recommend.RecommendPath == "1")
                     {
-                        recommends = recommends.Where(a => a.UserId== userId);
+                        if (teamLevel == 1)
+                        {
+                            recommends = recommends.Where(a => a.RecommendId == userId);
+                        }
+                        else if (teamLevel == 2)
+                        {
+                            recommends = recommends.Where(a => a.RecommendPath.Contains(userId.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 2);
+                        }
+                        else if (teamLevel == 3)
+                        {
+                            recommends = recommends.Where(a => a.RecommendPath.Contains(userId.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 3);
+                        }
                     }
-                    else if(teamLevel==2)
+                    else
                     {
-                        recommends = recommends.Where(a => a.RecommendPath.Contains("-"+ userId.ToString()+"-") && a.RecommendGenera==recommend.RecommendGenera+2);
-                    }
-                    else if (teamLevel == 3)
+                        if (teamLevel == 1)
+                        {
+                            recommends = recommends.Where(a => a.RecommendId == userId);
+                        }
+                        else if (teamLevel == 2)
+                        {
+                            recommends = recommends.Where(a => a.RecommendPath.Contains("-" + userId.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 2);
+                        }
+                        else if (teamLevel == 3)
+                        {
+                            recommends = recommends.Where(a => a.RecommendPath.Contains("-" + userId.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 3);
+                        }                                                    
+                    }                    
+                }
+                else
+                {
+                    if (recommend.RecommendMobile == "superhero" && recommend.RecommendGenera == 1)
                     {
-                        recommends = recommends.Where(a => a.RecommendPath.Contains("-" + userId.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 3);
+                        recommends = recommends.Where(a => a.RecommendId == userId ||
+                     (a.RecommendPath.Contains(userId.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 2) ||
+                     (a.RecommendPath.Contains(userId.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 3));
                     }
+                    else
+                    {
+                        recommends = recommends.Where(a => a.RecommendId == userId ||
+                     (a.RecommendPath.Contains("-" + userId.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 2) ||
+                     (a.RecommendPath.Contains("-" + userId.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 3));
+                    }                    
                 }
                 if(keyword!=null)
                 {
@@ -425,6 +533,7 @@ namespace IMS.Service.Service
                     recommends = recommends.Where(a => a.User.CreateTime.Year <= endTime.Value.Year && a.User.CreateTime.Month <= endTime.Value.Month && a.User.CreateTime.Day <= endTime.Value.Day);
                 }
                 result.PageCount = (int)Math.Ceiling(recommends.LongCount() * 1.0f / pageSize);
+                var lists = recommends.ToList();
                 var userResult = await recommends.OrderByDescending(a => a.User.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 result.Users = userResult.Select(a => ToDTO(a.User)).ToArray();
                 return result;

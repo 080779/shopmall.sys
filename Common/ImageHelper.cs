@@ -52,5 +52,21 @@ namespace IMS.Common
             res = path;
             return true;
         }
+
+        public static string[] Save(HttpPostedFileBase file)
+        {
+            string md5 = CommonHelper.GetMD5(file.InputStream);
+            string ext = Path.GetExtension(file.FileName);
+            string path = "/upload/" + DateTime.Now.ToString("yyyy") + "/" + md5 + ext;
+            string fullPath = HttpContext.Current.Server.MapPath("~" + path);
+            new FileInfo(fullPath).Directory.Create();
+            //file.SaveAs(fullPath);
+            //缩略图
+            file.InputStream.Position = 0;
+            ImageProcessingJob jobNormal = new ImageProcessingJob();
+            jobNormal.SaveProcessedImageToFileSystem(file.InputStream, fullPath);
+            string[] paths = { path };
+            return paths;
+        }
     }
 }

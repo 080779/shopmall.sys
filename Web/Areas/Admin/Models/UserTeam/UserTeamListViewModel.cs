@@ -1,0 +1,17 @@
+﻿using IMS.DTO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using static IMS.Common.Pagination;
+
+namespace IMS.Web.Areas.Admin.Models.UserTeam
+{
+    public class UserTeamListViewModel
+    {
+        public UserDTO Header { get; set; }
+        public UserDTO[] Members { get; set; }
+        public long PageCount { get; set; }
+        public SettingDTO[] TeamLevels { get; set; }
+    }
+}

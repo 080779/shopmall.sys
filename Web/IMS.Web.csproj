@@ -330,6 +330,7 @@
     <Compile Include="Areas\Admin\Controllers\NoticeController.cs" />
     <Compile Include="Areas\Admin\Controllers\TakeCashController.cs" />
     <Compile Include="Areas\Admin\Controllers\TestController.cs" />
+    <Compile Include="Areas\Admin\Controllers\UserTeamController.cs" />
     <Compile Include="Areas\Admin\Controllers\UserController.cs" />
     <Compile Include="Areas\Admin\Models\Admin\GetListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Admin\ListViewModel.cs" />
@@ -339,6 +340,7 @@
     <Compile Include="Areas\Admin\Models\Order\OrderDetailViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Order\OrderListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\TakeCash\ListViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\UserTeam\UserTeamListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\User\UserBonusSetModel.cs" />
     <Compile Include="Areas\Admin\Models\User\UserListViewModel.cs" />
     <Compile Include="Controllers\GoodsAreaController.cs" />
@@ -352,6 +354,7 @@
     <Compile Include="Controllers\AddressController.cs" />
     <Compile Include="Controllers\BankAccountController.cs" />
     <Compile Include="Controllers\UserCenterController.cs" />
+    <Compile Include="Controllers\UserTeamController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -397,6 +400,7 @@
     <Compile Include="Models\UserCenter\UserCenterEditHeadPicModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterDetailApiModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterResetPwdModel.cs" />
+    <Compile Include="Models\UserTeam\UserTeamListModel.cs" />
     <Compile Include="Models\User\UserLoginModel1.cs" />
     <Compile Include="Models\User\WeChatErrorResultModel.cs" />
     <Compile Include="Models\User\WeChatResultModel.cs" />

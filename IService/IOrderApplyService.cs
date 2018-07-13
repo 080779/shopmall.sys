@@ -11,7 +11,7 @@ namespace IMS.IService
     public interface IOrderApplyService : IServiceSupport
     {
         Task<long> AddAsync(params GoodsCarDTO[] goodsCars);
-        Task<bool> DeleteAsync(long userId);
+        Task<bool> DeleteListAsync(long userId);
         Task<OrderApplySearchResult> GetModelListAsync(long userId);
     }
 

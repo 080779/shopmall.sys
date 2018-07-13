@@ -51,16 +51,11 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<bool> DeleteAsync(long userId)
+        public async Task<bool> DeleteListAsync(long userId)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entities = dbc.GetAll<OrderApplyEntity>().Where(o => o.UserId == userId);
-                if(entities.Count()<=0)
-                {
-                    return false;
-                }
-                await entities.ForEachAsync(o => o.IsDeleted = true);
+                await dbc.GetAll<OrderApplyEntity>().Where(o => o.UserId == userId).ForEachAsync(o => dbc.OrderApplies.Remove(o));
                 await dbc.SaveChangesAsync();
                 return true;
             }

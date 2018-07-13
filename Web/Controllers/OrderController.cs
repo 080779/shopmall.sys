@@ -99,6 +99,7 @@ namespace IMS.Web.Controllers
             dto.Number = model.Number;
             dto.RealityPrice = goods.RealityPrice;
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
+            await orderApplyService.DeleteListAsync(user.Id);
             dto.UserId = user.Id;
             dto.GoodsAmount = dto.RealityPrice * dto.Number;
             long id = await orderApplyService.AddAsync(dto);
@@ -112,6 +113,7 @@ namespace IMS.Web.Controllers
         public async Task<ApiResult> Places()
         {
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
+            await orderApplyService.DeleteListAsync(user.Id);
             var res = await goodsCarService.GetModelListAsync(user.Id);
             if (res.Count() <= 0)
             {
@@ -195,8 +197,15 @@ namespace IMS.Web.Controllers
                 await orderService.UpdateAsync(id, null, null, orderStateId);
             }
             await goodsCarService.DeleteListAsync(user.Id);
-            await orderApplyService.DeleteAsync(user.Id);
+            await orderApplyService.DeleteListAsync(user.Id);
             return new ApiResult { status = 1, msg = "支付成功" };
+        }
+        [HttpPost]
+        public async Task<ApiResult> State()
+        {
+            IdNameDTO[] res = await idNameService.GetByTypeNameAsync("订单状态");
+            var result = res.Select(i => new { id = i.Id, name = i.Name }).ToList();
+            return new ApiResult { status = 1,data= result };
         }
     }
 }

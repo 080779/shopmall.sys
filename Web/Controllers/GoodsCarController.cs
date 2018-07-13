@@ -30,6 +30,17 @@ namespace IMS.Web.Controllers
             return new ApiResult { status = 1, data = model };
         }
         [HttpPost]
+        public async Task<ApiResult> SelectList()
+        {
+            string parm = await settingService.GetParmByNameAsync("网站域名");
+            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
+            GoodsCarSearchResult result = await goodsCarService.GetModelListAsync(user.Id,true, null, null, null, 1, 100);
+            GoodsCarListApiModel model = new GoodsCarListApiModel();
+            model.goodsCars = result.GoodsCars.Select(g => new GoodsCarModel { id = g.Id, goodsId = g.GoodsId, goodsName = g.Name, realityPrice = g.RealityPrice, number = g.Number, goodsAmount = g.GoodsAmount, imgUrl = parm + g.ImgUrl, isSelected = g.IsSelected }).ToList();
+            model.totalAmount = result.TotalAmount;
+            return new ApiResult { status = 1, data = model };
+        }
+        [HttpPost]
         public async Task<ApiResult> Add(GoodsCarAddModel model)
         {
             if (model.Id <= 0)

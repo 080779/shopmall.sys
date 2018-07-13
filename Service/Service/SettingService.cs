@@ -79,6 +79,17 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<SettingDTO[]> GetModelListAsync(string settingTypeName)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                long settingTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == settingTypeName)).Id;
+                var entities = dbc.GetAll<SettingEntity>().Where(a=>a.SettingTypeId==settingTypeId);
+                var settingsResult = await entities.ToListAsync();
+                return settingsResult.Select(a => ToDTO(a)).ToArray();
+            }
+        }
+
         public async Task<SettingDTO[]> GetModelListAsync(long[] settingTypeIds)
         {
             using (MyDbContext dbc = new MyDbContext())

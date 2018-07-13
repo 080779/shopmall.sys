@@ -69,6 +69,12 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        public ActionResult UploadDescPic(HttpPostedFileBase imgFile)
+        {
+            return Json(new { errno = "0", data= ImageHelper.Save(imgFile) });
+        }
+
+        [HttpPost]
         public async Task<ActionResult> GetImg(long id)
         {
             var res = await goodsImgService.GetModelListAsync(id);
@@ -85,6 +91,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public async Task<ActionResult> Add(GoodsAddEditModel model)
         {
             if(string.IsNullOrEmpty(model.Description))
@@ -103,6 +110,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Msg = "商品添加成功" });
         }
         [HttpPost]
+        [ValidateInput(false)]
         public async Task<ActionResult> Edit(GoodsAddEditModel model)
         {
             if (string.IsNullOrEmpty(model.Description))
@@ -119,6 +127,16 @@ namespace IMS.Web.Areas.Admin.Controllers
                 return Json(new AjaxResult { Status = 0, Msg = "商品编辑失败" });
             }
             return Json(new AjaxResult { Status = 1, Msg = "商品编辑成功" });
+        }
+        [HttpPost]
+        public async Task<ActionResult> Del(long id)
+        {
+            bool flag = await goodsService.DeleteAsync(id);
+            if (!flag)
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "商品删除失败" });
+            }
+            return Json(new AjaxResult { Status = 1, Msg = "商品删除成功" });
         }
         [HttpPost]
         public async Task<ActionResult> GetModel(long id)

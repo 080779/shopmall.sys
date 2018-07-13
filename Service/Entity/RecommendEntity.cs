@@ -12,7 +12,7 @@ namespace IMS.Service.Entity
     public class RecommendEntity : BaseEntity
     {
         public long UserId { get; set; }
-        public UserEntity User { get; set; }
+        public virtual UserEntity User { get; set; }
         public string RecommendMobile { get; set; }
         public long RecommendId { get; set; }
         public UserEntity Recommend { get; set; }
