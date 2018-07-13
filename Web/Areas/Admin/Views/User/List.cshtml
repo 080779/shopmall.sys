@@ -181,6 +181,7 @@
         methods: {
             getstart: function () {
                 var that = this;
+                that.searchs.startTime = "";
                 laydate({
                     elem: '#start',
                     choose: function (date) {
@@ -190,6 +191,7 @@
             },
             getend: function () {
                 var that = this;
+                that.searchs.endTime = "";
                 laydate({
                     elem: '#end',
                     choose: function (date) {

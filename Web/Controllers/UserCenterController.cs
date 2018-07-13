@@ -21,6 +21,7 @@ namespace IMS.Web.Controllers
         public IUserService userService { get; set; }
         public IBankAccountService bankAccountService { get; set; }
         public IPayCodeService payCodeService { get; set; }
+        public ISettingService settingService { get; set; }
 
         [HttpPost]
         public async Task<ApiResult> Info()
@@ -45,16 +46,17 @@ namespace IMS.Web.Controllers
         [HttpPost]
         public async Task<ApiResult> Detail()
         {
+            string parm = await settingService.GetParmByNameAsync("网站域名");
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             UserDTO userdto = await userService.GetModelAsync(user.Id);
             PayCodeDTO[] payCodes = await payCodeService.GetModelByUserIdAsync(user.Id);
             BankAccountDTO[] bankAccounts = await bankAccountService.GetModelByUserIdAsync(user.Id);
             UserCenterDetailApiModel model = new UserCenterDetailApiModel();
             model.bankAccountId = bankAccounts.Count() <= 0 ? 0 : bankAccounts.First().Id;
-            model.qrCode = payCodes.Count() <= 0 ? null : payCodes.First().CodeUrl;
+            model.qrCode = payCodes.Count() <= 0 ? null : parm + payCodes.First().CodeUrl;
             if (userdto != null)
             {
-                model.headPic = userdto.HeadPic;
+                model.headPic = parm + userdto.HeadPic;
                 model.nickName = userdto.NickName;
             }
             return new ApiResult { status = 1, data = model };

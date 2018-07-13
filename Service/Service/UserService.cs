@@ -32,7 +32,7 @@ namespace IMS.Service.Service
             dto.IsReturned = entity.IsReturned;
             dto.IsUpgraded = entity.IsUpgraded;
             dto.BonusAmount = entity.BonusAmount;
-            dto.Recommonder = entity.Recommend.RecommendMobile;
+            dto.Recommender = entity.Recommend.RecommendMobile;
             return dto;
         }
 
@@ -79,7 +79,7 @@ namespace IMS.Service.Service
                     catch(Exception ex)
                     {
                         scope.Rollback();
-                        throw ex;
+                        return -3;
                     }
                 }                
             }
@@ -396,11 +396,19 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserTeamSearchResult result = new UserTeamSearchResult();
+                if(string.IsNullOrEmpty(mobile))
+                {
+                    mobile = (await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u=>u.Recommend.RecommendGenera==1)).Mobile;
+                }
                 RecommendEntity user = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(r => r.User.Mobile == mobile);
+                if(user==null)
+                {
+                    return result;
+                }
                 var recommends = dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false);
                 if (teamLevel != null)
                 {
-                    if (user.RecommendMobile == "superhero" && user.RecommendPath == "1")
+                    if (user.RecommendMobile == "superhero" && user.RecommendGenera == 1)
                     {
                         if (teamLevel == 1)
                         {
@@ -446,7 +454,7 @@ namespace IMS.Service.Service
                      (a.RecommendPath.Contains("-" + user.UserId.ToString() + "-") && a.RecommendGenera == user.RecommendGenera + 3));
                     }
                 }
-                if (keyword != null)
+                if (!string.IsNullOrEmpty(keyword))
                 {
                     recommends = recommends.Where(a => a.User.Mobile.Contains(keyword) || a.User.Code.Contains(keyword) || a.User.NickName.Contains(keyword));
                 }
@@ -459,9 +467,9 @@ namespace IMS.Service.Service
                     recommends = recommends.Where(a => a.User.CreateTime.Year <= endTime.Value.Year && a.User.CreateTime.Month <= endTime.Value.Month && a.User.CreateTime.Day <= endTime.Value.Day);
                 }
                 result.PageCount = (int)Math.Ceiling(recommends.LongCount() * 1.0f / pageSize);
-                var lists = recommends.ToList();
+                result.TeamLeader = ToDTO(user.User);
                 var userResult = await recommends.OrderByDescending(a => a.User.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
-                result.Users = userResult.Select(a => ToDTO(a.User)).ToArray();
+                result.Members = userResult.Select(a => ToDTO(a.User)).ToArray();
                 return result;
             }
         }
@@ -533,9 +541,8 @@ namespace IMS.Service.Service
                     recommends = recommends.Where(a => a.User.CreateTime.Year <= endTime.Value.Year && a.User.CreateTime.Month <= endTime.Value.Month && a.User.CreateTime.Day <= endTime.Value.Day);
                 }
                 result.PageCount = (int)Math.Ceiling(recommends.LongCount() * 1.0f / pageSize);
-                var lists = recommends.ToList();
                 var userResult = await recommends.OrderByDescending(a => a.User.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
-                result.Users = userResult.Select(a => ToDTO(a.User)).ToArray();
+                result.Members = userResult.Select(a => ToDTO(a.User)).ToArray();
                 return result;
             }
         }

@@ -9,7 +9,7 @@ namespace IMS.Web.Areas.Admin.Models.UserTeam
 {
     public class UserTeamListViewModel
     {
-        public UserDTO Header { get; set; }
+        public UserDTO TeamLeader { get; set; }
         public UserDTO[] Members { get; set; }
         public long PageCount { get; set; }
         public SettingDTO[] TeamLevels { get; set; }

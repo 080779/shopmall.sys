@@ -87,6 +87,7 @@ namespace IMS.IService
         /// <param name="pageSize">每页数量</param>
         /// <returns></returns>
         Task<UserTeamSearchResult> GetModelTeamListAsync(long userId, long? teamLevel, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
+        Task<UserTeamSearchResult> GetModelTeamListAsync(string mobile, long? teamLevel, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
     }
     public class UserSearchResult
     {
@@ -95,8 +96,8 @@ namespace IMS.IService
     }
     public class UserTeamSearchResult
     {
-        public UserDTO TeamUser { get; set; }
-        public UserDTO[] Users { get; set; }
+        public UserDTO TeamLeader { get; set; }
+        public UserDTO[] Members { get; set; }
         public long PageCount { get; set; }
     }
 }

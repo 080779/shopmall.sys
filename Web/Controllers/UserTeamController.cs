@@ -24,7 +24,7 @@ namespace IMS.Web.Controllers
         {
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             var res= await userService.GetModelTeamListAsync(user.Id,model.TeamLevelId,null,null,null,model.PageIndex, model.PageSize);
-            var result = res.Users.Select(u => new
+            var result = res.Members.Select(u => new
             {
                 id = u.Id,
                 mobile = u.Mobile,
@@ -35,7 +35,7 @@ namespace IMS.Web.Controllers
                 bonusAmount=u.BonusAmount,
                 amount=u.Amount,
                 buyAmount=u.BuyAmount,
-                recommonder=u.Recommonder
+                recommender = u.Recommender
             });
             return new ApiResult { status = 1,data= result };
         }
