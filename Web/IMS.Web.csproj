@@ -328,6 +328,7 @@
     <Compile Include="Areas\Admin\Controllers\GoodsController.cs" />
     <Compile Include="Areas\Admin\Controllers\SlideController.cs" />
     <Compile Include="Areas\Admin\Controllers\NoticeController.cs" />
+    <Compile Include="Areas\Admin\Controllers\JournalController.cs" />
     <Compile Include="Areas\Admin\Controllers\TakeCashController.cs" />
     <Compile Include="Areas\Admin\Controllers\TeamController.cs" />
     <Compile Include="Areas\Admin\Controllers\TestController.cs" />
@@ -447,6 +448,8 @@
     <Content Include="Areas\Admin\Views\Test\List.cshtml" />
     <Content Include="Areas\Admin\Views\Team\List.cshtml" />
     <Content Include="Areas\Admin\Views\TakeCash\List.cshtml" />
+    <Content Include="Areas\Admin\Views\Log\List.cshtml" />
+    <Content Include="Areas\Admin\Views\Journal\List.cshtml" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">
@@ -458,6 +461,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\Admin\Views\NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\IMS.Common.csproj">

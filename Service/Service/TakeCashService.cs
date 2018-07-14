@@ -86,6 +86,34 @@ namespace IMS.Service.Service
                 return entity.Id;
             }
         }
+        
+        public async Task<long> Confirm(long id)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                TakeCashEntity takeCash = await dbc.GetAll<TakeCashEntity>().SingleOrDefaultAsync(t=>t.Id==id);
+                if(takeCash==null)
+                {
+                    return -1;
+                }
+                UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == takeCash.UserId);
+                if(user==null)
+                {
+                    return -2;
+                }
+                user.Amount = user.Amount - takeCash.Amount;
+                takeCash.StateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "已结款")).Id;
+                JournalEntity journal = new JournalEntity();
+                journal.OutAmount = takeCash.Amount;
+                journal.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "余额提现")).Id;
+                journal.Remark = "余额提现";
+                journal.UserId = takeCash.UserId;
+                journal.BalanceAmount = user.Amount;
+                dbc.Journals.Add(journal);
+                await dbc.SaveChangesAsync();
+                return takeCash.Id;
+            }
+        }
 
         public async Task<TakeCashSearchResult> GetModelListAsync(long? userId,long? stateId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {

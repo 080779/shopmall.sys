@@ -14,7 +14,7 @@ namespace IMS.Service.Entity
         public long UserId { get; set; }
         public virtual UserEntity User { get; set; }
         public long StateId { get; set; }
-        public decimal? Amount { get; set; }
+        public decimal Amount { get; set; }
         public string Description { get; set; }
         public virtual IdNameEntity State { get; set; }
         public long PayTypeId { get; set; }

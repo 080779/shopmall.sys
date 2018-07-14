@@ -16,6 +16,8 @@ namespace IMS.DTO
         public long JournalTypeId { get; set; }
         public string JournalTypeName { get; set; }
         public long UserId { get; set; }
-        public string UserMobile { get; set; }
+        public string Mobile { get; set; }
+        public string NickName { get; set; }
+        public string OrderCode { get; set; }
     }
 }
