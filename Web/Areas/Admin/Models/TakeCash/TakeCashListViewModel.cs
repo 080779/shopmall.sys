@@ -7,14 +7,10 @@ using static IMS.Common.Pagination;
 
 namespace IMS.Web.Areas.Admin.Models.TakeCash
 {
-    public class ListViewModel
+    public class TakeCashListViewModel
     {
         public TakeCashDTO[] TakeCashes { get; set; }
         public IdNameDTO[] States { get; set; }
-        public string PageHtml { get; set; }
-        public List<Page> Pages { get; set; }
         public long PageCount { get; set; }
-        public long? GivingIntegralCount { get; set; }
-        public long? UseIntegralCount { get; set; }
     }
 }

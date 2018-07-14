@@ -151,7 +151,7 @@ namespace IMS.Web.Controllers
             OrderDTO dto = await orderService.GetModelAsync(id);
             if (payTypeId == model.PayTypeId)
             {
-                long payResId = await userService.BalancePayAsync(user.Id, dto.Amount);
+                long payResId = await userService.BalancePayAsync(user.Id, id, dto.Amount);
                 if (payResId == -1)
                 {
                     return new ApiResult { status = 0, msg = "用户不存在" };
@@ -159,6 +159,10 @@ namespace IMS.Web.Controllers
                 if (payResId == -2)
                 {
                     return new ApiResult { status = 0, msg = "用户账户余额不足" };
+                }
+                if (payResId == -3)
+                {
+                    return new ApiResult { status = 0, msg = "订单不存在" };
                 }
                 orderStateId = await idNameService.GetIdByNameAsync("待发货");
                 await orderService.UpdateAsync(id, null, null, orderStateId);
@@ -184,7 +188,7 @@ namespace IMS.Web.Controllers
             OrderDTO dto = await orderService.GetModelAsync(id);
             if (payTypeId == model.PayTypeId)
             {
-                long payResId = await userService.BalancePayAsync(user.Id, dto.Amount);
+                long payResId = await userService.BalancePayAsync(user.Id, id, dto.Amount);
                 if (payResId == -1)
                 {
                     return new ApiResult { status = 0, msg = "用户不存在" };
@@ -192,6 +196,10 @@ namespace IMS.Web.Controllers
                 if (payResId == -2)
                 {
                     return new ApiResult { status = 0, msg = "用户账户余额不足" };
+                }
+                if (payResId == -3)
+                {
+                    return new ApiResult { status = 0, msg = "订单不存在" };
                 }
                 orderStateId = await idNameService.GetIdByNameAsync("待发货");
                 await orderService.UpdateAsync(id, null, null, orderStateId);

@@ -12,7 +12,7 @@ namespace IMS.Service.Entity
     public class PayCodeEntity : BaseEntity
     {
         public long UserId { get; set; }
-        public UserEntity User { get; set; }
+        public virtual UserEntity User { get; set; }
         public string Name { get; set; }
         public string CodeUrl { get; set; }
         public string Description { get; set; }

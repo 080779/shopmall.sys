@@ -339,7 +339,7 @@
     <Compile Include="Areas\Admin\Models\Home\HomeIndexViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Order\OrderDetailViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Order\OrderListViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\TakeCash\ListViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\TakeCash\TakeCashListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\UserTeam\UserTeamListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\User\UserBonusSetModel.cs" />
     <Compile Include="Areas\Admin\Models\User\UserListViewModel.cs" />
@@ -354,6 +354,7 @@
     <Compile Include="Controllers\AddressController.cs" />
     <Compile Include="Controllers\BankAccountController.cs" />
     <Compile Include="Controllers\UserCenterController.cs" />
+    <Compile Include="Controllers\TakeCashController.cs" />
     <Compile Include="Controllers\UserTeamController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
@@ -393,6 +394,7 @@
     <Compile Include="Models\Order\OrderAddModel.cs" />
     <Compile Include="Models\PayType\PayTypeListApiModel.cs" />
     <Compile Include="Models\Slide\SlideListApiModel.cs" />
+    <Compile Include="Models\TakeCash\TakeCashApplyModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterEditBankAccountModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterInfoApiModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterEditNickNameModel.cs" />
@@ -431,7 +433,6 @@
     <Content Include="Areas\Admin\Views\Admin\List.cshtml" />
     <Content Include="Areas\Admin\Views\Login\Login.cshtml" />
     <Content Include="Areas\Admin\Views\User\List.cshtml" />
-    <Content Include="Areas\Admin\Views\TakeCash\List.cshtml" />
     <Content Include="Areas\Admin\Views\AdminLog\List.cshtml" />
     <Content Include="Areas\Admin\Views\Home\Permission.cshtml" />
     <Content Include="Areas\Admin\Views\Notice\List.cshtml" />
@@ -445,6 +446,7 @@
     <Content Include="Areas\Admin\Views\Order\Detail.cshtml" />
     <Content Include="Areas\Admin\Views\Test\List.cshtml" />
     <Content Include="Areas\Admin\Views\Team\List.cshtml" />
+    <Content Include="Areas\Admin\Views\TakeCash\List.cshtml" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">

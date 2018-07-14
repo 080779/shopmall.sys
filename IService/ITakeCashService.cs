@@ -9,14 +9,12 @@ namespace IMS.IService
 {
     public interface ITakeCashService:IServiceSupport
     {
-        Task<TakeCashSearchResult> GetModelListAsync(long? stateId,string mobile,DateTime? startTime,DateTime? endTime,int pageIndex,int pageSize);
-        Task<decimal> CalcAsync(string description,long integral);
+        Task<long> AddAsync(long userId,long payTypeId,decimal amount,string descripton);
+        Task<TakeCashSearchResult> GetModelListAsync(long? userId,long? stateId, string keyword, DateTime? startTime,DateTime? endTime,int pageIndex,int pageSize);
     }
     public class TakeCashSearchResult
     {
         public TakeCashDTO[] TakeCashes { get; set; }
         public long PageCount { get; set; }
-        public long? GivingIntegralCount { get; set; }
-        public long? UseIntegralCount { get; set; }
     }
 }

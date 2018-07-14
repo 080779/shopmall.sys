@@ -17,5 +17,7 @@ namespace IMS.Service.Entity
         public decimal? Amount { get; set; }
         public string Description { get; set; }
         public virtual IdNameEntity State { get; set; }
+        public long PayTypeId { get; set; }
+        public virtual IdNameEntity PayType { get; set; }
     }
 }

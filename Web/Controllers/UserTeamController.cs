@@ -42,7 +42,7 @@ namespace IMS.Web.Controllers
         [HttpPost]
         public async Task<ApiResult> Levels()
         {
-            var res= await settingService.GetModelListAsync("会员等级");
+            var res= await settingService.GetModelListAsync("代理等级");
             var result = res.Select(s => new { id = Convert.ToInt32(s.Parm), name = s.Name });
             return new ApiResult { status = 1, data = result };
         }

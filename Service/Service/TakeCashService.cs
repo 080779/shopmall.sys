@@ -12,7 +12,7 @@ namespace IMS.Service.Service
 {
     public class TakeCashService : ITakeCashService
     {
-        public TakeCashDTO ToDTO(TakeCashEntity entity)
+        public TakeCashDTO ToDTO(TakeCashEntity entity, PayCodeDTO payCode, BankAccountDTO bankAccount)
         {
             TakeCashDTO dto = new TakeCashDTO();
             dto.Amount = entity.Amount;
@@ -21,25 +21,102 @@ namespace IMS.Service.Service
             dto.Id = entity.Id;
             dto.StateId = entity.StateId;
             dto.StateName = entity.State.Name;
+            dto.PayTypeId = entity.PayTypeId;
+            dto.PayTypeName = entity.PayType.Name;
+            dto.PayCode = payCode;
+            dto.BankAccount = bankAccount;
+            dto.NickName = entity.User.NickName;
+            dto.Mobile = entity.User.Mobile;
+            dto.Code = entity.User.Code;
             return dto;
         }
-        public async Task<TakeCashSearchResult> GetModelListAsync(long? stateId, string mobile, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        public BankAccountDTO ToDTO(BankAccountEntity entity)
+        {
+            BankAccountDTO dto = new BankAccountDTO();
+            if(entity==null)
+            {
+                return dto = null;
+            }
+            dto.Name = entity.Name;
+            dto.CreateTime = entity.CreateTime;
+            dto.Id = entity.Id;
+            dto.BankAccount = entity.BankAccount;
+            dto.BankName = entity.BankName;
+            dto.Description = entity.Description;
+            dto.UserId = entity.UserId;
+            return dto;
+        }
+        public PayCodeDTO ToDTO(PayCodeEntity entity)
+        {
+            PayCodeDTO dto = new PayCodeDTO();
+            if (entity == null)
+            {
+                return dto = null;
+            }
+            dto.Description = entity.Description;
+            dto.Name = entity.Name;
+            dto.CreateTime = entity.CreateTime;
+            dto.Id = entity.Id;
+            dto.CodeUrl = entity.CodeUrl;
+            dto.UserId = entity.UserId;
+            return dto;
+        }
+
+        public async Task<long> AddAsync(long userId, long payTypeId, decimal amount, string descripton)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == userId);
+                if(user==null)
+                {
+                    return -1;
+                }
+                if(user.Amount<amount)
+                {
+                    return -2;
+                }
+                TakeCashEntity entity = new TakeCashEntity();
+                entity.UserId = userId;
+                entity.PayTypeId = payTypeId;
+                entity.StateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "未结款")).Id;
+                entity.Amount = amount;
+                entity.Description = descripton;
+                dbc.TakeCashes.Add(entity);
+                await dbc.SaveChangesAsync();
+                return entity.Id;
+            }
+        }
+
+        public async Task<TakeCashSearchResult> GetModelListAsync(long? userId,long? stateId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 TakeCashSearchResult result = new TakeCashSearchResult();
-                var entities = await dbc.GetAll<TakeCashEntity>().FirstOrDefaultAsync();
-                
+                var entities = dbc.GetAll<TakeCashEntity>();
+                if(userId!=null)
+                {
+                    entities = entities.Where(a => a.UserId == userId);
+                }
+                if (stateId != null)
+                {
+                    entities = entities.Where(a => a.StateId == stateId);
+                }
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    entities = entities.Where(g => g.User.Mobile.Contains(keyword) || g.User.NickName.Contains(keyword));
+                }
+                if (startTime != null)
+                {
+                    entities = entities.Where(a => a.CreateTime >= startTime);
+                }
+                if (endTime != null)
+                {
+                    entities = entities.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
+                }
+                result.PageCount = (int)Math.Ceiling((await entities.LongCountAsync()) * 1.0f / pageSize);
+                var takeCashResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                result.TakeCashes = takeCashResult.Select(a => ToDTO(a,ToDTO(dbc.GetAll<PayCodeEntity>().SingleOrDefault(p => p.UserId == a.UserId)),ToDTO(dbc.GetAll<BankAccountEntity>().SingleOrDefault(b=>b.UserId==a.UserId)))).ToArray();
                 return result;
-            }
-        }
-
-        public async Task<decimal> CalcAsync(string description, long integral)
-        {
-            using (MyDbContext dbc = new MyDbContext())
-            {
-                var setting = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == description);
-                return Convert.ToDecimal(setting.Name) * integral;
             }
         }
     }

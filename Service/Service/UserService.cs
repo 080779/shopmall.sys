@@ -242,7 +242,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<long> BalancePayAsync(long id, decimal amount)
+        public async Task<long> BalancePayAsync(long id,long orderId, decimal amount)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -257,13 +257,30 @@ namespace IMS.Service.Service
                 }
                 user.Amount = user.Amount - amount;
                 user.BuyAmount = user.BuyAmount + amount;
-
+                OrderEntity order = await dbc.GetAll<OrderEntity>().SingleOrDefaultAsync(o => o.Id == orderId);
+                if(order==null)
+                {
+                    return -3;
+                }
+                string orderCode = order.Code;
+                var orderlists = dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == order.Id);
+                foreach(var orderlist in orderlists)
+                {
+                    GoodsEntity goods = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g => g.Id == orderlist.GoodsId);
+                    if(goods==null)
+                    {
+                        continue;
+                    }
+                    goods.Inventory = goods.Inventory - orderlist.Number;
+                    goods.SaleNum = goods.SaleNum + orderlist.Number;
+                }                
                 JournalEntity journal = new JournalEntity();
                 journal.UserId = user.Id;
                 journal.BalanceAmount = user.Amount;
                 journal.OutAmount = amount;
                 journal.Remark = "购买商品";
                 journal.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "购物")).Id;
+                journal.OrderCode = orderCode;
                 dbc.Journals.Add(journal);
                 decimal one;
                 decimal two;
@@ -298,6 +315,7 @@ namespace IMS.Service.Service
                     journal1.InAmount = amount * one;
                     journal1.Remark = "佣金收入";
                     journal1.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "佣金收入")).Id;
+                    journal1.OrderCode = orderCode;
                     dbc.Journals.Add(journal1);
 
                     UserEntity twoer= dbc.GetAll<UserEntity>().SingleOrDefault(u => u.Id == oneer.Recommend.RecommendId);
@@ -312,6 +330,7 @@ namespace IMS.Service.Service
                         journal2.InAmount = amount * two;
                         journal2.Remark = "佣金收入";
                         journal2.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "佣金收入")).Id;
+                        journal2.OrderCode = orderCode;
                         dbc.Journals.Add(journal2);
 
                         UserEntity threer= dbc.GetAll<UserEntity>().SingleOrDefault(u => u.Id == twoer.Recommend.RecommendId);
@@ -326,6 +345,7 @@ namespace IMS.Service.Service
                             journal3.InAmount = amount * three;
                             journal3.Remark = "佣金收入";
                             journal3.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "佣金收入")).Id;
+                            journal3.OrderCode = orderCode;
                             dbc.Journals.Add(journal3);
                         }
                     }

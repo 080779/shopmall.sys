@@ -13,6 +13,7 @@ namespace IMS.Service.Entity
         public decimal? InAmount { get; set; }
         public decimal? OutAmount { get; set; }
         public decimal? BalanceAmount { get; set; }
+        public string OrderCode { get; set; }
         public long UserId { get; set; }
         public virtual UserEntity User { get; set; }
         public long JournalTypeId { get; set; }

@@ -9,11 +9,16 @@ namespace IMS.DTO
     public class TakeCashDTO:BaseDTO
     {
         public long UserId { get; set; }
-        public string UserMobile { get; set; }
-        public string UserCode { get; set; }
+        public string Mobile { get; set; }
+        public string Code { get; set; }
+        public string NickName { get; set; }
         public long StateId { get; set; }
         public decimal? Amount { get; set; }
         public string Description { get; set; }
         public string StateName { get; set; }
+        public long PayTypeId { get; set; }
+        public string PayTypeName { get; set; }
+        public PayCodeDTO PayCode { get; set; }
+        public BankAccountDTO BankAccount { get; set; }
     }
 }

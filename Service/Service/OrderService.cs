@@ -85,7 +85,7 @@ namespace IMS.Service.Service
                 dbc.Orders.Add(entity);
                 await dbc.SaveChangesAsync();
 
-                foreach(var orderApply in orderApplies)
+                foreach (var orderApply in orderApplies)
                 {
                     GoodsEntity goods = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g => g.Id == orderApply.GoodsId);
                     if (goods == null)
@@ -99,7 +99,7 @@ namespace IMS.Service.Service
                     listEntity.Price = goods.RealityPrice;
                     listEntity.ImgUrl = orderApply.ImgUrl;
                     listEntity.TotalFee = listEntity.Price * orderApply.Number + listEntity.PostFee + listEntity.Poundage;
-                    entity.Amount = entity.Amount+listEntity.TotalFee;
+                    entity.Amount = entity.Amount + listEntity.TotalFee;
                     dbc.OrderLists.Add(listEntity);
                 }
                 await dbc.SaveChangesAsync();

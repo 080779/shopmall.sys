@@ -23,12 +23,14 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         //[Permission("积分管理_积分管理")]
         [HttpPost]
-        public async Task<ActionResult> List(long? stateId, string mobile, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
+        public async Task<ActionResult> List(long? stateId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
-            //long? typeId = await journalTypeService.GetIdByDescAsync("赠送");
-            TakeCashSearchResult result = await takeCashService.GetModelListAsync(stateId,mobile,startTime, endTime, pageIndex, pageSize);
-            
-            return Json(new AjaxResult { Status = 1, Data = result });
+            TakeCashSearchResult result = await takeCashService.GetModelListAsync(null,stateId, keyword, startTime, endTime, pageIndex, pageSize);
+            TakeCashListViewModel model = new TakeCashListViewModel();
+            model.TakeCashes = result.TakeCashes;
+            model.PageCount = result.PageCount;
+            model.States = await idNameService.GetByTypeNameAsync("提现状态");
+            return Json(new AjaxResult { Status = 1, Data = model });
         }        
     }
 }

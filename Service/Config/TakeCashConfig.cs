@@ -10,6 +10,7 @@ namespace IMS.Service.Config
             ToTable("tb_takecashes");
             HasRequired(t => t.User).WithMany().HasForeignKey(t => t.UserId).WillCascadeOnDelete(false);
             HasRequired(t => t.State).WithMany().HasForeignKey(t => t.StateId).WillCascadeOnDelete(false);
+            HasRequired(t => t.PayType).WithMany().HasForeignKey(t=>t.PayTypeId).WillCascadeOnDelete(false);
             Property(t => t.Description).HasMaxLength(100);
         }
     }

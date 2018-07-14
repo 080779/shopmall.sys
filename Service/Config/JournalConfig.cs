@@ -10,6 +10,7 @@ namespace IMS.Service.Config
             ToTable("tb_journals");
             Property(s => s.Remark).HasMaxLength(100);
             Property(s => s.RemarkEn).HasMaxLength(100);
+            Property(s => s.OrderCode).HasMaxLength(100);
             HasRequired(s => s.JournalType).WithMany().HasForeignKey(s => s.JournalTypeId).WillCascadeOnDelete(false);
             HasRequired(s => s.User).WithMany().HasForeignKey(s => s.UserId).WillCascadeOnDelete(false);
         }
