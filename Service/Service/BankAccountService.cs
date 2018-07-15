@@ -69,6 +69,7 @@ namespace IMS.Service.Service
                     entity.Name = name;
                     entity.BankAccount = bankAccount;
                     entity.BankName = bankName;
+                    entity.UserId = id;
                     dbc.BankAccounts.Add(entity);
                 }
                 else
@@ -97,7 +98,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<BankAccountDTO[]> GetModelByUserIdAsync(long id)
+        public async Task<BankAccountDTO[]> GetModelListByUserIdAsync(long id)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -113,6 +114,19 @@ namespace IMS.Service.Service
             {
                 var entity = await dbc.GetAll<BankAccountEntity>().SingleOrDefaultAsync(b => b.IsNull == false && b.Id == id);
                 if(entity==null)
+                {
+                    return null;
+                }
+                return ToDTO(entity);
+            }
+        }
+
+        public async Task<BankAccountDTO> GetModelByUserIdAsync(long id)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                var entity = await dbc.GetAll<BankAccountEntity>().SingleOrDefaultAsync(b => b.IsNull == false && b.UserId == id);
+                if (entity == null)
                 {
                     return null;
                 }

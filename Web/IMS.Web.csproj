@@ -354,6 +354,8 @@
     <Compile Include="Controllers\NoticeController.cs" />
     <Compile Include="Controllers\AddressController.cs" />
     <Compile Include="Controllers\BankAccountController.cs" />
+    <Compile Include="Controllers\JournalController.cs" />
+    <Compile Include="Controllers\ShareController.cs" />
     <Compile Include="Controllers\UserCenterController.cs" />
     <Compile Include="Controllers\TakeCashController.cs" />
     <Compile Include="Controllers\UserTeamController.cs" />
@@ -367,7 +369,6 @@
     <Compile Include="Models\Address\AddressDetailModel.cs" />
     <Compile Include="Models\Address\AddressListApiModel.cs" />
     <Compile Include="Models\BankAccount\BankAccountInfoApiModel.cs" />
-    <Compile Include="Models\BankAccount\BankAccountInfoModel.cs" />
     <Compile Include="Models\BankAccount\BankAccountEditModel.cs" />
     <Compile Include="Models\BankAccount\BankAccountAddModel.cs" />
     <Compile Include="Models\GoodsArea\GoodsAreaListApiModel.cs" />
@@ -384,6 +385,8 @@
     <Compile Include="Models\Goods\GoodsDetailModel.cs" />
     <Compile Include="Models\Goods\GoodsHotSalesModel.cs" />
     <Compile Include="Models\Goods\GoodsSearchModel.cs" />
+    <Compile Include="Models\Journal\JournalListApiModel.cs" />
+    <Compile Include="Models\Journal\JournalListModel.cs" />
     <Compile Include="Models\Notice\NoticeListApiModel.cs" />
     <Compile Include="Models\Order\OrderListApiModel.cs" />
     <Compile Include="Models\Order\OrderListModel.cs" />
@@ -395,12 +398,12 @@
     <Compile Include="Models\Order\OrderAddModel.cs" />
     <Compile Include="Models\PayType\PayTypeListApiModel.cs" />
     <Compile Include="Models\Slide\SlideListApiModel.cs" />
+    <Compile Include="Models\TakeCash\TakeCashListApiModel.cs" />
+    <Compile Include="Models\TakeCash\TakeCashListModel.cs" />
     <Compile Include="Models\TakeCash\TakeCashApplyModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterEditBankAccountModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterInfoApiModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterEditNickNameModel.cs" />
-    <Compile Include="Models\UserCenter\UserCenterEditQrCodeModel.cs" />
-    <Compile Include="Models\UserCenter\UserCenterEditHeadPicModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterDetailApiModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterResetPwdModel.cs" />
     <Compile Include="Models\UserTeam\UserTeamListModel.cs" />
@@ -448,7 +451,6 @@
     <Content Include="Areas\Admin\Views\Test\List.cshtml" />
     <Content Include="Areas\Admin\Views\Team\List.cshtml" />
     <Content Include="Areas\Admin\Views\TakeCash\List.cshtml" />
-    <Content Include="Areas\Admin\Views\Log\List.cshtml" />
     <Content Include="Areas\Admin\Views\Journal\List.cshtml" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
@@ -461,7 +463,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Areas\Admin\Views\NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\IMS.Common.csproj">

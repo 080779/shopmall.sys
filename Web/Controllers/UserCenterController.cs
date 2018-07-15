@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
@@ -26,6 +27,7 @@ namespace IMS.Web.Controllers
         [HttpPost]
         public async Task<ApiResult> Info()
         {
+            string parm = await settingService.GetParmByNameAsync("网站域名");
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             UserDTO result = await userService.GetModelAsync(user.Id);
             UserCenterInfoApiModel model = new UserCenterInfoApiModel();
@@ -33,7 +35,7 @@ namespace IMS.Web.Controllers
             model.bonusAmount = result.BonusAmount;
             model.buyAmount = result.BuyAmount;
             model.createTime = result.CreateTime;
-            model.headPic = result.HeadPic;
+            model.headPic = parm + result.HeadPic;
             model.id = result.Id;
             model.levelId = result.LevelId;
             model.levelName = result.LevelName;
@@ -50,10 +52,10 @@ namespace IMS.Web.Controllers
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             UserDTO userdto = await userService.GetModelAsync(user.Id);
             PayCodeDTO[] payCodes = await payCodeService.GetModelByUserIdAsync(user.Id);
-            BankAccountDTO[] bankAccounts = await bankAccountService.GetModelByUserIdAsync(user.Id);
+            BankAccountDTO bankAccount = await bankAccountService.GetModelByUserIdAsync(user.Id);
             UserCenterDetailApiModel model = new UserCenterDetailApiModel();
-            model.bankAccountId = bankAccounts.Count() <= 0 ? 0 : bankAccounts.First().Id;
             model.qrCode = payCodes.Count() <= 0 ? null : parm + payCodes.First().CodeUrl;
+            model.bankAccount = bankAccount == null ? null : bankAccount.BankAccount;
             if (userdto != null)
             {
                 model.headPic = parm + userdto.HeadPic;
@@ -62,55 +64,47 @@ namespace IMS.Web.Controllers
             return new ApiResult { status = 1, data = model };
         }
         [HttpPost]
-        public async Task<ApiResult> EditHeadPic(UserCenterEditHeadPicModel model)
+        public async Task<ApiResult> EditHeadPic()
         {
-            if (string.IsNullOrEmpty(model.File))
+            HttpContextBase context = (HttpContextBase)Request.Properties["MS_HttpContext"];//获取传统context
+            HttpRequestBase request = context.Request;//定义传统request对象
+            HttpPostedFileBase _upfile = context.Request.Files["File"];
+            if (_upfile == null)
             {
                 return new ApiResult { status = 0, msg = "图片文件不能为空" };
             }
-            if (!model.File.Contains(";base64"))
-            {
-                return new ApiResult { status = 0, msg = "请上传编码后的base64图片文件" };
-            }
-            string res;
-            if(!ImageHelper.SaveBase64(model.File, out res))
-            {
-                return new ApiResult { status = 0, msg = res };
-            }
+            string res = ImageHelper.SaveImage(_upfile);
 
+            string parm = await settingService.GetParmByNameAsync("网站域名");
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             bool flag = await userService.UpdateInfoAsync(user.Id, null, res);
             if (!flag)
             {
-                return new ApiResult { status = 0, msg = "头像添加修改失败" };
+                return new ApiResult { status = 0, msg = HttpUtility.UrlEncode("头像添加修改失败", Encoding.UTF8) };
             }
-            return new ApiResult { status = 1, msg = "头像添加修改成功" };
+            return new ApiResult { status = 1, data = parm + res };
         }
         [HttpPost]
-        public async Task<ApiResult> EditQrCode(UserCenterEditQrCodeModel model)
+        public async Task<ApiResult> EditQrCode()
         {
-            if (string.IsNullOrEmpty(model.File))
+            HttpContextBase context = (HttpContextBase)Request.Properties["MS_HttpContext"];//获取传统context
+            HttpRequestBase request = context.Request;//定义传统request对象
+            HttpPostedFileBase _upfile = context.Request.Files["File"];
+            if (_upfile == null)
             {
                 return new ApiResult { status = 0, msg = "图片文件不能为空" };
             }
-            if (!model.File.Contains(";base64"))
-            {
-                return new ApiResult { status = 0, msg = "请上传编码后的base64图片文件" };
-            }
-            string res;
-            if (!ImageHelper.SaveBase64(model.File, out res))
-            {
-                return new ApiResult { status = 0, msg = res };
-            }
+            string res = ImageHelper.SaveImage(_upfile);
 
+            string parm = await settingService.GetParmByNameAsync("网站域名");
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             PayCodeDTO[] payCodes = await payCodeService.GetModelByUserIdAsync(user.Id);
-            if(payCodes==null)
+            if(payCodes.Count()<=0)
             {
                 long id= await payCodeService.AddAsync(user.Id, "微信收款码", res, null);
                 if(id<=0)
                 {
-                    return new ApiResult { status = 0, msg = "收款码添加修改失败" };
+                    return new ApiResult { status = 0, msg = HttpUtility.UrlEncode("收款码添加修改失败", Encoding.UTF8) };
                 }
             }
             else
@@ -118,10 +112,10 @@ namespace IMS.Web.Controllers
                 bool flag = await payCodeService.UpdateAsync(payCodes.First().Id,null,res,null);
                 if (!flag)
                 {
-                    return new ApiResult { status = 0, msg = "收款码添加修改失败" };
+                    return new ApiResult { status = 0, msg = HttpUtility.UrlEncode("收款码添加修改失败", Encoding.UTF8) };
                 }
-            }            
-            return new ApiResult { status = 1, msg = "收款码添加修改成功" };
+            }
+            return new ApiResult { status = 1, data = parm + res };
         }
         [HttpPost]
         public async Task<ApiResult> EditNickName(UserCenterEditNickNameModel model)
@@ -137,30 +131,6 @@ namespace IMS.Web.Controllers
                 return new ApiResult { status = 0, msg = "昵称添加修改失败" };
             }
             return new ApiResult { status = 1, msg = "昵称添加修改成功" };
-        }
-
-        [HttpPost]
-        public async Task<ApiResult> EditBankAccount(UserCenterEditBankAccountModel model)
-        {
-            if (string.IsNullOrEmpty(model.BankAccount))
-            {
-                return new ApiResult { status = 0, msg = "银行卡号不能为空" };
-            }
-            if (string.IsNullOrEmpty(model.BankName))
-            {
-                return new ApiResult { status = 0, msg = "开卡银行不能为空" };
-            }
-            if (string.IsNullOrEmpty(model.Name))
-            {
-                return new ApiResult { status = 0, msg = "持卡人姓名不能为空" };
-            }
-            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
-            bool flag = await bankAccountService.UpdateByUserIdAsync(user.Id, model.Name, model.BankAccount, model.BankName);
-            if (!flag)
-            {
-                return new ApiResult { status = 0, msg = "银行卡添加修改失败" };
-            }
-            return new ApiResult { status = 1, msg = "银行卡添加修改成功" };
         }
 
         [HttpPost]

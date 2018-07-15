@@ -9,11 +9,13 @@ namespace IMS.IService
 {
     public interface IJournalService:IServiceSupport
     {
-        Task<JournalSearchResult> GetModelListAsync(long? journalTypeId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
+        Task<JournalSearchResult> GetModelListAsync(long? userId, long? journalTypeId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
     }
     public class JournalSearchResult
     {
         public JournalDTO[] Journals { get; set; }
         public long PageCount { get; set; }
+        public decimal? TotalInAmount { get; set; }
+        public decimal? TotalOutAmount { get; set; }
     }
 }

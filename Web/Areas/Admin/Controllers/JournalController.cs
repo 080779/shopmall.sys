@@ -26,7 +26,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         public async Task<ActionResult> List(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
             long journalTypeId = await idNameService.GetIdByNameAsync("佣金收入");
-            JournalSearchResult result = await journalService.GetModelListAsync(journalTypeId, keyword, startTime, endTime, pageIndex, pageSize);
+            JournalSearchResult result = await journalService.GetModelListAsync(null,journalTypeId, keyword, startTime, endTime, pageIndex, pageSize);
             return Json(new AjaxResult { Status = 1, Data = result });
         }        
     }

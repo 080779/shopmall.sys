@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +13,20 @@ namespace IMS.Common
 {
     public static class HttpClientHelper
     {
+        public static async Task<string> GetResponseByGetAsync(HttpClient httpClient, string url)
+        {
+            string result = "";
+            var response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                Stream myResponseStream = await response.Content.ReadAsStreamAsync();
+                StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("utf-8"));
+                result = await myStreamReader.ReadToEndAsync();
+                myStreamReader.Close();
+                myResponseStream.Close();
+            }
+            return result;
+        }
         /// <summary>
         /// get请求，可以对请求头进行多项设置
         /// </summary>
@@ -21,8 +37,27 @@ namespace IMS.Common
         {
             string result = "";
             url = url + "?" + BuildParam(paramArray);
-            var response = httpClient.GetAsync(url).Result;
+            var response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
+            {
+                Stream myResponseStream = await response.Content.ReadAsStreamAsync();
+                StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("utf-8"));
+                result = await myStreamReader.ReadToEndAsync();
+                myStreamReader.Close();
+                myResponseStream.Close();
+            }
+            return result;
+        }
+
+        public static async Task<string> GetResponseByPostJsonAsync<T>(HttpClient httpClient, T obj, string url)
+        {
+            string result = "";
+            string json = JsonConvert.SerializeObject(obj);
+            HttpClient client = new HttpClient();
+            StringContent content = new StringContent(json);
+            //contentype 必不可少
+            content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+            var response = await httpClient.PostAsync(url, content);            if (response.IsSuccessStatusCode)
             {
                 Stream myResponseStream = await response.Content.ReadAsStreamAsync();
                 StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("utf-8"));
@@ -54,7 +89,6 @@ namespace IMS.Common
             if (encode == null) return content;
 
             return System.Web.HttpUtility.UrlEncode(content, Encoding.UTF8);
-
         }
 
         private static string BuildParam(List<KeyValuePair<string, string>> paramArray, Encoding encode = null)

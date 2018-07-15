@@ -13,8 +13,9 @@ namespace IMS.IService
         Task<bool> UpdateAsync(long id, string name, string bankAccount, string bankName);
         Task<bool> UpdateByUserIdAsync(long id, string name, string bankAccount, string bankName);
         Task<bool> DeleteAsync(long id);
-        Task<BankAccountDTO[]> GetModelByUserIdAsync(long id);
+        Task<BankAccountDTO[]> GetModelListByUserIdAsync(long id);
         Task<BankAccountDTO> GetModelAsync(long id);
+        Task<BankAccountDTO> GetModelByUserIdAsync(long id);
         Task<BankAccountSearchResult> GetModelListAsync(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
     }
     public class BankAccountSearchResult

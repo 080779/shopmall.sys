@@ -27,6 +27,12 @@ namespace IMS.Web.Controllers
         public IPayCodeService payCodeService { get; set; }
         [HttpPost]
         [AllowAnonymous]
+        public string Index()
+        {
+            return "ok";
+        }
+        [HttpPost]
+        [AllowAnonymous]
         public async Task<ApiResult> Register(UserRegisterModel model)
         {
             if(string.IsNullOrEmpty(model.Mobile))

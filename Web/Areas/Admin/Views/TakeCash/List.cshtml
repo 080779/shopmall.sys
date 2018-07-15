@@ -80,7 +80,7 @@
                         <td v-html="takeCashe.amount"></td>
                         <td v-html="takeCashe.stateName"></td>
                         <td>
-                            <a class="btn btn-xs btn-info" v-on:click="getcodeorcard(takeCashe.payTypeName,takeCashe.payCode,take.bankAccount)" v-html="'查看'+takeCashe.payTypeName"></a>
+                            <a class="btn btn-xs btn-info" v-on:click="getcodeorcard(takeCashe.payTypeName,takeCashe.payCode,takeCashe.bankAccount)" v-html="'查看'+takeCashe.payTypeName"></a>
                             <a title="标记结款" href="javascript:;" v-on:click="confirm(takeCashe.id)" class="btn btn-xs btn-warning">标记结款</a>
                         </td>
                     </tr>
@@ -105,15 +105,15 @@
         <!--查看银行账户图层-->
         <div class="add_menber" id="bank" style="display:none">
             <ul class="page-content">
-                <li><label class="label_name">银行账号：</label><span class="add_name"><label v-html="bankAccount"></label></span><div class="prompt r_f"></div></li>
-                <li><label class="label_name">开户行：</label><span class="add_name"><label v-html="bankName"></label></span><div class="prompt r_f"></div></li>
-                <li><label class="label_name">开户人姓名：</label><span class="add_name"><label v-html="name"></label></span><div class="prompt r_f"></div></li>
+                <li><label class="label_name">银行账号：</label><span class="add_name"><label v-html="bankAccount.bankAccount"></label></span><div class="prompt r_f"></div></li>
+                <li><label class="label_name">开户行：</label><span class="add_name"><label v-html="bankAccount.bankName"></label></span><div class="prompt r_f"></div></li>
+                <li><label class="label_name">开户人姓名：</label><span class="add_name"><label v-html="bankAccount.name"></label></span><div class="prompt r_f"></div></li>
             </ul>
         </div>
         <!--查看银行账户图层-->
         <div class="add_menber" id="paycode" style="display:none">
             <ul class="page-content">
-                <li><label class="label_name"></label><span class="add_name"><img v-bind:src="codeUrl" /></span><div class="prompt r_f"></div></li>               
+                <li><label class="label_name"></label><span class="add_name"><img v-bind:src="payCode.codeUrl" /></span><div class="prompt r_f"></div></li>
             </ul>
         </div>
     </div>
@@ -124,8 +124,12 @@
         el: "#app",
         data: {
             takeCashes: [],
-            payCode: [],
-            bankAccount:[],
+            payCode: {
+                codeUrl: ""
+            },
+            bankAccount: {
+                bankAccount: "", bankName: "", name: ""
+            },
             states: [],
             stateId: "",
             pages: {
@@ -182,7 +186,16 @@
                 this.getpage();
             },
             getcodeorcard: function (payTypeName, payCode, bankAccount) {
-                if (payTypeName == '付款码') {
+                if (payCode != null) {
+                    this.payCode = payCode;
+                }
+                if (bankAccount != null) {
+                    this.bankAccount = bankAccount;
+                }
+                console.log(payTypeName);
+                console.log(this.payCode)
+                console.log(this.bankAccount);
+                if (payTypeName == '收款码') {
                     layer.open({
                         type: 1,
                         title: '添加用户',
@@ -192,7 +205,7 @@
                         content: $('#paycode')
                     });
                 }
-                else {
+                if (payTypeName =='银行卡') {
                     layer.open({
                         type: 1,
                         title: '添加用户',
@@ -201,7 +214,7 @@
                         area: ['400px', ''],
                         content: $('#bank')
                     });
-                }                
+                }
             },
             confirm: function () { }
         },

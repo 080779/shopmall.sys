@@ -32,12 +32,16 @@ namespace IMS.Service.Service
             return dto;
         }
 
-        public async Task<JournalSearchResult> GetModelListAsync(long? journalTypeId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        public async Task<JournalSearchResult> GetModelListAsync(long? userId, long? journalTypeId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 JournalSearchResult result = new JournalSearchResult();
                 var entities = dbc.GetAll<JournalEntity>();
+                if (userId != null)
+                {
+                    entities = entities.Where(a => a.UserId == userId);
+                }
                 if (journalTypeId != null)
                 {
                     entities = entities.Where(a => a.JournalTypeId == journalTypeId);
@@ -55,6 +59,8 @@ namespace IMS.Service.Service
                     entities = entities.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
                 }
                 result.PageCount = (int)Math.Ceiling((await entities.LongCountAsync()) * 1.0f / pageSize);
+                result.TotalInAmount = await entities.SumAsync(j => j.InAmount);
+                result.TotalOutAmount = await entities.SumAsync(j => j.OutAmount);
                 var journalResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 result.Journals = journalResult.Select(a => ToDTO(a)).ToArray();
                 return result;

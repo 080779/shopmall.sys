@@ -21,10 +21,11 @@ namespace IMS.Web.Controllers
         public IBankAccountService bankAccountService { get; set; }
 
         [HttpPost]
-        public async Task<ApiResult> Info(BankAccountInfoModel model)
+        public async Task<ApiResult> Info()
         {
-            BankAccountDTO dto = await bankAccountService.GetModelAsync(model.Id);
-            BankAccountInfoApiModel apiModel = null;
+            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
+            BankAccountDTO dto = await bankAccountService.GetModelByUserIdAsync(user.Id);
+            BankAccountInfoApiModel apiModel = new BankAccountInfoApiModel();
             if(dto!=null)
             {
                 apiModel.bankAccount = dto.BankAccount;
@@ -33,30 +34,6 @@ namespace IMS.Web.Controllers
                 apiModel.name = dto.Name;
             }
             return new ApiResult { status = 1, data=apiModel };
-        }
-
-        [HttpPost]
-        public async Task<ApiResult> Add(BankAccountAddModel model)
-        {            
-            if (string.IsNullOrEmpty(model.BankAccount))
-            {
-                return new ApiResult { status = 0, msg = "银行卡号不能为空" };
-            }
-            if (string.IsNullOrEmpty(model.BankName))
-            {
-                return new ApiResult { status = 0, msg = "开户银行不能为空" };
-            }
-            if (string.IsNullOrEmpty(model.Name))
-            {
-                return new ApiResult { status = 0, msg = "持卡人姓名不能为空" };
-            }
-            User user= JwtHelper.JwtDecrypt<User>(ControllerContext);
-            long id = await bankAccountService.AddAsync(user.Id, model.Name,model.BankAccount,model.BankName);
-            if(id<=0)
-            {
-                return new ApiResult { status = 0, msg = "添加银行卡失败" };
-            }
-            return new ApiResult { status =1,msg= "添加银行卡成功" };
         }
         [HttpPost]
         public async Task<ApiResult> Edit(BankAccountEditModel model)
@@ -74,7 +51,7 @@ namespace IMS.Web.Controllers
                 return new ApiResult { status = 0, msg = "持卡人姓名不能为空" };
             }
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
-            bool flag = await bankAccountService.UpdateAsync(model.Id, model.Name, model.BankAccount, model.BankName);
+            bool flag = await bankAccountService.UpdateByUserIdAsync(user.Id, model.Name, model.BankAccount, model.BankName);
             if (!flag)
             {
                 return new ApiResult { status = 0, msg = "修改银行卡失败" };

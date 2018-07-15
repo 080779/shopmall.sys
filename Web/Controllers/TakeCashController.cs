@@ -20,11 +20,14 @@ namespace IMS.Web.Controllers
     {
         public ITakeCashService takeCashService { get; set; }
         public IIdNameService idNameService { get; set; }
-        public async Task<ApiResult> List()
+        public async Task<ApiResult> List(TakeCashListModel model)
         {
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
-            var res = await takeCashService.GetModelListAsync(user.Id, null, null, null, null, 1, 100);
-            return new ApiResult { status = 1, data = res };
+            TakeCashSearchResult res = await takeCashService.GetModelListAsync(user.Id, null, null, null, null, model.PageIndex, model.PageSize);
+            TakeCashListApiModel result = new TakeCashListApiModel();
+            result.takeCashes = res.TakeCashes.Select(t=>new TakeCash { createTime=t.CreateTime,amount=t.Amount,description=t.Description,payTypeName=t.PayTypeName,stateName=t.StateName});
+            result.pageCount = res.PageCount;
+            return new ApiResult { status = 1, data = result };
         }
         public async Task<ApiResult> Apply(TakeCashApplyModel model)
         {

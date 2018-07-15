@@ -33,6 +33,7 @@ namespace IMS.Service.Service
             dto.IsUpgraded = entity.IsUpgraded;
             dto.BonusAmount = entity.BonusAmount;
             dto.Recommender = entity.Recommend.RecommendMobile;
+            dto.HeadPic = entity.HeadPic;
             return dto;
         }
 

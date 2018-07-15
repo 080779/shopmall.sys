@@ -10,6 +10,6 @@ namespace IMS.Web.Models.UserCenter
         public string nickName { get; set; }
         public string headPic { get; set; }
         public string qrCode { get; set; }
-        public long bankAccountId { get; set; }
+        public string bankAccount { get; set; }
     }
 }
