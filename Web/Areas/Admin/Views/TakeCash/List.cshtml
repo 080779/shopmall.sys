@@ -216,7 +216,27 @@
                     });
                 }
             },
-            confirm: function () { }
+            confirm: function (id) {
+                var that = this;
+                layer.confirm("确认要结款吗？", { icon: 0, title: '确认要结款' }, function (index) {
+                    that.$http.post('/admin/takecash/confirm', { id: id }, { emulateJSON: true }).then(function (result) {
+                        if (result.data.status == 1) {
+                            layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                            that.getpage();
+                        }
+                        else if (result.data.status == 0) {
+                            layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                            //that.msg = result.data.msg;
+                        }
+                        else if (result.data.status == 302) {
+                            window.location.href = result.data.data;
+                        }
+                        else if (result.data.status == 401) {
+                            layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                        }
+                    });
+                });
+            }
         },
         computed: {
             indexs: function () {

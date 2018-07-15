@@ -318,6 +318,8 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\AdminController.cs" />
+    <Compile Include="Areas\Admin\Controllers\ReturnController.cs" />
+    <Compile Include="Areas\Admin\Controllers\DeliverController.cs" />
     <Compile Include="Areas\Admin\Controllers\GoodsSecondTypeController.cs" />
     <Compile Include="Areas\Admin\Controllers\GoodsTypeController.cs" />
     <Compile Include="Areas\Admin\Controllers\GoodsAreaController.cs" />

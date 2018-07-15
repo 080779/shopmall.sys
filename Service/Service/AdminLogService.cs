@@ -58,15 +58,15 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<AdminLogSearchResult> GetModelListAsync(string mobile, long? permissionTypeId, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        public async Task<AdminLogSearchResult> GetModelListAsync(string keyword, long? permissionTypeId, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 AdminLogSearchResult result = new AdminLogSearchResult();
                 var adminLogs = dbc.GetAll<AdminLogEntity>();
-                if (!string.IsNullOrEmpty(mobile))
+                if (!string.IsNullOrEmpty(keyword))
                 {
-                    adminLogs = adminLogs.Where(a => a.Admin.Mobile.Contains(mobile));
+                    adminLogs = adminLogs.Where(a => a.Admin.Mobile.Contains(keyword));
                 }
                 if (permissionTypeId != null)
                 {

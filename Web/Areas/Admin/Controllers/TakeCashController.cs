@@ -31,6 +31,16 @@ namespace IMS.Web.Areas.Admin.Controllers
             model.PageCount = result.PageCount;
             model.States = await idNameService.GetByTypeNameAsync("提现状态");
             return Json(new AjaxResult { Status = 1, Data = model });
-        }        
+        }
+        [HttpPost]
+        public async Task<ActionResult> Confirm(long id)
+        {
+            long res = await takeCashService.Confirm(id);
+            if(res<=0)
+            {
+                return Json(new AjaxResult { Status = 1, Msg = "结款失败" });
+            }
+            return Json(new AjaxResult { Status = 1, Msg = "结款成功" });
+        }
     }
 }

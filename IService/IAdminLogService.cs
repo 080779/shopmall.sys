@@ -11,7 +11,7 @@ namespace IMS.IService
     {
         Task<long> AddAsync(long adminId,long permissionTypeId,string description,string ipAddress,string tip);
         long Add(long adminId,string permissionType,string description,string ipAddress,string tip);
-        Task<AdminLogSearchResult> GetModelListAsync(string mobile, long? permissionTypeId, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
+        Task<AdminLogSearchResult> GetModelListAsync(string keyword, long? permissionTypeId, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
     }
     public class AdminLogSearchResult
     {
