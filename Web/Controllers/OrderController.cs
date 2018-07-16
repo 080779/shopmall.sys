@@ -30,7 +30,7 @@ namespace IMS.Web.Controllers
         public async Task<ApiResult> List(OrderListModel model)
         {
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
-            OrderSearchResult result= await orderService.GetModelListAsync(user.Id, model.OrderStateId, null, null, null, model.PageIndex, model.PageSize);
+            OrderSearchResult result= await orderService.GetModelListAsync(user.Id, model.OrderStateId,null, null, null, null, model.PageIndex, model.PageSize);
             OrderListApiModel res = new OrderListApiModel();
             res.PageCount = result.PageCount;
             res.Orders = result.Orders.Select(o => new Order
@@ -38,13 +38,22 @@ namespace IMS.Web.Controllers
                 amount = o.Amount,
                 code = o.Code,
                 createTime = o.CreateTime,
-                deliveryCode = o.DeliveryCode,
-                deliveryName = o.DeliveryName,
+                postFee = o.PostFee,
+                deliver = o.Deliver,
+                deliveryCode = o.DeliverCode,
+                deliveryName = o.DeliverName,
                 id = o.Id,
                 orderStateId = o.OrderStateId,
                 orderStateName = o.OrderStateName,
                 payTypeId = o.PayTypeId,
                 payTypeName = o.PayTypeName,
+                receiverName = o.ReceiverName,
+                receiverMobile = o.ReceiverMobile,
+                receiverAddress = o.ReceiverAddress,
+                payTime = o.PayTime,
+                consignTime = o.ConsignTime,
+                endTime = o.EndTime,
+                closeTime=o.CloseTime,
                 OrderGoods = orderListService.GetModelList(o.Id).Select(l => new OrderGoods {
                     name= l.GoodsName,
                     number= l.Number,
@@ -57,28 +66,44 @@ namespace IMS.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ApiResult> Add(OrderAddModel model)
+        public async Task<ApiResult> Detail(OrderDetailModel model)
         {
-            //GoodsCarDTO dto = new GoodsCarDTO();
-            //var goods= await goodsService.GetModelAsync(model.GoodsId);
-            //dto.GoodsId = model.GoodsId;
-            //dto.ImgUrl = goodsImgService.GetFirstImg(model.GoodsId);
-            //dto.Name = goods.Name;
-            //dto.Number = model.Number;
-            //dto.RealityPrice = goods.RealityPrice;
-            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
-            //dto.UserId = user.Id;
-            //dto.GoodsAmount = dto.RealityPrice * dto.Number;
-            var res = await goodsCarService.GetModelListAsync(user.Id, null, null, null, 1, 100);
-            long id = await orderApplyService.AddAsync(res.GoodsCars);
-            //long orderStateId = await idNameService.GetIdByNameAsync("待付款");
-            //User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
-            //id= await orderService.AddAsync(user.Id, model.AddressId, model.PayTypeId, orderStateId, model.GoodsId,model.Number);
-            if (id <= 0)
+            var o = await orderService.GetModelAsync(model.Id);
+            if(o==null)
             {
-                return new ApiResult { status = 0, msg = "生成订单失败" };
+                return new ApiResult { status = 0, msg = "订单不存在" };
             }
-            return new ApiResult { status = 1, msg = "生成订单成功" };
+            Order order = new Order
+            {
+                amount = o.Amount,
+                code = o.Code,
+                createTime = o.CreateTime,
+                postFee = o.PostFee,
+                deliver = o.Deliver,
+                deliveryCode = o.DeliverCode,
+                deliveryName = o.DeliverName,
+                id = o.Id,
+                orderStateId = o.OrderStateId,
+                orderStateName = o.OrderStateName,
+                payTypeId = o.PayTypeId,
+                payTypeName = o.PayTypeName,
+                receiverName = o.ReceiverName,
+                receiverMobile = o.ReceiverMobile,
+                receiverAddress = o.ReceiverAddress,
+                payTime = o.PayTime,
+                consignTime = o.ConsignTime,
+                endTime = o.EndTime,
+                closeTime = o.CloseTime,
+                OrderGoods = orderListService.GetModelList(o.Id).Select(l => new OrderGoods
+                {
+                    name = l.GoodsName,
+                    number = l.Number,
+                    price = l.Price,
+                    realityPrice = l.RealityPrice,
+                    totalFee = l.TotalFee
+                }).ToList()
+            };
+            return new ApiResult { status = 1, data = order };
         }
 
         public async Task<ApiResult> Place(OrderPlaceModel model)
@@ -133,7 +158,7 @@ namespace IMS.Web.Controllers
             var res = await orderApplyService.GetModelListAsync(user.Id);
             OrderPlaceListApiModel model = new OrderPlaceListApiModel();
             model.totalAmount = res.ToTalAmount;
-            model.orderPlaces = res.OrderApplies.Select(o => new OrderPlace { GoodsId = o.GoodsId, GoodsName = o.GoodsName, ImgUrl = o.ImgUrl, Number = o.Number, PostFee = o.PostFee, Poundage = o.Poundage, Price = o.Price, TotalFee = o.TotalFee, UserId = o.UserId }).ToList();
+            model.orderPlaces = res.OrderApplies.Select(o => new OrderPlace { GoodsId = o.GoodsId, GoodsName = o.GoodsName, ImgUrl = o.ImgUrl, Number = o.Number, Price = o.Price, TotalFee = o.TotalFee, UserId = o.UserId }).ToList();
             return new ApiResult { status = 1, data = model };
         }
 
@@ -179,7 +204,7 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "下单列表无商品" };
             }
-            long id = await orderService.AddAsync(user.Id, model.AddressId, model.PayTypeId, orderStateId,dtos.OrderApplies);
+            long id = await orderService.AddAsync(null,user.Id, model.AddressId, model.PayTypeId, orderStateId,dtos.OrderApplies);
             if (id <= 0)
             {
                 return new ApiResult { status = 0, msg = "生成订单失败" };

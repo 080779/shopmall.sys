@@ -34,6 +34,20 @@ namespace IMS.Service.Service
                 return entitiy.Id;
             }
         }
+
+        public async Task<IdNameDTO> GetByNameAsync(string name)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                var entitiy = await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == name);
+                if (entitiy == null)
+                {
+                    return null;
+                }
+                return ToDTO(entitiy);
+            }
+        }
+
         public async Task<IdNameDTO[]> GetByTypeNameAsync(string typeName)
         {
             using (MyDbContext dbc = new MyDbContext())

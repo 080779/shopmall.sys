@@ -15,7 +15,7 @@ namespace IMS.Service.Config
             Property(p => p.ReceiverMobile).HasMaxLength(50);
             Property(p => p.ReceiverAddress).HasMaxLength(50);
             HasKey(r => r.OrderId);
-            HasRequired(p => p.Order).WithOptional(p => p.Delivery).WillCascadeOnDelete(false);
+            //HasRequired(p => p.Order).WithOptional(p => p.Delivery).WillCascadeOnDelete(false);
         }
     }
 }

@@ -30,10 +30,10 @@ namespace IMS.Web.Areas.Admin.Controllers
             {
                 return Json(new AjaxResult { Status = 0, Msg = "幻灯片名称不能为空" });
             }
-            if (string.IsNullOrEmpty(url))
-            {
-                return Json(new AjaxResult { Status = 0, Msg = "转向连接不能为空" });
-            }
+            //if (string.IsNullOrEmpty(url))
+            //{
+            //    return Json(new AjaxResult { Status = 0, Msg = "转向连接不能为空" });
+            //}
             if (string.IsNullOrEmpty(imgFile))
             {
                 return Json(new AjaxResult { Status = 0, Msg = "幻灯片图片必须上传" });
@@ -63,10 +63,10 @@ namespace IMS.Web.Areas.Admin.Controllers
             {
                 return Json(new AjaxResult { Status = 0, Msg = "幻灯片名称不能为空" });
             }
-            if (string.IsNullOrEmpty(url))
-            {
-                return Json(new AjaxResult { Status = 0, Msg = "转向连接不能为空" });
-            }
+            //if (string.IsNullOrEmpty(url))
+            //{
+            //    return Json(new AjaxResult { Status = 0, Msg = "转向连接不能为空" });
+            //}
             if (string.IsNullOrEmpty(imgFile))
             {
                 return Json(new AjaxResult { Status = 0, Msg = "幻灯片图片必须上传" });

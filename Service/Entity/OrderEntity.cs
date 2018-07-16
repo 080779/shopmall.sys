@@ -27,15 +27,21 @@ namespace IMS.Service.Entity
         public DateTime? ConsignTime { get; set; }//发货时间
         public DateTime? EndTime { get; set; }//交易完成时间
         public DateTime? CloseTime { get; set; }//交易结束时间
-        public virtual DeliveryEntity Delivery { get; set; }
+        //public virtual DeliveryEntity Delivery { get; set; }
+        public decimal PostFee { get; set; } = 10;//邮费
+        public string Deliver { get; set; } = "快递";
+        public string DeliverName { get; set; }
+        public string DeliverCode { get; set; }
         public string BuyerMessage { get; set; }//买家留言
         public bool IsRated { get; set; } = false;//是否评价
         public DateTime? ApplyTime { get; set; }//申请退货时间
         public decimal? ReturnAmount { get; set; }//申请退货金额
         public decimal? DeductAmount { get; set; } //扣除金额
         public decimal? RefundAmount { get; set; } //应退款金额
-        public long? DownCycledId { get; set; }//降级处理
-        public long? AuditStatusId { get; set; }//审核状态
+        public long DownCycledId { get; set; } = 65;//降级处理
+        public virtual IdNameEntity DownCycled { get; set; }
+        public long AuditStatusId { get; set; } = 65;//审核状态
+        public virtual IdNameEntity AuditStatus { get; set; }
         public DateTime? AuditTime { get; set; }//审核时间
         public string AuditMobile { get; set; }//审核人账号
     }

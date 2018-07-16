@@ -156,7 +156,7 @@
                 </li>
             </ul>
         </div>
-        <!--添加商品图层-->
+        <!--修改商品图层-->
         <div class="add_menber" id="edit" style="display:none">
             <ul class="page-content">
                 <li><label class="label_name">商品名称：</label><span class="add_name"><input value="" placeholder="商品名称" v-model="edits.name" type="text" class="text_add" /></span><div class="prompt r_f"></div></li>
@@ -194,7 +194,7 @@
                     <label class="label_name">商品描述：</label><span class="add_name"></span><div class="prompt r_f"></div>
                 </li>
                 <li>
-                    <div id="adddesc" style="width:1000px"></div>
+                    <div id="editdesc" style="width:1000px"></div>
                 </li>
             </ul>
         </div>
@@ -345,6 +345,7 @@
             },
             add: function () {
                 var that = this;
+                that.adds.description = editor.txt.html();
                 layer.open({
                     type: 1,
                     title: '添加用户',
@@ -385,7 +386,7 @@
                 that.$http.post('/admin/goods/getmodel', { id: id }, { emulateJSON: true }).then(function (result) {
                     that.edits = result.data.data;
                     that.getsec(result.data.data.goodsTypeId);
-                    editor.txt.html(result.data.data.description);
+                    editor1.txt.html(result.data.data.description);
                 });
                 //that.getsec(that.edits.goodsTypeId);
                 layer.open({
@@ -530,4 +531,12 @@
     editor.customConfig.uploadFileName = 'imgfile'
     editor.customConfig.uploadImgServer = '/admin/goods/uploaddescpic'
     editor.create()
+
+    var editor1 = new E('#editdesc')
+    editor1.customConfig.uploadImgMaxSize = 3 * 1024 * 1024
+    editor1.customConfig.uploadImgMaxLength = 1
+    editor1.customConfig.uploadImgShowBase64 = true
+    editor1.customConfig.uploadFileName = 'imgfile'
+    editor1.customConfig.uploadImgServer = '/admin/goods/uploaddescpic'
+    editor1.create()
 </script>

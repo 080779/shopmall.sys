@@ -22,8 +22,6 @@ namespace IMS.Service.Service
             dto.Id = entity.Id;
             dto.ImgUrl = entity.ImgUrl;
             dto.Number = entity.Number;
-            dto.PostFee = entity.PostFee;
-            dto.Poundage = entity.Poundage;
             dto.Price = entity.Price;
             dto.TotalFee = entity.TotalFee;
             dto.UserId = entity.UserId;

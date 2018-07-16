@@ -24,9 +24,9 @@ namespace IMS.Web.Controllers
         [HttpPost]
         public async Task<ApiResult> Get()
         {
-            string url = string.Format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}",APPID,APPSECRET);
+            string getTokenUrl = string.Format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}",APPID,APPSECRET);
             HttpClient httpClient = new HttpClient();
-            string res = await HttpClientHelper.GetResponseByGetAsync(httpClient, url);
+            string res = await HttpClientHelper.GetResponseByGetAsync(httpClient, getTokenUrl);
             if (res.Contains(@"errcode\"))
             {
                 return new ApiResult { status = 1, data = res };
@@ -35,15 +35,17 @@ namespace IMS.Web.Controllers
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             Parm parm = new Parm();
             parm.scene = (await userService.GetModelAsync(user.Id)).Mobile;
-            var result = await HttpClientHelper.GetResponseByPostJsonAsync(httpClient, parm, string.Format("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={0}", getAccessToken.access_token));
+            string getCodeUrl = string.Format("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={0}", getAccessToken.access_token);
+            var result = await HttpClientHelper.GetResponseByPostJsonAsync(httpClient, parm, getCodeUrl);
             return new ApiResult { status = 1, data = result };
         }
         public class Parm
         {
             public string scene { get; set; }
+            //public string page { get; set; } = "pages/register/register";
             public string page { get; set; } = "";
             public int width { get; set; } = 430;
-            public bool auto_color { get; set; } = true;
+            public bool auto_color { get; set; } = false;
             public object line_color { get; set; } = new LineColor();
             public bool is_hyaline { get; set; } = false;
         }
@@ -54,9 +56,9 @@ namespace IMS.Web.Controllers
         }
         public class LineColor
         {
-            public string r { get; set; } = "0";
-            public string g { get; set; } = "0";
-            public string b { get; set; } = "0";
+            public string r { get; set; } = "231";
+            public string g { get; set; } = "123";
+            public string b { get; set; } = "245";
         }
     }    
 }

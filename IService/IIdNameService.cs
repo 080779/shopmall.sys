@@ -10,6 +10,7 @@ namespace IMS.IService
     public interface IIdNameService : IServiceSupport
     {
         Task<long> GetIdByNameAsync(string name);
+        Task<IdNameDTO> GetByNameAsync(string name);
         Task<IdNameDTO[]> GetByTypeNameAsync(string typeName);
     }
 }

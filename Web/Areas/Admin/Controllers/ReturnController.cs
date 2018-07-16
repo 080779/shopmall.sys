@@ -1,6 +1,7 @@
 ﻿using IMS.Common;
 using IMS.IService;
 using IMS.Web.App_Start.Filter;
+using IMS.Web.Areas.Admin.Models.Return;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,11 +26,15 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         //[Permission("日志管理_查看日志")]
-        public async Task<ActionResult> List(string keyword,DateTime? startTime,DateTime? endTime,int pageIndex=1)
+        public async Task<ActionResult> List(long? auditStatusId, string keyword,DateTime? startTime,DateTime? endTime,int pageIndex=1)
         {
-            long orderStateId = await idNameService.GetIdByNameAsync("");
-            var result = await orderService.GetModelListAsync(null, orderStateId,keyword, startTime, endTime, pageIndex, pageSize);
-            return Json(new AjaxResult { Status = 1, Data = result });
+            long orderStateId = await idNameService.GetIdByNameAsync("退货中");
+            var result = await orderService.GetModelListAsync(null, orderStateId, auditStatusId, keyword, startTime, endTime, pageIndex, pageSize);
+            ReturnListViewModel model = new ReturnListViewModel();
+            model.Orders = result.Orders;
+            model.PageCount = result.PageCount;
+            model.AuditStatus = await idNameService.GetByTypeNameAsync("退货审核状态");
+            return Json(new AjaxResult { Status = 1, Data = model });
         }
     }
 }

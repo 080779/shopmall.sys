@@ -24,17 +24,18 @@ namespace IMS.Web.Areas.Admin.Controllers
             var result = await noticeService.GetModelListAsync(mobile, startTime, endTime, pageIndex, pageSize);
             return Json(new AjaxResult { Status = 1, Data = result });
         }
-        public async Task<ActionResult> Add(string content, string url, DateTime failureTime)
+        [ValidateInput(false)]
+        public async Task<ActionResult> Add(string code, string content, DateTime failureTime)
         {
+            if (string.IsNullOrEmpty(code))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "公告标题不能为空" });
+            }
             if (string.IsNullOrEmpty(content))
             {
                 return Json(new AjaxResult { Status = 0, Msg = "公告内容不能为空" });
-            }
-            if (string.IsNullOrEmpty(url))
-            {
-                return Json(new AjaxResult { Status = 0, Msg = "转向连接不能为空" });
-            }
-            long id = await noticeService.AddAsync(content, url, failureTime);
+            }            
+            long id = await noticeService.AddAsync(content, code, failureTime);
             if (id <= 0)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "添加公告失败" });
@@ -48,17 +49,18 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Data = model });
         }
 
-        public async Task<ActionResult> Edit(long id, string content, string url, DateTime failureTime)
+        [ValidateInput(false)]
+        public async Task<ActionResult> Edit(long id, string code, string content, DateTime failureTime)
         {
+            if (string.IsNullOrEmpty(code))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "公告标题不能为空" });
+            }
             if (string.IsNullOrEmpty(content))
             {
                 return Json(new AjaxResult { Status = 0, Msg = "公告内容不能为空" });
             }
-            if (string.IsNullOrEmpty(url))
-            {
-                return Json(new AjaxResult { Status = 0, Msg = "转向连接不能为空" });
-            }
-            bool flag = await noticeService.UpdateAsync(id, content, url, failureTime);
+            bool flag = await noticeService.UpdateAsync(id, code, content, failureTime);
 
             if (!flag)
             {

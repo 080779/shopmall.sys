@@ -9,7 +9,7 @@ namespace IMS.Service.Config
         {
             ToTable("tb_notices");
             Property(p => p.Code).HasMaxLength(30).IsRequired();
-            Property(p => p.Content).HasMaxLength(256);
+            Property(p => p.Content).HasMaxLength(2048);
             Property(p => p.Url).HasMaxLength(256);
         }
     }

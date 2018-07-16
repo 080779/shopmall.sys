@@ -24,14 +24,14 @@ namespace IMS.Service.Service
             dto.Url = entity.Url;
             return dto;
         }
-        public async Task<long> AddAsync(string content,string url, DateTime failureTime)
+        public async Task<long> AddAsync(string code,string content, DateTime failureTime)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 NoticeEntity entity = new NoticeEntity();
-                entity.Code = DateTime.Now.ToString("yyMMddHHmmss");
+                entity.Code = code;
                 entity.Content = content;
-                entity.Url = url;
+                entity.Url = "";
                 entity.FailureTime = failureTime;
                 if(entity.FailureTime>DateTime.Now)
                 {
@@ -39,7 +39,7 @@ namespace IMS.Service.Service
                 }
                 else
                 {
-                    entity.IsEnabled = true;
+                    entity.IsEnabled = false;
                 }
                 dbc.Notices.Add(entity);
                 await dbc.SaveChangesAsync();
@@ -100,7 +100,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<bool> UpdateAsync(long id,string content, string url, DateTime failureTime)
+        public async Task<bool> UpdateAsync(long id, string code, string content, DateTime failureTime)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -109,8 +109,8 @@ namespace IMS.Service.Service
                 {
                     return false;
                 }
+                entity.Code = code;
                 entity.Content = content;
-                entity.Url = url;
                 entity.FailureTime = failureTime;
                 if (entity.FailureTime > DateTime.Now)
                 {
@@ -118,7 +118,7 @@ namespace IMS.Service.Service
                 }
                 else
                 {
-                    entity.IsEnabled = true;
+                    entity.IsEnabled = false;
                 }
                 await dbc.SaveChangesAsync();
                 return true;

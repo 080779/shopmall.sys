@@ -24,7 +24,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         [HttpPost]
         public async Task<ActionResult> List(long? orderStateId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
-            var result = await orderService.GetModelListAsync(null, orderStateId, keyword, startTime, endTime, pageIndex, pageSize);
+            var result = await orderService.GetModelListAsync(null, orderStateId,null, keyword, startTime, endTime, pageIndex, pageSize);
             OrderListViewModel model = new OrderListViewModel();
             model.Orders = result.Orders;
             model.PageCount = result.PageCount;

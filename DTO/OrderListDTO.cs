@@ -16,9 +16,8 @@ namespace IMS.DTO
         public long Number { get; set; }
         public decimal Price { get; set; }
         public decimal RealityPrice { get; set; }
-        public decimal PostFee { get; set; }//邮费
-        public decimal Poundage { get; set; }//手续费
         public decimal TotalFee { get; set; }
         public string ImgUrl { get; set; }
+        public bool IsReturn { get; set; }
     }
 }

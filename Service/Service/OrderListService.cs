@@ -24,12 +24,11 @@ namespace IMS.Service.Service
             dto.Number = entity.Number;
             dto.OrderCode = entity.Order.Code;
             dto.OrderId = entity.OrderId;
-            dto.PostFee = entity.PostFee;
-            dto.Poundage = entity.Poundage;
             dto.Price = entity.Goods.Price;
             dto.RealityPrice = entity.Goods.RealityPrice;
             dto.TotalFee = entity.TotalFee;
             dto.GoodsCode = entity.Goods.Code;
+            dto.IsReturn = entity.IsReturn;
             return dto;
         }
         public async Task<long> AddAsync(long orderId, long goodsId, long number)
@@ -55,7 +54,7 @@ namespace IMS.Service.Service
                 {
                     entity.ImgUrl = imgEntity.ImgUrl;
                 }                
-                entity.TotalFee = entity.Price * number+entity.PostFee+entity.Poundage;
+                entity.TotalFee = entity.Price * number;
                 dbc.OrderLists.Add(entity);
                 await dbc.SaveChangesAsync();
                 return entity.Id;
@@ -87,7 +86,7 @@ namespace IMS.Service.Service
                     {
                         entity.ImgUrl = imgEntity.ImgUrl;
                     }
-                    entity.TotalFee = entity.Price * entity.Number + entity.PostFee + entity.Poundage;
+                    entity.TotalFee = entity.Price * entity.Number;
                     dbc.OrderLists.Add(entity);
                 }
                 await dbc.SaveChangesAsync();

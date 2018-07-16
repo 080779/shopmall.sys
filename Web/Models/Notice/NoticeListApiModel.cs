@@ -8,7 +8,7 @@ namespace IMS.Web.Models.Notice
     public class NoticeListApiModel
     {
         public long id { get; set; }
+        public string code { get; set; }
         public string content { get; set; }
-        public string url { get; set; }
     }
 }

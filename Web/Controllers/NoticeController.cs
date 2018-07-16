@@ -19,8 +19,18 @@ namespace IMS.Web.Controllers
         {
             NoticeSearchResult result= await noticeService.GetModelListAsync(null,null,null,1,100);
             List<NoticeListApiModel> model;
-            model = result.Notices.Select(n => new NoticeListApiModel { id = n.Id, content = n.Content, url = n.Url }).ToList(); ;
+            model = result.Notices.Select(n => new NoticeListApiModel { id = n.Id, content = n.Content, code = n.Code }).ToList(); ;
             return new ApiResult { status = 1, data = model };
+        }
+        public async Task<ApiResult> Detail(NoticeDetailModel model)
+        {
+            var n= await noticeService.GetModelAsync(model.Id);
+            if(n==null)
+            {
+                return new ApiResult { status = 0, msg = "公告不存在" };
+            }
+            NoticeListApiModel res = new NoticeListApiModel { id = n.Id, content = n.Content, code = n.Code };
+            return new ApiResult { status = 1, data = res };
         }
     }
 }

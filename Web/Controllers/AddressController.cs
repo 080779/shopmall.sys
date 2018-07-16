@@ -112,7 +112,7 @@ namespace IMS.Web.Controllers
             }
             return new ApiResult { status = 1, msg = "收货地址修改成功" };
         }
-        public async Task<ApiResult> Delete(AddressDelModel model)
+        public async Task<ApiResult> Del(AddressDelModel model)
         {
             bool flag = await addressService.DeleteAsync(model.Id);
             if (!flag)

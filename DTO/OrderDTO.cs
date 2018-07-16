@@ -17,8 +17,10 @@ namespace IMS.DTO
         public string PayTypeName { get; set; }//支付方式
         public long OrderStateId { get; set; }
         public string OrderStateName { get; set; }//订单状态
-        public string DeliveryName { get; set; }//物流名称
-        public string DeliveryCode { get; set; }//物流单号
+        public decimal PostFee { get; set; }
+        public string Deliver { get; set; }
+        public string DeliverName { get; set; }//物流名称
+        public string DeliverCode { get; set; }//物流单号
         public string ReceiverName { get; set; }
         public string ReceiverMobile { get; set; }
         public string ReceiverAddress { get; set; }
@@ -27,9 +29,16 @@ namespace IMS.DTO
         public DateTime? EndTime { get; set; }//交易完成时间
         public DateTime? CloseTime { get; set; }//交易结束时间
         public string BuyerMessage { get; set; }//买家留言
+        public long? DownCycledId { get; set; }//降级处理
+        public string DownCycledName { get; set; }
+        public long? AuditStatusId { get; set; }//审核状态
+        public string AuditStatusName { get; set; }
         public bool IsRated { get; set; } //是否评价
         public DateTime? ApplyTime { get; set; }//申请退货时间
         public decimal? DeductAmount { get; set; } //扣除金额
+        public DateTime? AuditTime { get; set; }//审核时间
+        public string AuditMobile { get; set; }//审核人账号
+        public decimal? ReturnAmount { get; set; }//申请退货金额
         public decimal? RefundAmount { get; set; } //应退款金额
     }
 }
