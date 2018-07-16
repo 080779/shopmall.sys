@@ -168,6 +168,39 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<OrderSearchResult> GetModelListAsync(long? buyerId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize, params long?[] orderStateIds)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                OrderSearchResult result = new OrderSearchResult();
+                var entities = dbc.GetAll<OrderEntity>();
+                if (buyerId != null)
+                {
+                    entities = entities.Where(a => a.BuyerId == buyerId);
+                }
+                if (orderStateIds !=null && orderStateIds.Count() > 0)
+                {
+                    entities = entities.Where(a => orderStateIds.Contains(a.OrderStateId));
+                }
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    entities = entities.Where(g => g.Code.Contains(keyword) || g.Buyer.Mobile.Contains(keyword));
+                }
+                if (startTime != null)
+                {
+                    entities = entities.Where(a => a.CreateTime >= startTime);
+                }
+                if (endTime != null)
+                {
+                    entities = entities.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
+                }
+                result.PageCount = (int)Math.Ceiling((await entities.LongCountAsync()) * 1.0f / pageSize);
+                var goodsTypesResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                result.Orders = goodsTypesResult.Select(a => ToDTO(a)).ToArray();
+                return result;
+            }
+        }
+
         public async Task<bool> UpdateAsync(long id, long? addressId, long? payTypeId, long? orderStateId)
         {
             using (MyDbContext dbc = new MyDbContext())

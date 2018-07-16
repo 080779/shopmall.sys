@@ -63,6 +63,7 @@ namespace IMS.Service.Service
 
                         if (recommend == null)
                         {
+                            scope.Rollback();
                             return -2;
                         }
                         RecommendEntity ruser = new RecommendEntity();
@@ -247,34 +248,38 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u=>u.Id==id);
-                if(user==null)
+                UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == id);
+                if (user == null)
                 {
                     return -1;
                 }
-                if(amount>user.Amount)
+                if (amount > user.Amount)
                 {
                     return -2;
                 }
                 user.Amount = user.Amount - amount;
                 user.BuyAmount = user.BuyAmount + amount;
                 OrderEntity order = await dbc.GetAll<OrderEntity>().SingleOrDefaultAsync(o => o.Id == orderId);
-                if(order==null)
+                if (order == null)
                 {
                     return -3;
                 }
                 string orderCode = order.Code;
                 var orderlists = dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == order.Id);
-                foreach(var orderlist in orderlists)
+                foreach (var orderlist in orderlists)
                 {
                     GoodsEntity goods = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g => g.Id == orderlist.GoodsId);
-                    if(goods==null)
+                    if (goods == null)
                     {
                         continue;
                     }
+                    if (goods.Inventory < orderlist.Number)
+                    {
+                        return -4;
+                    }
                     goods.Inventory = goods.Inventory - orderlist.Number;
                     goods.SaleNum = goods.SaleNum + orderlist.Number;
-                }                
+                }
                 JournalEntity journal = new JournalEntity();
                 journal.UserId = user.Id;
                 journal.BalanceAmount = user.Amount;
@@ -286,13 +291,13 @@ namespace IMS.Service.Service
                 decimal one;
                 decimal two;
                 decimal three;
-                if (user.Level.Name=="普通会员")
+                if (user.Level.Name == "普通会员")
                 {
                     one = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "一级分销佣金比例")).Parm) / 100;
                     two = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "二级分销佣金比例")).Parm) / 100;
                     three = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "三级分销佣金比例")).Parm) / 100;
                 }
-                else if(user.Level.Name == "黄金会员")
+                else if (user.Level.Name == "黄金会员")
                 {
                     one = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "一级分销佣金比例")).Parm) / 100;
                     two = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "二级分销佣金比例")).Parm) / 100;
@@ -305,7 +310,7 @@ namespace IMS.Service.Service
                     three = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "三级分销佣金比例")).Parm) / 100;
                 }
                 UserEntity oneer = dbc.GetAll<UserEntity>().SingleOrDefault(u => u.Id == user.Recommend.RecommendId);
-                if (oneer.Recommend.RecommendPath!= "0")
+                if (oneer.Recommend.RecommendPath != "0")
                 {
                     oneer.Amount = oneer.Amount + amount * one;
                     oneer.BonusAmount = oneer.BonusAmount + amount * one;
@@ -319,8 +324,8 @@ namespace IMS.Service.Service
                     journal1.OrderCode = orderCode;
                     dbc.Journals.Add(journal1);
 
-                    UserEntity twoer= dbc.GetAll<UserEntity>().SingleOrDefault(u => u.Id == oneer.Recommend.RecommendId);
-                    if(twoer.Recommend.RecommendPath != "0")
+                    UserEntity twoer = dbc.GetAll<UserEntity>().SingleOrDefault(u => u.Id == oneer.Recommend.RecommendId);
+                    if (twoer.Recommend.RecommendPath != "0")
                     {
                         twoer.Amount = twoer.Amount + amount * two;
                         twoer.BonusAmount = twoer.BonusAmount + amount * two;
@@ -334,8 +339,8 @@ namespace IMS.Service.Service
                         journal2.OrderCode = orderCode;
                         dbc.Journals.Add(journal2);
 
-                        UserEntity threer= dbc.GetAll<UserEntity>().SingleOrDefault(u => u.Id == twoer.Recommend.RecommendId);
-                        if(threer.Recommend.RecommendPath != "0")
+                        UserEntity threer = dbc.GetAll<UserEntity>().SingleOrDefault(u => u.Id == twoer.Recommend.RecommendId);
+                        if (threer.Recommend.RecommendPath != "0")
                         {
                             threer.Amount = threer.Amount + amount * three;
                             threer.BonusAmount = threer.BonusAmount + amount * three;

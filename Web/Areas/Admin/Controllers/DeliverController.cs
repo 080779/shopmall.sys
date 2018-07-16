@@ -28,7 +28,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         public async Task<ActionResult> List(string keyword,DateTime? startTime,DateTime? endTime,int pageIndex=1)
         {
             long orderStateId = await idNameService.GetIdByNameAsync("");
-            var result = await orderService.GetModelListAsync(null, orderStateId,keyword, startTime, endTime, pageIndex, pageSize);
+            var result = await orderService.GetModelListAsync(null,keyword, startTime, endTime, pageIndex, pageSize,null);
             return Json(new AjaxResult { Status = 1, Data = result });
         }
     }
