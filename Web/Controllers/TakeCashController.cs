@@ -31,6 +31,10 @@ namespace IMS.Web.Controllers
         }
         public async Task<ApiResult> Apply(TakeCashApplyModel model)
         {
+            if(model.Amount<=0)
+            {
+                return new ApiResult { status = 0, msg = "提现金额必须大于零" };
+            }
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             long id = await takeCashService.AddAsync(user.Id, model.PayTypeId, model.Amount, "佣金提现");
             if(id<=0)

@@ -14,6 +14,7 @@ namespace IMS.IService
         Task<bool> UpdateAsync(params SettingParm[] parms);
         Task<bool> DeleteAsync(long id);
         Task<SettingDTO> GetModelAsync(long id);
+        Task<SettingDTO> GetModelByNameAsync(string name);
         Task<string> GetParmByNameAsync(string name);
         Task<SettingDTO[]> GetModelListAsync(string settingTypeName);
         Task<SettingDTO[]> GetModelListAsync(long[] settingTypeIds);

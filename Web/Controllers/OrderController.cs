@@ -25,6 +25,7 @@ namespace IMS.Web.Controllers
         public IGoodsService goodsService { get; set; }
         public IGoodsImgService goodsImgService { get; set; }
         public IGoodsCarService goodsCarService { get; set; }
+        public ISettingService settingService { get; set; }
 
         [HttpPost]
         public async Task<ApiResult> List(OrderListModel model)
@@ -63,6 +64,28 @@ namespace IMS.Web.Controllers
                 }).ToList()
             }).ToList();
             return new ApiResult { status = 1, data=res };
+        }
+
+        public async Task<ApiResult> GoodsList(OrderGoodsListModel model)
+        {
+            string parm = await settingService.GetParmByNameAsync("网站域名");
+            var res= await orderListService.GetModelListAsync(model.Id,null,null,null,model.PageIndex,model.PageSize);
+            var result = new OrderGoodsListApiModel();
+            result.pageCount = res.PageCount;
+            result.goodsLists = res.OrderLists.Select(o => new OrderList
+            {
+                goodsName = o.GoodsName,
+                id = o.Id,
+                imgUrl = parm + o.ImgUrl,
+                isReturn = o.IsReturn,
+                number = o.Number,
+                orderCode = o.OrderCode,
+                orderId = o.OrderId,
+                price=o.Price,
+                tealityPrice=o.RealityPrice,
+                totalFee=o.TotalFee
+            });
+            return new ApiResult { status = 1, data = res };
         }
 
         [HttpPost]

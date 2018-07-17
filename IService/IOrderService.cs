@@ -15,6 +15,7 @@ namespace IMS.IService
         Task<bool> UpdateDeliverStateAsync(long id, string deliveryName, string deliveryCode);
         Task<bool> DeleteAsync(long id);
         Task<OrderDTO> GetModelAsync(long id);
+        Task<OrderDTO[]> GetAllAsync();
         Task<OrderSearchResult> GetModelListAsync(long? buyerId,long? orderStateId , long? auditStatusId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
         Task<OrderSearchResult> GetDeliverModelListAsync(long? buyerId, long? orderStateId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
     }

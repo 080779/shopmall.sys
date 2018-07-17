@@ -13,6 +13,8 @@ namespace IMS.IService
         Task<long> AddAsync(long orderId, long goodsId, long number);
         Task<long> AddListAsync(List<OrderListAdd> goodsLists);
         Task<bool> UpdateAsync(long id, long number);
+        Task<bool> SetIsReturnAsync(long id);
+        Task<bool> ReSetIsReturnAsync(long orderId);
         Task<bool> DeleteAsync(long id);
         OrderListDTO[] GetModelList(long? orderId);
         Task<OrderListSearchResult> GetModelListAsync(long? orderId,string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);

@@ -6,6 +6,7 @@ using IMS.Web.Areas.Admin.Models.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -43,10 +44,22 @@ namespace IMS.Web.Areas.Admin.Controllers
             {
                 return Json(new AjaxResult { Status = 0, Msg = "会员账号不能为空" });
             }
+            if (!Regex.IsMatch(mobile, @"^1\d{10}$"))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "注册手机号格式不正确" });
+            }
+            //if ((await userService.UserCheck(mobile)) > 0)
+            //{
+            //    return Json(new AjaxResult { Status = 0, Msg = "注册手机号已经存在" });
+            //}
             if (string.IsNullOrEmpty(recommendMobile))
             {
                 return Json(new AjaxResult { Status = 0, Msg = "推荐人账号不能为空" });
             }
+            //if ((await userService.UserCheck(recommendMobile)) == -1)
+            //{
+            //    return Json(new AjaxResult { Status = 0, Msg = "推荐人不存在" });
+            //}
             if (string.IsNullOrEmpty(password))
             {
                 return Json(new AjaxResult { Status = 0, Msg = "登录密码不能为空" });

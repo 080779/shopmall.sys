@@ -66,6 +66,19 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<SettingDTO> GetModelByNameAsync(string name)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                SettingEntity entity = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(g => g.Name == name);
+                if (entity == null)
+                {
+                    return null;
+                }
+                return ToDTO(entity);
+            }
+        }
+
         public async Task<string> GetParmByNameAsync(string name)
         {
             using (MyDbContext dbc = new MyDbContext())

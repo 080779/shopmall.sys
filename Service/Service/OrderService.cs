@@ -158,6 +158,16 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<OrderDTO[]> GetAllAsync()
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                var entities = await dbc.GetAll<OrderEntity>().OrderByDescending(a => a.CreateTime).ToListAsync();
+
+                return entities.Select(o => ToDTO(o)).ToArray();
+            }
+        }
+
         public async Task<OrderSearchResult> GetModelListAsync(long? buyerId, long? orderStateId,long? auditStatusId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())

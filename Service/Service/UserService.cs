@@ -59,7 +59,7 @@ namespace IMS.Service.Service
                         await dbc.SaveChangesAsync();
 
                         long recommendId = (await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Mobile == recommendMobile)).Id;
-                        RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(u => u.UserId == recommendId);
+                        RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.UserId == recommendId);
 
                         if (recommend == null)
                         {
@@ -91,7 +91,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                UserEntity entity = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == id);
+                UserEntity entity = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Id == id);
                 if (entity == null)
                 {
                     return false;
@@ -113,9 +113,9 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == userId);
-                long recommendId = (await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Mobile == recommendMobile)).Id;
-                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(u => u.UserId == recommendId);
+                UserEntity user = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Id == userId);
+                long recommendId = (await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Mobile == recommendMobile)).Id;
+                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.UserId == recommendId);
                 if (user == null)
                 {
                     return -1;
@@ -139,7 +139,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                UserEntity entity = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == id);
+                UserEntity entity = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Id == id);
                 if (entity == null)
                 {
                     return false;
@@ -154,7 +154,7 @@ namespace IMS.Service.Service
                 {
                     await bankAccounts.ForEachAsync(a => a.IsDeleted = true);
                 }
-                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(r=>r.UserId==id);
+                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(r=>r.UserId==id);
                 if(recommend!=null)
                 {
                     recommend.IsDeleted = true;
@@ -169,7 +169,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                UserEntity entity = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == id);
+                UserEntity entity = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Id == id);
                 if (entity == null)
                 {
                     return false;
@@ -184,7 +184,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                UserEntity entity = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == id);
+                UserEntity entity = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Id == id);
                 if (entity == null)
                 {
                     return -1;
@@ -203,7 +203,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                UserEntity entity = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == id);
+                UserEntity entity = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Id == id);
                 if (entity == null)
                 {
                     return -1;
@@ -218,7 +218,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                UserEntity entity = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Mobile == mobile);
+                UserEntity entity = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Mobile == mobile);
                 if (entity == null)
                 {
                     return -1;
@@ -231,7 +231,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                UserEntity entity = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Mobile == mobile);
+                UserEntity entity = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Mobile == mobile);
                 if (entity == null)
                 {
                     return -1;
@@ -239,6 +239,10 @@ namespace IMS.Service.Service
                 if(entity.Password!=CommonHelper.GetMD5(password+entity.Salt))
                 {
                     return -2;
+                }
+                if(entity.IsEnabled==false)
+                {
+                    return -3;
                 }
                 return entity.Id;
             }
@@ -248,7 +252,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == id);
+                UserEntity user = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Id == id);
                 if (user == null)
                 {
                     return -1;
@@ -309,7 +313,7 @@ namespace IMS.Service.Service
                     two = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "二级分销佣金比例")).Parm) / 100;
                     three = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "三级分销佣金比例")).Parm) / 100;
                 }
-                UserEntity oneer = dbc.GetAll<UserEntity>().SingleOrDefault(u => u.Id == user.Recommend.RecommendId);
+                UserEntity oneer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == user.Recommend.RecommendId);
                 if (oneer.Recommend.RecommendPath != "0")
                 {
                     oneer.Amount = oneer.Amount + amount * one;
@@ -324,7 +328,7 @@ namespace IMS.Service.Service
                     journal1.OrderCode = orderCode;
                     dbc.Journals.Add(journal1);
 
-                    UserEntity twoer = dbc.GetAll<UserEntity>().SingleOrDefault(u => u.Id == oneer.Recommend.RecommendId);
+                    UserEntity twoer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == oneer.Recommend.RecommendId);
                     if (twoer.Recommend.RecommendPath != "0")
                     {
                         twoer.Amount = twoer.Amount + amount * two;
@@ -339,7 +343,7 @@ namespace IMS.Service.Service
                         journal2.OrderCode = orderCode;
                         dbc.Journals.Add(journal2);
 
-                        UserEntity threer = dbc.GetAll<UserEntity>().SingleOrDefault(u => u.Id == twoer.Recommend.RecommendId);
+                        UserEntity threer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == twoer.Recommend.RecommendId);
                         if (threer.Recommend.RecommendPath != "0")
                         {
                             threer.Amount = threer.Amount + amount * three;
@@ -365,7 +369,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                UserEntity entity = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == id);
+                UserEntity entity = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Id == id);
                 if (entity == null)
                 {
                     return null;
@@ -379,7 +383,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserSearchResult result = new UserSearchResult();
-                var user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u=>u.Mobile==mobile);
+                var user = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u=>u.Mobile==mobile);
                 if(user==null)
                 {
                     return null;
@@ -424,9 +428,9 @@ namespace IMS.Service.Service
                 UserTeamSearchResult result = new UserTeamSearchResult();
                 if(string.IsNullOrEmpty(mobile))
                 {
-                    mobile = (await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u=>u.Recommend.RecommendGenera==1)).Mobile;
+                    mobile = (await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u=>u.Recommend.RecommendGenera==1)).Mobile;
                 }
-                RecommendEntity user = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(r => r.User.Mobile == mobile);
+                RecommendEntity user = await dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.User.Mobile == mobile);
                 if(user==null)
                 {
                     return result;
@@ -504,7 +508,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserTeamSearchResult result = new UserTeamSearchResult();
-                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().SingleOrDefaultAsync(r => r.UserId == userId);
+                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.UserId == userId);
                 var recommends = dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false);
                 if (teamLevel!=null)
                 {

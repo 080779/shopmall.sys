@@ -2241,23 +2241,23 @@ body:nth-of-type(1) .table-responsive .table {
         font-weight: bold;
     }
 
-#edit_perm .page-content {
+#editperm .page-content {
     border-bottom: 1px solid #eee;
     margin-bottom: 6px;
 }
 
-    #edit_perm .page-content li {
+    #editperm .page-content li {
         display: inline-block;
         width: 120px;
         vertical-align: middle;
         padding: 2px 0;
     }
 
-        #edit_perm .page-content li:first-child {
+        #editperm .page-content li:first-child {
             display: block;
             width: 100%;
         }
 
-        #edit_perm .page-content li input {
+        #editperm .page-content li input {
             vertical-align: text-top;
         }

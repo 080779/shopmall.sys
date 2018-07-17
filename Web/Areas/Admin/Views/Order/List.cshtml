@@ -40,9 +40,9 @@
             <span class="l_f">
                 <a v-on:click="orderexport" class="btn btn-success"><i class="icon-plus"></i>订单导出</a>
             </span>
-            <span class="l_f">
+            @*<span class="l_f">
                 <a v-on:click="orderanalysis" class="btn btn-success"><i class="icon-plus"></i>订单数据分析</a>
-            </span>
+            </span>*@
         </div>
         <div class="search_style">
             <ul class="search_content clearfix">
@@ -175,9 +175,18 @@
                 this.getpage();
             },
             add: function () { },
-            orderexport: function () { },
-            orderanalysis: function () { },
-            search: function () { },
+            orderexport: function () {
+                var msg = '确认要导出订单吗？';
+                var msg1 = '是否导出订单';
+                layer.confirm(msg, { icon: 0, title: msg1 }, function () {
+                    window.location.href = '/admin/order/exportExcel';
+                    layer.closeAll('dialog');
+                });
+            },
+            //orderanalysis: function () { },
+            search: function () {
+                this.getpage();
+            },
             getorder : function(id) { }
         },
         computed: {

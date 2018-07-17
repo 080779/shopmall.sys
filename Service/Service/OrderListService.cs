@@ -166,5 +166,30 @@ namespace IMS.Service.Service
                 return true;
             }
         }
+
+        public async Task<bool> SetIsReturnAsync(long id)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                OrderListEntity entity = await dbc.GetAll<OrderListEntity>().SingleOrDefaultAsync(o => o.Id == id);
+                if (entity == null)
+                {
+                    return false;
+                }
+                entity.IsReturn = !entity.IsReturn;
+                await dbc.SaveChangesAsync();
+                return true;
+            }
+        }
+
+        public async Task<bool> ReSetIsReturnAsync(long orderId)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                await dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == orderId).ForEachAsync(g=>g.IsReturn=false);                
+                await dbc.SaveChangesAsync();
+                return true;
+            }
+        }
     }
 }

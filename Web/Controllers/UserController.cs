@@ -118,6 +118,10 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "登录账号或密码错误" };
             }
+            if(userId==-3)
+            {
+                return new ApiResult { status = 0, msg = "会员账号已经被冻结" };
+            }
             HttpClient httpClient=new HttpClient();
             List<KeyValuePair<string, string>> parmArray=new List<KeyValuePair<string, string>>();
             parmArray.Add(new KeyValuePair<string, string>("appid", appid));

@@ -310,6 +310,7 @@
   <ItemGroup>
     <Compile Include="App_Start\Filter\AdminLogAttribute.cs" />
     <Compile Include="App_Start\Filter\ApiSYSAuthorizationFilter.cs" />
+    <Compile Include="App_Start\Filter\ExportExcelNameAttribute.cs" />
     <Compile Include="App_Start\Filter\PermissionAttribute.cs" />
     <Compile Include="App_Start\Filter\SYSAuthorizationFilter.cs" />
     <Compile Include="App_Start\Filter\SYSExceptionFilter.cs" />
@@ -318,6 +319,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\AdminController.cs" />
+    <Compile Include="Areas\Admin\Controllers\SettingController.cs" />
     <Compile Include="Areas\Admin\Controllers\ReturnController.cs" />
     <Compile Include="Areas\Admin\Controllers\DeliverController.cs" />
     <Compile Include="Areas\Admin\Controllers\GoodsSecondTypeController.cs" />
@@ -342,8 +344,10 @@
     <Compile Include="Areas\Admin\Models\Goods\GoodsListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Home\HomeIndexViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Order\OrderDetailViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Order\OrderExportExcelModel.cs" />
     <Compile Include="Areas\Admin\Models\Order\OrderListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Return\ReturnListViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Setting\SettingListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\TakeCash\TakeCashListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\UserTeam\UserTeamListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\User\UserBonusSetModel.cs" />
@@ -354,6 +358,7 @@
     <Compile Include="Controllers\GoodsTypeController.cs" />
     <Compile Include="Controllers\GoodsController.cs" />
     <Compile Include="Controllers\PayTypeController.cs" />
+    <Compile Include="Controllers\ReturnController.cs" />
     <Compile Include="Controllers\SlideController.cs" />
     <Compile Include="Controllers\NoticeController.cs" />
     <Compile Include="Controllers\AddressController.cs" />
@@ -393,8 +398,10 @@
     <Compile Include="Models\Journal\JournalListModel.cs" />
     <Compile Include="Models\Notice\NoticeDetailModel.cs" />
     <Compile Include="Models\Notice\NoticeListApiModel.cs" />
+    <Compile Include="Models\Order\OrderGoodsListApiModel.cs" />
     <Compile Include="Models\Order\OrderListApiModel.cs" />
     <Compile Include="Models\Order\OrderDetailModel.cs" />
+    <Compile Include="Models\Order\OrderGoodsListModel.cs" />
     <Compile Include="Models\Order\OrderListModel.cs" />
     <Compile Include="Models\Order\WeChatPay.cs" />
     <Compile Include="Models\Order\OrderApplysModel.cs" />
@@ -403,6 +410,8 @@
     <Compile Include="Models\Order\OrderPlaceModel.cs" />
     <Compile Include="Models\Order\OrderAddModel.cs" />
     <Compile Include="Models\PayType\PayTypeListApiModel.cs" />
+    <Compile Include="Models\Return\ReturnApplyModel.cs" />
+    <Compile Include="Models\Return\ReturnSelectModel.cs" />
     <Compile Include="Models\Slide\SlideListApiModel.cs" />
     <Compile Include="Models\TakeCash\TakeCashListApiModel.cs" />
     <Compile Include="Models\TakeCash\TakeCashListModel.cs" />
@@ -460,6 +469,7 @@
     <Content Include="Areas\Admin\Views\Journal\List.cshtml" />
     <Content Include="Areas\Admin\Views\Deliver\List.cshtml" />
     <Content Include="Areas\Admin\Views\Return\List.cshtml" />
+    <Content Include="Areas\Admin\Views\Setting\List.cshtml" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">
@@ -471,7 +481,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\Return\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\IMS.Common.csproj">

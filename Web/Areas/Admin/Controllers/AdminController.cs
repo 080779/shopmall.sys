@@ -72,13 +72,13 @@ namespace IMS.Web.Areas.Admin.Controllers
         //[Permission("管理员管理_管理员管理")]
         //[Permission("管理员管理_修改权限")]
         //[AdminLog("管理员管理", "修改权限")]
-        public async Task<ActionResult> EditPermission(long id,long[] permissionIds)
+        public async Task<ActionResult> EditPermission(long id, List<long> permissionIds)
         {
-            if (permissionIds==null)
+            if (permissionIds.Count <= 0)
             {
-                permissionIds = new long[] { };
+                permissionIds = new List<long>();
             }
-            bool res = await adminService.UpdateAsync(id,permissionIds);
+            bool res = await adminService.UpdateAsync(id,permissionIds.ToArray());
             if(!res)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "编辑管理员权限失败" });
@@ -101,11 +101,11 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             return Json(new AjaxResult { Status = 1, Msg = "编辑管理员密码成功", Data = "/admin/admin/list" });
         }
-        public async Task<ActionResult> GetPerm(long id,long[] permissionIds)
+        public async Task<ActionResult> GetPerm(long id,List<long> permissionIds)
         {
-            if(permissionIds==null)
+            if(permissionIds.Count<=0)
             {
-                permissionIds = new long[] { };
+                permissionIds = new List<long>();
             }
             PermissionTypeDTO[] types = await permissionTypeService.GetModelList();
             List<PermissionType> permissionTypes = new List<PermissionType>();

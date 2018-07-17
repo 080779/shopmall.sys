@@ -141,7 +141,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<AdminSearchResult> GetModelListAsync(string isAdmin,string mobile, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        public async Task<AdminSearchResult> GetModelListAsync(string isAdmin,string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -153,9 +153,9 @@ namespace IMS.Service.Service
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(mobile))
+                    if (!string.IsNullOrEmpty(keyword))
                     {
-                        admins = admins.Where(a => a.Mobile.Contains(mobile));
+                        admins = admins.Where(a => a.Mobile.Contains(keyword));
                     }
                     if (startTime != null)
                     {

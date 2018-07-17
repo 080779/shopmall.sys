@@ -77,7 +77,7 @@
                                     <td class="td-status"><span class="label label-success radius" v-html="admin.isEnabled?'正常':'已冻结'"></span></td>
                                     <td class="td-manage">
                                         <a v-on:click="resetpwd(admin.id,admin.mobile)" href="javascript:;" title="修改密码" class="btn btn-xs btn-success">修改密码</a>
-                                        <a title="权限管理" v-if="admin.mobile!='admin'" v-on:click="permedit(admin.id, admin.mobile,admin.permissionIds)" href="javascript:;" class="btn btn-xs btn-info">权限管理</a>
+                                        <a title="权限管理" v-if="admin.mobile!='admin'" v-on:click="permedit(admin.id,admin.permissionIds)" href="javascript:;" class="btn btn-xs btn-info">权限管理</a>
                                         <a title="冻结" href="javascript:;" v-if="admin.mobile!='admin'" v-on:click="frozen(admin.id,admin.isEnabled)" class="btn btn-xs btn-warning" v-html="admin.isEnabled?'冻结账户':'解冻账户'"></a>
                                         <a title="删除" href="javascript:;" v-if="admin.mobile!='admin'" v-on:click="del(admin.id)" class="btn btn-xs btn-warning">删除账户</a>
                                     </td>
@@ -111,18 +111,15 @@
             </ul>
         </div>
         <!--修改权限图层-->
-        <div id="editperm" style="display:none;margin-left:30px">
-            <ul class="page-content">
-                <li><label class="label_name">管理员账户：</label><span class="add_name" v-html="edit_mobile"></span><div class="prompt r_f"></div></li>
-            </ul>
+        <div id="editperm" style="display:none;margin-left:30px;">
             <ul class="page-content" v-for="type in permissionTypes">
-                <li v-html="type.name"></li>
+                <li v-if="type.permissions.length>0" v-html="type.name"></li>
                 <li v-for="perm in type.permissions">
                     <input type="checkbox" name="perm" v-bind:value="perm.id" v-bind:checked="perm.isChecked" v-bind:id="'perm'+perm.id" /><label v-bind:for="'perm'+perm.id" v-html="perm.name"></label>
                 </li>
             </ul>
         </div>
-        <!--添加用户图层-->
+        <!--修改密码图层-->
         <div class="add_menber" id="edit_pwd" style="display:none">
             <ul class="page-content">
                 <li><label class="label_name">管理员账户：</label><span class="add_name" v-html="edit_mobile"></span><div class="prompt r_f"></div></li>
@@ -173,7 +170,8 @@
             },
             getpage: function () {
                 this.$http.post('/admin/admin/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
-                    this.notices = result.data.data.notices;
+                    this.admins = result.data.data.admins;
+                    this.permissionTypes = result.data.data.permissionTypes;
                     this.pages.all = result.data.data.pageCount;
                 })
             },
@@ -238,33 +236,25 @@
                     }
                 });
             },
-            permedit: function (id, mobile, permissionIds) {
+            permedit: function (id, permissionIds) {
                 this.permissionIds = [];
                 var that = this;
                 that.$http.post('/admin/admin/getperm', { id: id, permissionIds: permissionIds }, { emulateJSON: true }).then(function (result) {
                     that.permissionTypes = result.data.data;
                 });
-                this.edit_mobile = mobile;
                 layer.open({
                     type: 1,
                     title: '修改权限',
                     maxmin: true,
                     shadeClose: false, //点击遮罩关闭层
-                    area: ['540px', ''],
-                    offset: ['100px', ''],
+                    area: ['700px', '560px'],
+                    offset: ['20px', ''],
                     content: $('#editperm'),
                     btn: ['确认', '取消'],
                     yes: function (index, layero) {
-
                         $('input[name="perm"]:checked').each(function () {
                             that.permissionIds.push($(this).val());//向数组中添加元素
-                        });
-                        //if (that.permissionIds.length <= 0) {
-                        //    layer.alert('请选择权限', { icon: 0, title: '提示框' });
-                        //}
-                        //else {
-
-                        //}         
+                        });        
                         that.$http.post('/admin/admin/editpermission', { id: id, permissionIds: that.permissionIds }, { emulateJSON: true }).then(function (result) {
                             if (result.data.status == 1) {
                                 layer.alert(result.data.msg, { icon: 6, title: '提示框' });
@@ -403,6 +393,7 @@
         mounted: function () {
             this.$http.post('/admin/admin/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
                 this.admins = result.data.data.admins;
+                this.permissionTypes = result.data.data.permissionTypes;
                 this.pages.all = result.data.data.pageCount;
             })
         }
