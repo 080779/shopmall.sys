@@ -287,5 +287,76 @@ namespace IMS.Service.Service
                 return true;
             }
         }
+
+        public async Task<long> ReturnAsync(long orderId)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                OrderEntity order = await dbc.GetAll<OrderEntity>().SingleOrDefaultAsync(o=>o.Id==orderId);
+                if(order==null)
+                {
+                    return -1;
+                }
+                var orderLists = dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == order.Id);
+                decimal totalAmount = 0;
+                decimal totalReturnAmount = 0;
+                foreach (var item in orderLists)
+                {
+                    totalAmount = totalAmount + item.TotalFee;
+                    if(item.IsReturn==true)
+                    {
+                        totalReturnAmount = totalReturnAmount + item.TotalFee;
+                    }
+                }
+                if(totalReturnAmount<=0)
+                {
+                    return -2;
+                }
+                decimal percent = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Name == "退货扣除比例")).Parm) / 100;
+                order.AuditTime = DateTime.Now;
+                order.ReturnAmount = totalReturnAmount;
+                order.DeductAmount = totalReturnAmount * percent;
+                order.RefundAmount = order.ReturnAmount = order.DeductAmount;
+                UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u=>u.Id==order.BuyerId);
+                if(user==null)
+                {
+                    return -3;
+                }
+                //会员扣除金额、降级
+                user.Amount = user.Amount - order.RefundAmount.Value;
+                //普通会员id
+                long levelId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员")).Id;
+                //黄金会员id
+                long levelId1 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "黄金会员")).Id;
+                //铂金会员id
+                long levelId2 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "铂金会员")).Id;
+                if(user.LevelId==levelId1 && user.IsReturned == false && user.IsUpgraded == true)
+                {
+                    if (totalReturnAmount / totalAmount > (decimal)0.5)
+                    {
+                        user.LevelId = levelId;
+                        user.IsReturned = true;
+                    }            
+                }
+                if (user.LevelId == levelId2 && user.IsReturned == false && user.IsUpgraded == true)
+                {
+                    if (totalReturnAmount / totalAmount > (decimal)0.5)
+                    {
+                        user.LevelId = levelId;
+                        user.IsReturned = true;
+                    }                        
+                }
+                //添加流水记录
+                JournalEntity journal = new JournalEntity();
+                journal.OrderCode = order.Code;
+                journal.UserId = user.Id;
+                journal.OutAmount = order.RefundAmount;
+                journal.Remark = "退货退款";
+                journal.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "退货退款")).Id;
+                journal.BalanceAmount = user.Amount;
+                dbc.Journals.Add(journal);
+                return 1;
+            }
+        }
     }
 }
