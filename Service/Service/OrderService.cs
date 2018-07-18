@@ -103,7 +103,7 @@ namespace IMS.Service.Service
                 entity.PayTypeId = payTypeId;
                 entity.OrderStateId = orderStateId;
                 entity.PayTime = DateTime.Now;
-                entity.PostFee = postFee == null ? postFee.Value : 0;
+                entity.PostFee = postFee.Value;
                 dbc.Orders.Add(entity);
                 await dbc.SaveChangesAsync();
 
@@ -181,6 +181,45 @@ namespace IMS.Service.Service
                 if (orderStateId != null)
                 {
                     entities = entities.Where(a => a.OrderStateId ==orderStateId);
+                }
+                if (auditStatusId != null)
+                {
+                    entities = entities.Where(a => a.AuditStatusId == auditStatusId);
+                }
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    entities = entities.Where(g => g.Code.Contains(keyword) || g.Buyer.Mobile.Contains(keyword));
+                }
+                if (startTime != null)
+                {
+                    entities = entities.Where(a => a.CreateTime >= startTime);
+                }
+                if (endTime != null)
+                {
+                    entities = entities.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
+                }
+                result.PageCount = (int)Math.Ceiling((await entities.LongCountAsync()) * 1.0f / pageSize);
+                var goodsTypesResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                result.Orders = goodsTypesResult.Select(a => ToDTO(a)).ToArray();
+                return result;
+            }
+        }
+        
+        public async Task<OrderSearchResult> GetReturnModelListAsync(long? buyerId, long? orderStateId, long? auditStatusId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                OrderSearchResult result = new OrderSearchResult();
+                long returnStateId1 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "退货中")).Id;
+                long returnStateId2 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "退货完成")).Id;
+                var entities = dbc.GetAll<OrderEntity>().Where(o => o.OrderStateId == returnStateId1 || o.OrderStateId == returnStateId2);
+                if (buyerId != null)
+                {
+                    entities = entities.Where(a => a.BuyerId == buyerId);
+                }
+                if (orderStateId != null)
+                {
+                    entities = entities.Where(a => a.OrderStateId == orderStateId);
                 }
                 if (auditStatusId != null)
                 {
@@ -288,6 +327,70 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<long> ApplyReturnAsync(long orderId)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                OrderEntity order = await dbc.GetAll<OrderEntity>().SingleOrDefaultAsync(o => o.Id == orderId);
+                if (order == null)
+                {
+                    return -1;
+                }
+                var orderLists = dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == order.Id).ToList();
+                decimal totalAmount = 0;
+                decimal totalReturnAmount = 0;
+                foreach (var item in orderLists)
+                {
+                    totalAmount = totalAmount + item.TotalFee;
+                    if (item.IsReturn == true)
+                    {
+                        totalReturnAmount = totalReturnAmount + item.TotalFee;
+                    }
+                }
+                if (totalReturnAmount <= 0)
+                {
+                    return -2;
+                }
+                decimal percent = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Name == "退货扣除比例")).Parm) / 100;
+                order.ApplyTime = DateTime.Now;
+                order.ReturnAmount = totalReturnAmount;
+                order.DeductAmount = totalReturnAmount * percent;
+                order.RefundAmount = order.ReturnAmount - order.DeductAmount;
+                order.DownCycledId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "--不降级")).Id;
+                order.AuditStatusId= (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "未审核")).Id;
+                order.OrderStateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "退货中")).Id;
+                UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == order.BuyerId);
+                if (user == null)
+                {
+                    return -3;
+                }
+                //会员扣除金额、降级
+                //user.Amount = user.Amount - order.RefundAmount.Value;
+                //普通会员id
+                long levelId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员")).Id;
+                //黄金会员id
+                long levelId1 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "黄金会员")).Id;
+                //铂金会员id
+                long levelId2 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "铂金会员")).Id;
+                if (user.LevelId == levelId1 && user.IsReturned == false && user.IsUpgraded == true)
+                {
+                    if (totalReturnAmount / totalAmount > (decimal)0.5)
+                    {
+                        order.DownCycledId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "↓普通会员")).Id;
+                    }
+                }
+                if (user.LevelId == levelId2 && user.IsReturned == false && user.IsUpgraded == true)
+                {
+                    if (totalReturnAmount / totalAmount > (decimal)0.5)
+                    {
+                        order.DownCycledId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "↓普通会员")).Id;
+                    }
+                }
+                await dbc.SaveChangesAsync();
+                return 1;
+            }
+        }
+
         public async Task<long> ReturnAsync(long orderId)
         {
             using (MyDbContext dbc = new MyDbContext())
@@ -297,7 +400,7 @@ namespace IMS.Service.Service
                 {
                     return -1;
                 }
-                var orderLists = dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == order.Id);
+                var orderLists = dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == order.Id).ToList();
                 decimal totalAmount = 0;
                 decimal totalReturnAmount = 0;
                 foreach (var item in orderLists)
@@ -313,10 +416,10 @@ namespace IMS.Service.Service
                     return -2;
                 }
                 decimal percent = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Name == "退货扣除比例")).Parm) / 100;
-                order.AuditTime = DateTime.Now;
                 order.ReturnAmount = totalReturnAmount;
                 order.DeductAmount = totalReturnAmount * percent;
-                order.RefundAmount = order.ReturnAmount = order.DeductAmount;
+                order.RefundAmount = order.ReturnAmount - order.DeductAmount;
+                order.OrderStateId= (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "退货完成")).Id;
                 UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u=>u.Id==order.BuyerId);
                 if(user==null)
                 {
@@ -336,6 +439,7 @@ namespace IMS.Service.Service
                     {
                         user.LevelId = levelId;
                         user.IsReturned = true;
+                        order.DownCycledId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i=>i.Name== "↓普通会员")).Id;
                     }            
                 }
                 if (user.LevelId == levelId2 && user.IsReturned == false && user.IsUpgraded == true)
@@ -344,6 +448,7 @@ namespace IMS.Service.Service
                     {
                         user.LevelId = levelId;
                         user.IsReturned = true;
+                        order.DownCycledId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "↓普通会员")).Id;
                     }                        
                 }
                 //添加流水记录
@@ -355,7 +460,25 @@ namespace IMS.Service.Service
                 journal.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "退货退款")).Id;
                 journal.BalanceAmount = user.Amount;
                 dbc.Journals.Add(journal);
+                await dbc.SaveChangesAsync();
                 return 1;
+            }
+        }
+
+        public async Task<long> ReturnAuditAsync(long orderId, long adminId)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                OrderEntity order = await dbc.GetAll<OrderEntity>().SingleOrDefaultAsync(o => o.Id == orderId);
+                if (order == null)
+                {
+                    return -1;
+                }
+                order.AuditStatusId= (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "已审核")).Id;
+                order.AuditMobile = (await dbc.GetAll<AdminEntity>().SingleOrDefaultAsync(a => a.Id == adminId)).Mobile;
+                order.AuditTime = DateTime.Now;
+                await dbc.SaveChangesAsync();
+                return order.Id;
             }
         }
     }

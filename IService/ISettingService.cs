@@ -28,6 +28,6 @@ namespace IMS.IService
     public class SettingParm
     {
         public long Id { get; set; }
-        public long Parm { get; set; }
+        public string Parm { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿@model string
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -18,7 +19,7 @@
             window.top.location.href = location.href;
         }
     </script>
-    <title>平台管理系统登录(启硕网络)</title>
+    <title>@(Model)登录</title>
 </head>
 
 <body class="login-layout">
@@ -34,9 +35,9 @@
                 <h1>
                     <i class="icon-leaf green"></i>
                     @*<span class="orange">思美软件</span>*@
-                    <span class="white">登录平台管理系统</span>
+                    <span class="white">登录@(Model)</span>
                 </h1>
-                <h4 class="white">启硕网络</h4>
+                @*<h4 class="white">启硕网络</h4>*@
             </div>
 
             <div class="space-6"></div>

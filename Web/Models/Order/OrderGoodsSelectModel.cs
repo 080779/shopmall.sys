@@ -5,10 +5,9 @@ using System.Web;
 
 namespace IMS.Web.Models.Order
 {
-    public class OrderGoodsListModel
+    public class OrderGoodsSelectModel
     {
+        public long Id { get; set; }
         public long OrderId { get; set; }
-        public int PageIndex { get; set; }
-        public int PageSize { get; set; }
     }
 }

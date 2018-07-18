@@ -18,6 +18,7 @@ namespace IMS.DTO
         public long LevelId { get; set; }
         public string LevelName { get; set; }
         public string Description { get; set; }
+        public string ShareCode { get; set; }
         public int ErrorCount { get; set; }
         public DateTime ErrorTime { get; set; }
         public bool IsEnabled { get; set; }

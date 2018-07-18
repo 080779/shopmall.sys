@@ -22,6 +22,7 @@ namespace IMS.IService
         /// <param name="headpic">要修改的头像地址（为null不修改）</param>
         /// <returns></returns>
         Task<bool> UpdateInfoAsync(long id,string nickName, string headpic);
+        Task<bool> UpdateShareCodeAsync(long id, string codeUrl);
         /// <summary>
         /// 添加推荐人
         /// </summary>

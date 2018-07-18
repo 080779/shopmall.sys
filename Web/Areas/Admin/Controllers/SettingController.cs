@@ -14,7 +14,6 @@ namespace IMS.Web.Areas.Admin.Controllers
     public class SettingController : Controller
     {
         public ISettingService settingService { get; set; }
-        private int pageSize = 10;
         //[Permission("日志管理_查看日志")]
         public ActionResult List()
         {
@@ -26,22 +25,48 @@ namespace IMS.Web.Areas.Admin.Controllers
         {
             SettingListViewModel model = new SettingListViewModel();
             var tilte= await settingService.GetModelByNameAsync("系统标题");
-            model.Title = new SettingModel { Id = tilte.Id, Parm = tilte.Parm };
+            model.SysTitle = new SettingParm { Id = tilte.Id, Parm = tilte.Parm };
             var phone1 = await settingService.GetModelByNameAsync("客服电话");
-            model.Phone1 = new SettingModel { Id = phone1.Id, Parm = phone1.Parm };
+            model.Phone1 = new SettingParm { Id = phone1.Id, Parm = phone1.Parm };
             var phone2 = await settingService.GetModelByNameAsync("客服电话1");
-            model.Phone2 = new SettingModel { Id = phone2.Id, Parm = phone2.Parm };
+            model.Phone2 = new SettingParm { Id = phone2.Id, Parm = phone2.Parm };
             var logo = await settingService.GetModelByNameAsync("系统LOGO");
-            model.Logo = new SettingModel { Id = logo.Id, Parm = logo.Parm };
+            model.Logo = new SettingParm { Id = logo.Id, Parm = logo.Parm };
             var about = await settingService.GetModelByNameAsync("关于我们");
-            model.About = new SettingModel { Id = about.Id, Parm = about.Parm };
+            model.About = new SettingParm { Id = about.Id, Parm = about.Parm };
             return Json(new AjaxResult { Status = 1, Data = model });
         }
         [HttpPost]
         [ValidateInput(false)]
-        public async Task<ActionResult> Edit(List<SettingModel> parms)
+        public async Task<ActionResult> Edit(List<SettingParm> parms)
         {
-            return Json(new AjaxResult { Status = 1});
+            if(parms.Count()<=0)
+            {
+                return Json(new AjaxResult { Status = 0,Msg="无参数"});
+            }
+            string path = "";
+            bool res = false;
+            foreach (var item in parms)
+            {
+                if(item.Parm.Contains(";base64,"))
+                {
+                    bool flag =ImageHelper.SaveBase64(item.Parm, out path);
+                    if(!flag)
+                    {
+                        return Json(new AjaxResult { Status = 0, Msg = "logo图片保存失败" });
+                    }
+                    res = await settingService.UpdateAsync(item.Id, path);
+                }
+                else
+                {
+                    res = await settingService.UpdateAsync(item.Id, item.Parm);
+                }
+            }
+            if(!res)
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "修改失败" });
+            }
+            return Json(new AjaxResult { Status = 1,Msg="修改成功" });
         }
     }
 }

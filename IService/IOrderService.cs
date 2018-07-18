@@ -17,8 +17,11 @@ namespace IMS.IService
         Task<OrderDTO> GetModelAsync(long id);
         Task<OrderDTO[]> GetAllAsync();
         Task<OrderSearchResult> GetModelListAsync(long? buyerId,long? orderStateId , long? auditStatusId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
+        Task<OrderSearchResult> GetReturnModelListAsync(long? buyerId, long? orderStateId, long? auditStatusId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
         Task<OrderSearchResult> GetDeliverModelListAsync(long? buyerId, long? orderStateId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
+        Task<long> ApplyReturnAsync(long orderId);
         Task<long> ReturnAsync(long orderId);
+        Task<long> ReturnAuditAsync(long orderId, long adminId);
     }
     public class OrderSearchResult
     {

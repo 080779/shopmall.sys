@@ -18,6 +18,7 @@ namespace IMS.Web.Areas.Admin.Controllers
     {
         public IOrderService orderService { get; set; }
         public IIdNameService idNameService { get; set; }
+        public IAdminService adminService { get; set; }
         private int pageSize = 10;
         //[Permission("日志管理_查看日志")]
         public ActionResult List()
@@ -28,13 +29,37 @@ namespace IMS.Web.Areas.Admin.Controllers
         //[Permission("日志管理_查看日志")]
         public async Task<ActionResult> List(long? auditStatusId, string keyword,DateTime? startTime,DateTime? endTime,int pageIndex=1)
         {
-            long orderStateId = await idNameService.GetIdByNameAsync("退货中");
-            var result = await orderService.GetModelListAsync(null, orderStateId, auditStatusId, keyword, startTime, endTime, pageIndex, pageSize);
+            //long orderStateId = await idNameService.GetIdByNameAsync("退货中");
+            var result = await orderService.GetReturnModelListAsync(null, null, auditStatusId, keyword, startTime, endTime, pageIndex, pageSize);
             ReturnListViewModel model = new ReturnListViewModel();
             model.Orders = result.Orders;
             model.PageCount = result.PageCount;
             model.AuditStatus = await idNameService.GetByTypeNameAsync("退货审核状态");
             return Json(new AjaxResult { Status = 1, Data = model });
+        }
+
+        [HttpPost]
+        //[Permission("日志管理_查看日志")]
+        public async Task<ActionResult> Audit(long id)
+        {
+            long res = await orderService.ReturnAuditAsync(id, Convert.ToInt64(Session["Platform_AdminUserId"]));
+            if (res <= 0)
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "退货审核失败" });
+            }
+            return Json(new AjaxResult { Status = 1, Msg = "退货审核成功" });
+        }
+
+        [HttpPost]
+        //[Permission("日志管理_查看日志")]
+        public async Task<ActionResult> Confirm(long id)
+        {
+            long res = await orderService.ReturnAsync(id);
+            if(res<=0)
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "确认退货完成失败" });
+            }
+            return Json(new AjaxResult { Status = 1, Msg = "确认退货完成成功" });
         }
     }
 }

@@ -65,11 +65,11 @@ namespace IMS.Web.Controllers
             }).ToList();
             return new ApiResult { status = 1, data=res };
         }
-
+        [HttpPost]
         public async Task<ApiResult> GoodsList(OrderGoodsListModel model)
         {
             string parm = await settingService.GetParmByNameAsync("网站域名");
-            var res= await orderListService.GetModelListAsync(model.Id,null,null,null,model.PageIndex,model.PageSize);
+            var res= await orderListService.GetModelListAsync(model.OrderId,null,null,null,model.PageIndex,model.PageSize);
             var result = new OrderGoodsListApiModel();
             result.pageCount = res.PageCount;
             result.goodsLists = res.OrderLists.Select(o => new OrderList
@@ -85,7 +85,30 @@ namespace IMS.Web.Controllers
                 tealityPrice=o.RealityPrice,
                 totalFee=o.TotalFee
             });
-            return new ApiResult { status = 1, data = res };
+            return new ApiResult { status = 1, data = result };
+        }
+
+        [HttpPost]
+        public async Task<ApiResult> GoodsSelect(OrderGoodsSelectModel model)
+        {
+            await orderListService.ReSetIsReturnAsync(model.OrderId);
+            bool flag = await orderListService.SetIsReturnAsync(model.Id);
+            if(!flag)
+            {
+                return new ApiResult { status = 0, msg="选择出错" };
+            }
+            return new ApiResult { status = 1, msg = "成功" };
+        }
+
+        [HttpPost]
+        public async Task<ApiResult> ReturnApply(OrderReturnApplyModel model)
+        {
+            long id = await orderService.ApplyReturnAsync(model.OrderId);
+            if (id<=0)
+            {
+                return new ApiResult { status = 0, msg = "退货申请失败" };
+            }
+            return new ApiResult { status = 1, msg = "退货申请成功" };
         }
 
         [HttpPost]
@@ -227,7 +250,7 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "下单列表无商品" };
             }
-            long id = await orderService.AddAsync(null,user.Id, model.AddressId, model.PayTypeId, orderStateId,dtos.OrderApplies);
+            long id = await orderService.AddAsync(0,user.Id, model.AddressId, model.PayTypeId, orderStateId,dtos.OrderApplies);
             if (id <= 0)
             {
                 return new ApiResult { status = 0, msg = "生成订单失败" };

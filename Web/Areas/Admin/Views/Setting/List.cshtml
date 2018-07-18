@@ -41,7 +41,7 @@
         <div class="xinxi">
             <div class="form-group">
                 <label class="col-sm-3 control-label no-padding-right" for="form-field-1">系统标题： </label>
-                <div class="col-sm-9"><input type="text" v-model="title.parm" class="col-xs-7 text_info" /></div>
+                <div class="col-sm-9"><input type="text" v-model="sysTitle.parm" class="col-xs-7 text_info" /></div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label no-padding-right" for="form-field-1">客服电话： </label>
@@ -70,7 +70,7 @@
     var vue = new Vue({
         el: "#app",
         data: {
-            title: {
+            sysTitle: {
                 id:"",parm:""
             },
             phone1: {
@@ -86,18 +86,10 @@
                 id: "", parm: ""
             }
         },
-        methods: {            
-            edit: function () {
-                this.logo.parm = $("#img1").attr("src");
-                this.about.parm = editor.txt.html();
-                var arrays = new Array();
-                arrays.push(this.title);
-                arrays.push(this.phone1);
-                arrays.push(this.phone2);
-                arrays.push(this.logo);
-                arrays.push(this.about);
-                this.$http.post('/admin/setting/edit', { parms: arrays }, { emulateJSON: true }).then(function (result) {
-                    this.title = result.data.data.title;
+        methods: {
+            getpage: function () {
+                this.$http.post('/admin/setting/list', {}, { emulateJSON: true }).then(function (result) {
+                    this.sysTitle = result.data.data.sysTitle;
                     this.phone1 = result.data.data.phone1;
                     this.phone2 = result.data.data.phone2;
                     this.logo = result.data.data.logo;
@@ -105,11 +97,37 @@
                     $("#img").attr("src", this.logo.parm);
                     editor.txt.html(this.about.parm);
                 })
+            },
+            edit: function () {
+                this.logo.parm = $("#img1").attr("src");
+                this.about.parm = editor.txt.html();
+                var arrays = new Array();
+                arrays.push(this.sysTitle);
+                arrays.push(this.phone1);
+                arrays.push(this.phone2);
+                arrays.push(this.logo);
+                arrays.push(this.about);
+                this.$http.post('/admin/setting/edit', { parms: arrays }, { emulateJSON: true }).then(function (result) {
+                    if (result.data.status == 1) {
+                        layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                        this.getpage();
+                    }
+                    else if (result.data.status == 0) {
+                        layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                        //that.msg = result.data.msg;
+                    }
+                    else if (result.data.status == 302) {
+                        window.location.href = result.data.data;
+                    }
+                    else if (result.data.status == 401) {
+                        layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                    }
+                })
             }
         },
         mounted: function () {
             this.$http.post('/admin/setting/list', {}, { emulateJSON: true }).then(function (result) {
-                this.title = result.data.data.title;
+                this.sysTitle = result.data.data.sysTitle;
                 this.phone1 = result.data.data.phone1;
                 this.phone2 = result.data.data.phone2;
                 this.logo = result.data.data.logo;

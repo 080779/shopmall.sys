@@ -53,6 +53,29 @@ namespace IMS.Common
             return true;
         }
 
+        public static string SaveByte(Stream stream)
+        {
+            byte[] files = StreamToBytes(stream);
+            string md5 = CommonHelper.GetMD5(files);
+            string path = "/upload/" + DateTime.Now.ToString("yyyy") + "/" + md5 + ".jpeg";
+            string fullPath = HttpContext.Current.Server.MapPath("~" + path);
+            new FileInfo(fullPath).Directory.Create();
+            //file.SaveAs(fullPath);
+            //缩略图
+            ImageProcessingJob jobNormal = new ImageProcessingJob();
+            jobNormal.SaveProcessedImageToFileSystem(files, fullPath);
+            return path;
+        }
+
+        public static byte[] StreamToBytes(Stream stream)
+        {
+            byte[] bytes = new byte[stream.Length];
+            stream.Read(bytes, 0, bytes.Length);
+            // 设置当前流的位置为流的开始 
+            stream.Seek(0, SeekOrigin.Begin);
+            return bytes;
+        }
+
         public static string SaveImage(HttpPostedFileBase file)
         {
             string md5 = CommonHelper.GetMD5(file.InputStream);

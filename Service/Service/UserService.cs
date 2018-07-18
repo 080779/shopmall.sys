@@ -34,6 +34,7 @@ namespace IMS.Service.Service
             dto.BonusAmount = entity.BonusAmount;
             dto.Recommender = entity.Recommend.RecommendMobile;
             dto.HeadPic = entity.HeadPic;
+            dto.ShareCode = entity.ShareCode;
             return dto;
         }
 
@@ -104,6 +105,21 @@ namespace IMS.Service.Service
                 {
                     entity.HeadPic = headpic;
                 }
+                await dbc.SaveChangesAsync();
+                return true;
+            }
+        }
+
+        public async Task<bool> UpdateShareCodeAsync(long id, string codeUrl)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserEntity entity = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Id == id);
+                if (entity == null)
+                {
+                    return false;
+                }
+                entity.ShareCode = codeUrl;
                 await dbc.SaveChangesAsync();
                 return true;
             }
@@ -269,7 +285,7 @@ namespace IMS.Service.Service
                     return -3;
                 }
                 string orderCode = order.Code;
-                var orderlists = dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == order.Id);
+                var orderlists = dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == order.Id).ToList();
                 foreach (var orderlist in orderlists)
                 {
                     GoodsEntity goods = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g => g.Id == orderlist.GoodsId);
@@ -314,7 +330,7 @@ namespace IMS.Service.Service
                     three = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "三级分销佣金比例")).Parm) / 100;
                 }
                 UserEntity oneer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == user.Recommend.RecommendId);
-                if (oneer.Recommend.RecommendPath != "0")
+                if (oneer !=null && oneer.Recommend.RecommendPath != "0")
                 {
                     oneer.Amount = oneer.Amount + amount * one;
                     oneer.BonusAmount = oneer.BonusAmount + amount * one;
@@ -329,7 +345,7 @@ namespace IMS.Service.Service
                     dbc.Journals.Add(journal1);
 
                     UserEntity twoer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == oneer.Recommend.RecommendId);
-                    if (twoer.Recommend.RecommendPath != "0")
+                    if (twoer!=null && twoer.Recommend.RecommendPath != "0")
                     {
                         twoer.Amount = twoer.Amount + amount * two;
                         twoer.BonusAmount = twoer.BonusAmount + amount * two;
@@ -344,7 +360,7 @@ namespace IMS.Service.Service
                         dbc.Journals.Add(journal2);
 
                         UserEntity threer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == twoer.Recommend.RecommendId);
-                        if (threer.Recommend.RecommendPath != "0")
+                        if (threer!=null && threer.Recommend.RecommendPath != "0")
                         {
                             threer.Amount = threer.Amount + amount * three;
                             threer.BonusAmount = threer.BonusAmount + amount * three;

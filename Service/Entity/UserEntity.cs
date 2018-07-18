@@ -18,9 +18,9 @@ namespace IMS.Service.Entity
         public decimal Amount { get; set; } = 0;//账户金额
         public decimal BonusAmount { get; set; } = 0;//累计佣金
         /// <summary>
-        /// 消费金额(BuyAmount),后面改
+        /// 消费金额
         /// </summary>
-        public decimal BuyAmount { get; set; } = 0;//消费金额(BuyAmount)
+        public decimal BuyAmount { get; set; } = 0;//消费金额
         public virtual RecommendEntity Recommend { get; set; }
         public long LevelId { get; set; }
         public virtual IdNameEntity Level { get; set; }
@@ -28,6 +28,7 @@ namespace IMS.Service.Entity
         public string Salt { get; set; } = string.Empty;
         public string Password { get; set; }
         public string TradePassword { get; set; }
+        public string ShareCode { get; set; }
         public int ErrorCount { get; set; } = 0;
         public DateTime ErrorTime { get; set; } = DateTime.Now;
         public bool IsEnabled { get; set; } = true;

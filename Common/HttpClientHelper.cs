@@ -20,7 +20,7 @@ namespace IMS.Common
             if (response.IsSuccessStatusCode)
             {
                 Stream myResponseStream = await response.Content.ReadAsStreamAsync();
-                StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("utf-8"));
+                StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.UTF8);
                 result = await myStreamReader.ReadToEndAsync();
                 myStreamReader.Close();
                 myResponseStream.Close();
@@ -41,7 +41,7 @@ namespace IMS.Common
             if (response.IsSuccessStatusCode)
             {
                 Stream myResponseStream = await response.Content.ReadAsStreamAsync();
-                StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("utf-8"));
+                StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.UTF8);
                 result = await myStreamReader.ReadToEndAsync();
                 myStreamReader.Close();
                 myResponseStream.Close();
@@ -57,15 +57,27 @@ namespace IMS.Common
             StringContent content = new StringContent(json);
             //contentype 必不可少
             content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
-            var response = await httpClient.PostAsync(url, content);            if (response.IsSuccessStatusCode)
+            var response = await httpClient.PostAsync(url, content);
+            if (response.IsSuccessStatusCode)
             {
                 Stream myResponseStream = await response.Content.ReadAsStreamAsync();
-                StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("utf-8"));
+                StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.UTF8);
                 result = await myStreamReader.ReadToEndAsync();
                 myStreamReader.Close();
                 myResponseStream.Close();
             }
             return result;
+        }
+
+        public static async Task<Stream> GetResponseStringByPostJsonAsync<T>(HttpClient httpClient, T obj, string url)
+        {
+            string json = JsonConvert.SerializeObject(obj);
+            HttpClient client = new HttpClient();
+            StringContent content = new StringContent(json);
+            //contentype 必不可少
+            content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+            var response = await httpClient.PostAsync(url, content);
+            return await response.Content.ReadAsStreamAsync();
         }
 
         public static async Task<string> GetResponseByPostAsync<T>(HttpClient httpClient, T obj, string url)
@@ -76,7 +88,7 @@ namespace IMS.Common
             if (response.IsSuccessStatusCode)
             {
                 Stream myResponseStream = await response.Content.ReadAsStreamAsync();
-                StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("utf-8"));
+                StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.UTF8);
                 result = await myStreamReader.ReadToEndAsync();
                 myStreamReader.Close();
                 myResponseStream.Close();

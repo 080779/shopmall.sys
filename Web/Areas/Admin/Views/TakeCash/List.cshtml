@@ -63,11 +63,12 @@
                 <thead>
                     <tr>
                         <th width="60">编号</th>
-                        <th width="100">申请时间</th>
-                        <th width="100">会员账号</th>
-                        <th width="100">会员昵称</th>
-                        <th width="120">提现金额</th>
+                        <th width="120">申请时间</th>
+                        <th width="120">会员账号</th>
+                        <th width="120">会员昵称</th>
+                        <th width="60">提现金额</th>
                         <th width="60">结款状态</th>
+                        <th width="120">结款人</th>
                         <th width="120">操作</th>
                     </tr>
                 </thead>
@@ -79,9 +80,10 @@
                         <td v-html="takeCashe.nickName"></td>
                         <td v-html="takeCashe.amount"></td>
                         <td v-html="takeCashe.stateName"></td>
+                        <td v-html="takeCashe.adminMobile"></td>
                         <td>
                             <a class="btn btn-xs btn-info" v-on:click="getcodeorcard(takeCashe.payTypeName,takeCashe.payCode,takeCashe.bankAccount)" v-html="'查看'+takeCashe.payTypeName"></a>
-                            <a title="标记结款" href="javascript:;" v-on:click="confirm(takeCashe.id)" class="btn btn-xs btn-warning">标记结款</a>
+                            <a title="标记结款" href="javascript:;" v-bind:disabled="takeCashe.stateName=='已结款'" v-on:click="confirm(takeCashe.id)" class="btn btn-xs btn-warning">标记结款</a>
                         </td>
                     </tr>
                 </tbody>

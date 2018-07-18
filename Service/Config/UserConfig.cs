@@ -16,6 +16,7 @@ namespace IMS.Service.Config
             Property(p => p.Salt).HasMaxLength(30);
             Property(p => p.Password).HasMaxLength(50);
             Property(p => p.TradePassword).HasMaxLength(50);
+            Property(p => p.ShareCode).HasMaxLength(250);
             HasRequired(p => p.Level).WithMany().HasForeignKey(p => p.LevelId).WillCascadeOnDelete(false);
         }
     }

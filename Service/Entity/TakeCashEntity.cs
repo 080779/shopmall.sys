@@ -19,5 +19,6 @@ namespace IMS.Service.Entity
         public virtual IdNameEntity State { get; set; }
         public long PayTypeId { get; set; }
         public virtual IdNameEntity PayType { get; set; }
+        public string AdminMobile { get; set; }
     }
 }

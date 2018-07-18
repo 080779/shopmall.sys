@@ -28,6 +28,7 @@ namespace IMS.Service.Service
             dto.NickName = entity.User.NickName;
             dto.Mobile = entity.User.Mobile;
             dto.Code = entity.User.Code;
+            dto.AdminMobile = entity.AdminMobile;
             return dto;
         }
         public BankAccountDTO ToDTO(BankAccountEntity entity)
@@ -87,7 +88,7 @@ namespace IMS.Service.Service
             }
         }
         
-        public async Task<long> Confirm(long id)
+        public async Task<long> Confirm(long id,long adminId)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -103,6 +104,7 @@ namespace IMS.Service.Service
                 }
                 user.Amount = user.Amount - takeCash.Amount;
                 takeCash.StateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "已结款")).Id;
+                takeCash.AdminMobile = (await dbc.GetAll<AdminEntity>().SingleOrDefaultAsync(a => a.Id == adminId)).Mobile;
                 JournalEntity journal = new JournalEntity();
                 journal.OutAmount = takeCash.Amount;
                 journal.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "余额提现")).Id;

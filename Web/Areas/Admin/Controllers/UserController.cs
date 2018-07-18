@@ -81,10 +81,13 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Msg = "会员添加成功" });
         }
 
-        public async Task<ActionResult> BonusSet(List<Setting> settings)
+        public async Task<ActionResult> BonusSet(List<SettingParm> settings)
         {
-            SettingParm[] parms= settings.Select(s => new SettingParm { Id = s.Id, Parm = s.Parm }).ToArray();
-            bool flag= await settingService.UpdateAsync(parms);
+            if (settings.Count() <= 0)
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "无参数" });
+            }
+            bool flag= await settingService.UpdateAsync(settings.ToArray());
             if(!flag)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "修改失败" });

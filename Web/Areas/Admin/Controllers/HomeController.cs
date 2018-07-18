@@ -12,6 +12,7 @@ namespace IMS.Web.Areas.Admin.Controllers
     public class HomeController : Controller
     {
         public IAdminService adminService { get; set; }
+        public ISettingService settingService { get; set; }
         public IPermissionTypeService permissionTypeService { get; set; }
         public async Task<ActionResult> Index()
         {
@@ -19,6 +20,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             HomeIndexViewModel model = new HomeIndexViewModel();
             model.Mobile = (await adminService.GetModelAsync(userId)).Mobile;
             model.PermissionTypes = await permissionTypeService.GetModelList();
+            model.SysTitle= await settingService.GetParmByNameAsync("系统标题");
             return View(model);
         }
         public ActionResult Home()

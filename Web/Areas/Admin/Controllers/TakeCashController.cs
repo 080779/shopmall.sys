@@ -35,7 +35,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         [HttpPost]
         public async Task<ActionResult> Confirm(long id)
         {
-            long res = await takeCashService.Confirm(id);
+            long res = await takeCashService.Confirm(id, Convert.ToInt64(Session["Platform_AdminUserId"]));
             if(res<=0)
             {
                 return Json(new AjaxResult { Status = 1, Msg = "结款失败" });

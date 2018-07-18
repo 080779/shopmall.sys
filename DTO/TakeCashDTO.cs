@@ -20,5 +20,6 @@ namespace IMS.DTO
         public string PayTypeName { get; set; }
         public PayCodeDTO PayCode { get; set; }
         public BankAccountDTO BankAccount { get; set; }
+        public string AdminMobile { get; set; }
     }
 }
