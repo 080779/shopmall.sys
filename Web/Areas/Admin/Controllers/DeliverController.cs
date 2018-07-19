@@ -27,6 +27,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         //[Permission("日志管理_查看日志")]
+        [AdminLog("发货管理", "查看收发货列表")]
         public async Task<ActionResult> List(long? orderStateId,string keyword,DateTime? startTime,DateTime? endTime,int pageIndex=1)
         {
             var result = await orderService.GetDeliverModelListAsync(null,orderStateId, keyword, startTime, endTime, pageIndex, pageSize);
@@ -44,6 +45,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             var res = await orderService.GetModelAsync(id);
             return Json(new AjaxResult { Status = 1, Data = res });
         }
+        [AdminLog("发货管理", "标记发货")]
         public async Task<ActionResult> Edit(long id,string deliverName,string deliverCode)
         {
             bool flag = await orderService.UpdateDeliverStateAsync(id, deliverName, deliverCode);

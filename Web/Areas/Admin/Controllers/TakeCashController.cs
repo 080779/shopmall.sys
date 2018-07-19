@@ -22,6 +22,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return View();
         }
         //[Permission("积分管理_积分管理")]
+        [AdminLog("佣金结款", "查看佣金结款管理列表")]
         [HttpPost]
         public async Task<ActionResult> List(long? stateId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
@@ -33,6 +34,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Data = model });
         }
         [HttpPost]
+        [AdminLog("佣金结款", "确认结款")]
         public async Task<ActionResult> Confirm(long id)
         {
             long res = await takeCashService.Confirm(id, Convert.ToInt64(Session["Platform_AdminUserId"]));

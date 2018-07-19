@@ -1,6 +1,7 @@
 ﻿using IMS.Common;
 using IMS.DTO;
 using IMS.IService;
+using IMS.Web.App_Start.Filter;
 using IMS.Web.Areas.Admin.Models.Goods;
 using System;
 using System.Collections.Generic;
@@ -20,12 +21,13 @@ namespace IMS.Web.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
+        [AdminLog("首页产品分区管理", "查看分区列表")]
         public async Task<ActionResult> List(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
             GoodsAreaSearchResult result= await goodsAreaService.GetModelListAsync(keyword,startTime,endTime,pageIndex,pageSize);
             return Json(new AjaxResult { Status = 1, Data = result });
         }
-
+        [AdminLog("首页产品分区管理", "添加分区")]
         public async Task<ActionResult> Add(string title, string description, string note)
         {
             if (string.IsNullOrEmpty(title))
@@ -49,7 +51,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             GoodsAreaDTO model = await goodsAreaService.GetModelAsync(id);
             return Json(new AjaxResult { Status = 1, Data = model });
         }
-
+        [AdminLog("首页产品分区管理", "编辑分区")]
         public async Task<ActionResult> Edit(long id,string title, string description, string note)
         {
             if (string.IsNullOrEmpty(title))
@@ -67,6 +69,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             return Json(new AjaxResult { Status = 1, Msg = "编辑首页产品分区成功" });
         }
+        [AdminLog("首页产品分区管理", "删除分区")]
         public async Task<ActionResult> Del(long id)
         {
             bool flag = await goodsAreaService.DeleteAsync(id);

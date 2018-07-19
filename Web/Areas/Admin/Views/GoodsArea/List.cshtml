@@ -179,7 +179,7 @@
                 var that = this;
                 layer.open({
                     type: 1,
-                    title: '添加用户',
+                    title: '添加分区',
                     maxmin: true,
                     shadeClose: false, //点击遮罩关闭层
                     area: ['450px', '430px'],
@@ -202,13 +202,12 @@
                             }
                             else if (result.data.status == 0) {
                                 layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                                //that.msg = result.data.msg;
                             }
                             else if (result.data.status == 302) {
                                 window.location.href = result.data.data;
                             }
                             else if (result.data.status == 401) {
-                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
                             }
                         });
                     }
@@ -223,7 +222,7 @@
                 });
                 layer.open({
                     type: 1,
-                    title: '修改用户',
+                    title: '编辑分区',
                     maxmin: true,
                     shadeClose: false, //点击遮罩关闭层
                     area: ['450px', '430px'],
@@ -246,13 +245,12 @@
                             }
                             else if (result.data.status == 0) {
                                 layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                                //that.msg = result.data.msg;
                             }
                             else if (result.data.status == 302) {
                                 window.location.href = result.data.data;
                             }
                             else if (result.data.status == 401) {
-                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
                             }
                         });
                     }
@@ -268,7 +266,6 @@
                         }
                         else if (result.data.status == 0) {
                             layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                            //that.msg = result.data.msg;
                         }
                         else if (result.data.status == 302) {
                             window.location.href = result.data.data;

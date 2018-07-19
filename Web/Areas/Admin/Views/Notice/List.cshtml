@@ -44,9 +44,6 @@
         </div>
         <div class="search_style">
             <ul class="search_content clearfix">
-                @*<li><label class="l_f">添加时间</label>
-                <input class="inline laydate-icon" id="start" style=" margin-left:10px;" v-on:focus='getstart' />至
-                <input class="inline laydate-icon" id="end" style=" margin-left:10px;" v-on:focus='getend' /></li>*@
                 <li>
                     <label class="l_f">公告信息</label>
                     <input name="" v-model="searchs.keyword" type="text" class="text_add" placeholder="公告信息" style=" width:150px" />
@@ -62,7 +59,6 @@
                         <th width="100">发布时间</th>
                         <th width="100">失效时间</th>
                         <th width="100">公告标题</th>
-                        @*<th width="120">公告内容</th>*@
                         <th width="60">状态</th>
                         <th width="120">操作</th>
                     </tr>
@@ -73,7 +69,6 @@
                         <td v-html="notice.createTime"></td>
                         <td v-html="notice.failureTime"></td>
                         <td v-html="notice.code"></td>
-                        @*<td v-html="notice.content"></td>*@
                         <td v-html="notice.isEnabled==true?'已启用':'停用'"></td>                        
                         <td>
                             @*<a class="btn btn-xs btn-info" v-on:click="getnotices(admin.id)">查看公告</a>*@
@@ -194,7 +189,7 @@
                 var that = this;
                 layer.open({
                     type: 1,
-                    title: '添加用户',
+                    title: '添加公告',
                     maxmin: true,
                     shadeClose: false, //点击遮罩关闭层
                     area: ['1200px', '600px'],
@@ -222,13 +217,12 @@
                             }
                             else if (result.data.status == 0) {
                                 layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                                //that.msg = result.data.msg;
                             }
                             else if (result.data.status == 302) {
                                 window.location.href = result.data.data;
                             }
                             else if (result.data.status == 401) {
-                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
                             }
                         });
                     }
@@ -243,7 +237,7 @@
                 });
                 layer.open({
                     type: 1,
-                    title: '修改用户',
+                    title: '修改公告',
                     maxmin: true,
                     shadeClose: false, //点击遮罩关闭层
                     area: ['1200px', '600px'],
@@ -271,13 +265,12 @@
                             }
                             else if (result.data.status == 0) {
                                 layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                                //that.msg = result.data.msg;
                             }
                             else if (result.data.status == 302) {
                                 window.location.href = result.data.data;
                             }
                             else if (result.data.status == 401) {
-                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
                             }
                         });
                     }

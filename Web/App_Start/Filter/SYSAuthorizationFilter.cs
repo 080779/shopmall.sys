@@ -37,13 +37,29 @@ namespace IMS.Web.App_Start.Filter
                     filterContext.Result = new RedirectResult("/admin/login/login");
                 }
                 return;
-            }
+            }            
             if (attribute == null && attributes.Length <= 0)
             {
+                object[] attrs = filterContext.ActionDescriptor.GetCustomAttributes(typeof(AdminLogAttribute), false);
+                if (attrs!=null && attrs.Length > 0)
+                {
+                    string ipAddress = CommonHelper.GetWebClientIp();
+                    string logDesc = ((AdminLogAttribute)attrs[0]).AdminLog;
+                    string permType = ((AdminLogAttribute)attrs[0]).PermissionType;
+                    adminLogService.Add(adminUserId.Value, permType, logDesc, ipAddress, "");
+                }
                 return; //如果没有权限检查的attribute就返回，不进行后面的判断
             }
             else if (attribute != null)
             {
+                object[] attrs = filterContext.ActionDescriptor.GetCustomAttributes(typeof(AdminLogAttribute), false);
+                if (attrs != null && attrs.Length > 0)
+                {
+                    string ipAddress = CommonHelper.GetWebClientIp();
+                    string logDesc = ((AdminLogAttribute)attrs[0]).AdminLog;
+                    string permType = ((AdminLogAttribute)attrs[0]).PermissionType;
+                    adminLogService.Add(adminUserId.Value, permType, logDesc, ipAddress, "");
+                }
                 if (!adminUserService.HasPermission(adminUserId.Value, attribute.Permission))
                 {
                     if (filterContext.HttpContext.Request.IsAjaxRequest())
@@ -54,9 +70,37 @@ namespace IMS.Web.App_Start.Filter
                     {
                         //filterContext.Result = new ContentResult() { Content = "没有" + permissionService.GetByName(attr.Permission).Description + "这个权限" };
                         filterContext.Result = new RedirectResult("/admin/home/permission?msg=" + "没有" + permissionService.GetByDesc(attribute.Permission).Name + "这个权限");
-                    }
+                    }                    
                     return;
                 }
+            }
+            else if (attributes.Length > 0)
+            {
+                object[] attrs = filterContext.ActionDescriptor.GetCustomAttributes(typeof(AdminLogAttribute), false);
+                if (attrs != null && attrs.Length > 0)
+                {
+                    string ipAddress = CommonHelper.GetWebClientIp();
+                    string logDesc = ((AdminLogAttribute)attrs[0]).AdminLog;
+                    string permType = ((AdminLogAttribute)attrs[0]).PermissionType;
+                    adminLogService.Add(adminUserId.Value, permType, logDesc, ipAddress, "");
+                }
+                foreach (var attr in attributes)
+                {
+                    if (!adminUserService.HasPermission(adminUserId.Value, attr.Permission))
+                    {
+                        if (filterContext.HttpContext.Request.IsAjaxRequest())
+                        {
+                            filterContext.Result = new JsonNetResult { Data = new AjaxResult { Status = 401, Msg = "没有" + permissionService.GetByDesc(attr.Permission).Name + "这个权限" } };
+                        }
+                        else
+                        {
+                            //filterContext.Result = new ContentResult() { Content = "没有" + permissionService.GetByName(attr.Permission).Description + "这个权限" };
+                            filterContext.Result = new RedirectResult("/admin/home/permission?msg=" + "没有" + permissionService.GetByDesc(attr.Permission).Name + "这个权限");
+                        }
+                        return;
+                    }
+                }
+                return;
             }
         }
     }

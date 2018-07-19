@@ -200,7 +200,7 @@
                 if (payTypeName == '收款码') {
                     layer.open({
                         type: 1,
-                        title: '添加用户',
+                        title: '查看收款码',
                         maxmin: true,
                         shadeClose: false, //点击遮罩关闭层
                         area: ['400px', ''],
@@ -210,7 +210,7 @@
                 if (payTypeName =='银行卡') {
                     layer.open({
                         type: 1,
-                        title: '添加用户',
+                        title: '查看银行卡',
                         maxmin: true,
                         shadeClose: false, //点击遮罩关闭层
                         area: ['400px', ''],
@@ -228,13 +228,12 @@
                         }
                         else if (result.data.status == 0) {
                             layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                            //that.msg = result.data.msg;
                         }
                         else if (result.data.status == 302) {
                             window.location.href = result.data.data;
                         }
                         else if (result.data.status == 401) {
-                            layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                            layer.alert(result.data.msg, { icon: 0, title: '提示框' });
                         }
                     });
                 });

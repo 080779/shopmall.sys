@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using IMS.Web.Areas.Admin.Models.Order;
 using IMS.DTO;
 using SDMS.Common;
+using IMS.Web.App_Start.Filter;
 
 namespace IMS.Web.Areas.Admin.Controllers
 {
@@ -23,6 +24,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
+        [AdminLog("订单管理", "查看订单管理列表")]
         public async Task<ActionResult> List(long? orderStateId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
             var result = await orderService.GetModelListAsync(null, orderStateId,null, keyword, startTime, endTime, pageIndex, pageSize);
@@ -38,6 +40,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [AdminLog("订单管理", "查看订单管理明细")]
         public async Task<ActionResult> GetDetail(long id)
         {
             OrderDTO dto= await orderService.GetModelAsync(id);
@@ -48,7 +51,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             model.OrderGoodsInfos = result.OrderLists.Select(g=>new OrderGoodsInfo { Code=g.GoodsCode,Id=g.GoodsId,Name=g.GoodsName,Number=g.Number,RealityPrice=g.Price,Thumb=g.ImgUrl }).ToList();
             return Json(new AjaxResult { Status = 1, Data = model });
         }
-
+        [AdminLog("订单管理", "导出订单管理列表")]
         public async Task<ActionResult> ExportExcel()
         {
             var res = await orderService.GetAllAsync();

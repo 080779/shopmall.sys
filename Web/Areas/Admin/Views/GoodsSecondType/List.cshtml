@@ -91,7 +91,7 @@
             </ul>
         </div>
 
-        <!--添加用户图层-->
+        <!--添加二级分区图层-->
         <div class="add_menber" id="add" style="display:none">
             <ul class="page-content">
                 <li><label class="label_name">商品类别名：</label><span class="add_name"><input value="" placeholder="商品类别名" v-model="adds.name" type="text" class="text_add" /></span><div class="prompt r_f"></div></li>
@@ -101,7 +101,7 @@
             </ul>
         </div>
 
-        <!--修改用户图层-->
+        <!--修改二级分区图层-->
         <div class="add_menber" id="edit" style="display:none">
             <ul class="page-content">
                 <li><label class="label_name">商品类别名：</label><span class="add_name"><input value="" placeholder="商品类别名" v-model="edits.name" type="text" class="text_add" /></span><div class="prompt r_f"></div></li>
@@ -164,7 +164,7 @@
                 var that = this;
                 layer.open({
                     type: 1,
-                    title: '添加用户',
+                    title: '添加二级分区',
                     maxmin: true,
                     shadeClose: false, //点击遮罩关闭层
                     area: ['450px', '430px'],
@@ -188,13 +188,12 @@
                             }
                             else if (result.data.status == 0) {
                                 layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                                //that.msg = result.data.msg;
                             }
                             else if (result.data.status == 302) {
                                 window.location.href = result.data.data;
                             }
                             else if (result.data.status == 401) {
-                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
                             }
                         });
                     }
@@ -208,7 +207,7 @@
                 });
                 layer.open({
                     type: 1,
-                    title: '修改用户',
+                    title: '编辑二级分区',
                     maxmin: true,
                     shadeClose: false, //点击遮罩关闭层
                     area: ['450px', '430px'],
@@ -232,13 +231,12 @@
                             }
                             else if (result.data.status == 0) {
                                 layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                                //that.msg = result.data.msg;
                             }
                             else if (result.data.status == 302) {
                                 window.location.href = result.data.data;
                             }
                             else if (result.data.status == 401) {
-                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
                             }
                         });
                     }

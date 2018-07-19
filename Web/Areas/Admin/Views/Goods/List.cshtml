@@ -218,10 +218,6 @@
                     </div>
                 </div>
             </div>
-            @*<ul class="page-content">
-                <li><label class="label_name">上传商品图片：</label><span class="add_name"><input placeholder="上传商品图片" type="file" id="file1" class="text_add" /></span><div class="prompt r_f"></div></li>
-                <li><label class="label_name">&nbsp;</label><span class="add_name"><img id="img1" style="margin-top: 10px; max-width: 100px; max-height: 400px;" /></span><div class="prompt r_f"></div></li>
-            </ul>*@
         </div>
     </div>
 </body>
@@ -348,7 +344,7 @@
                 that.adds.description = editor.txt.html();
                 layer.open({
                     type: 1,
-                    title: '添加用户',
+                    title: '添加商品',
                     maxmin: true,
                     shadeClose: false, //点击遮罩关闭层
                     area: ['1200px', '600px'],
@@ -402,7 +398,6 @@
                                 }
                                 else if (result.data.status == 0) {
                                     layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                                    //that.msg = result.data.msg;
                                 }
                                 else if (result.data.status == 302) {
                                     window.location.href = result.data.data;
@@ -421,10 +416,9 @@
                     that.getsec(result.data.data.goodsTypeId);
                     editor1.txt.html(result.data.data.description);
                 });
-                //that.getsec(that.edits.goodsTypeId);
                 layer.open({
                     type: 1,
-                    title: '添加用户',
+                    title: '编辑商品',
                     maxmin: true,
                     shadeClose: false, //点击遮罩关闭层
                     area: ['1200px', '600px'],
@@ -478,7 +472,6 @@
                                 }
                                 else if (result.data.status == 0) {
                                     layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                                    //that.msg = result.data.msg;
                                 }
                                 else if (result.data.status == 302) {
                                     window.location.href = result.data.data;
@@ -500,7 +493,6 @@
                         }
                         else if (result.data.status == 0) {
                             layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                            //that.msg = result.data.msg;
                         }
                         else if (result.data.status == 302) {
                             window.location.href = result.data.data;
@@ -520,7 +512,7 @@
                 //that.edits.goodsSecondTypeId = "";
                 layer.open({
                     type: 1,
-                    title: '添加用户',
+                    title: '上传商品图片',
                     maxmin: true,
                     shadeClose: false, //点击遮罩关闭层
                     area: ['1200px', '600px'],
@@ -539,13 +531,12 @@
                             }
                             else if (result.data.status == 0) {
                                 layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                                //that.msg = result.data.msg;
                             }
                             else if (result.data.status == 302) {
                                 window.location.href = result.data.data;
                             }
                             else if (result.data.status == 401) {
-                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
                             }
                         });
                     }

@@ -1,6 +1,7 @@
 ﻿using IMS.Common;
 using IMS.DTO;
 using IMS.IService;
+using IMS.Web.App_Start.Filter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +20,13 @@ namespace IMS.Web.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
+        [AdminLog("幻灯片管理", "查看幻灯片管理列表")]
         public async Task<ActionResult> List(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
             var result = await slideService.GetModelListAsync(keyword, startTime, endTime, pageIndex, pageSize);
             return Json(new AjaxResult { Status = 1, Data = result });
         }
+        [AdminLog("幻灯片管理", "添加幻灯片")]
         public async Task<ActionResult> Add(string name, string url, string imgFile, bool isEnabled)
         {
             if(string.IsNullOrEmpty(name))
@@ -56,7 +59,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             SlideDTO model= await slideService.GetModelAsync(id);
             return Json(new AjaxResult { Status = 1, Data= model });
         }
-
+        [AdminLog("幻灯片管理", "编辑幻灯片")]
         public async Task<ActionResult> Edit(long id,string name, string url, string imgFile, bool isEnabled)
         {
             if (string.IsNullOrEmpty(name))
@@ -92,6 +95,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             return Json(new AjaxResult { Status = 1, Msg = "修改幻灯片成功" });
         }
+        [AdminLog("幻灯片管理", "删除幻灯片")]
         public async Task<ActionResult> Del(long id)
         {
             bool flag = await slideService.DeleteAsync(id);

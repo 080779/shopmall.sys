@@ -221,7 +221,6 @@
                     }
                     else if (result.data.status == 0) {
                         layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                        //that.msg = result.data.msg;
                     }
                     else if (result.data.status == 302) {
                         window.location.href = result.data.data;
@@ -247,7 +246,6 @@
                             }
                             else if (result.data.status == 0) {
                                 layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                                //that.msg = result.data.msg;
                             }
                             else if (result.data.status == 302) {
                                 window.location.href = result.data.data;
@@ -267,7 +265,6 @@
                     }
                     else if (result.data.status == 0) {
                         layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                        //that.msg = result.data.msg;
                     }
                     else if (result.data.status == 302) {
                         window.location.href = result.data.data;
@@ -278,7 +275,7 @@
                 });
                 layer.open({
                     type: 1,
-                    title: '标记发货',
+                    title: '收发货详情',
                     maxmin: true,
                     shadeClose: false, //点击遮罩关闭层
                     area: ['800px', '400px'],

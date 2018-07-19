@@ -24,6 +24,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
+        [AdminLog("会员管理", "查看用户管理列表")]
         public async Task<ActionResult> List(long? levelId,string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
             //long levelId = await idNameService.GetIdByNameAsync("会员等级");
@@ -41,6 +42,8 @@ namespace IMS.Web.Areas.Admin.Controllers
             model.Discounts = (await settingService.GetModelListAsync("会员优惠")).Select(s => new SettingModel { Id = s.Id, Parm = s.Parm ,Name=s.Name}).ToList();
             return Json(new AjaxResult { Status = 1, Data = model });
         }
+        [Permission("会员管理_新增会员")]
+        [AdminLog("会员管理", "添加用户")]
         public async Task<ActionResult> Add(string mobile,string recommendMobile,string password)
         {
             if(string.IsNullOrEmpty(mobile))
@@ -75,7 +78,8 @@ namespace IMS.Web.Areas.Admin.Controllers
             }            
             return Json(new AjaxResult { Status = 1, Msg = "会员添加成功" });
         }
-
+        [AdminLog("会员管理", "用户佣金管理")]
+        [Permission("会员管理_佣金设置")]
         public async Task<ActionResult> BonusSet(List<SettingParm> settings)
         {
             if (settings.Count() <= 0)
@@ -89,7 +93,8 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             return Json(new AjaxResult { Status = 1, Msg = "修改成功" });
         }
-
+        [AdminLog("会员管理", "用户升级管理")]
+        [Permission("会员管理_升级设置")]
         public async Task<ActionResult> UpSet(List<SettingModel> settings)
         {
             if (settings.Count() <= 0)
@@ -111,7 +116,8 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             return Json(new AjaxResult { Status = 1, Msg = "修改成功" });
         }
-
+        [AdminLog("会员管理", "重置用户密码")]
+        [Permission("会员管理_重置密码")]
         public async Task<ActionResult> ResetPwd(long id, string password)
         {
             if (string.IsNullOrEmpty(password))
@@ -129,7 +135,8 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             return Json(new AjaxResult { Status = 1, Msg = "重置密码成功" });
         }
-
+        [AdminLog("会员管理", "冻结用户")]
+        [Permission("会员管理_冻结用户")]
         public async Task<ActionResult> Frozen(long id)
         {
             bool res= await userService.FrozenAsync(id);
@@ -139,6 +146,8 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             return Json(new AjaxResult { Status = 1, Msg = "冻结用户成功" });
         }
+        [AdminLog("会员管理", "删除用户")]
+        [Permission("会员管理_删除用户")]
         public async Task<ActionResult> Delete(long id)
         {
             bool res = await userService.DeleteAsync(id);

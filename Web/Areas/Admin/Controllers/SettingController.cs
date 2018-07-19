@@ -21,6 +21,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         //[Permission("日志管理_查看日志")]
+        [AdminLog("系统设置", "查看系统设置")]
         public async Task<ActionResult> List(string keyword,DateTime? startTime,DateTime? endTime,int pageIndex=1)
         {
             SettingListViewModel model = new SettingListViewModel();
@@ -38,6 +39,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateInput(false)]
+        [AdminLog("系统设置", "编辑系统设置")]
         public async Task<ActionResult> Edit(List<SettingParm> parms)
         {
             if(parms.Count()<=0)

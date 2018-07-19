@@ -1,6 +1,7 @@
 ﻿using IMS.Common;
 using IMS.DTO;
 using IMS.IService;
+using IMS.Web.App_Start.Filter;
 using IMS.Web.Areas.Admin.Models.Goods;
 using System;
 using System.Collections.Generic;
@@ -20,12 +21,13 @@ namespace IMS.Web.Areas.Admin.Controllers
             return View(id);
         }
         [HttpPost]
+        [AdminLog("商品分类", "查看商品二级分类列表")]
         public async Task<ActionResult> List(long id,string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
             GoodsSecondTypeSearchResult result= await goodsSecondTypeService.GetModelListAsync(id,keyword,startTime,endTime,pageIndex,pageSize);
             return Json(new AjaxResult { Status = 1, Data = result });
         }
-
+        [AdminLog("商品分类", "添加商品二级分类")]
         public async Task<ActionResult> Add(string name, string description)
         {
             if (string.IsNullOrEmpty(name))
@@ -45,7 +47,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             GoodsSecondTypeDTO model = await goodsSecondTypeService.GetModelAsync(id);
             return Json(new AjaxResult { Status = 1, Data = model });
         }
-
+        [AdminLog("商品分类", "编辑商品二级分类")]
         public async Task<ActionResult> Edit(long id, string name, string description)
         {
             if (string.IsNullOrEmpty(name))
@@ -59,6 +61,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             return Json(new AjaxResult { Status = 1, Msg = "编辑商品二级分类成功" });
         }
+        [AdminLog("商品分类", "删除商品二级分类")]
         public async Task<ActionResult> Del(long id)
         {
             bool flag = await goodsSecondTypeService.DeleteAsync(id);

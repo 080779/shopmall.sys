@@ -25,6 +25,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         //[Permission("管理员管理_管理员管理")]
+        [AdminLog("管理员管理", "查看管理员列表")]
         public async Task<ActionResult> List(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
             AdminSearchResult result= await adminService.GetModelListAsync("admin", keyword, startTime, endTime, pageIndex, pageSize);          
@@ -46,7 +47,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         //[Permission("管理员管理_管理员管理")]
         //[Permission("管理员管理_新增管理")]
-        //[AdminLog("管理员管理", "新增管理")]
+        [AdminLog("管理员管理", "新增管理")]
         public async Task<ActionResult> Add(string mobile,string password)
         {
             string adminMobile = (await adminService.GetModelAsync(Convert.ToInt64(Session["Platform_AdminUserId"]))).Mobile;
@@ -71,7 +72,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         //[Permission("管理员管理_管理员管理")]
         //[Permission("管理员管理_修改权限")]
-        //[AdminLog("管理员管理", "修改权限")]
+        [AdminLog("管理员管理", "修改权限")]
         public async Task<ActionResult> EditPermission(long id, List<long> permissionIds)
         {
             if (permissionIds.Count <= 0)
@@ -87,7 +88,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         //[Permission("管理员管理_管理员管理")]
         //[Permission("管理员管理_修改密码")]
-        //[AdminLog("管理员管理", "修改密码")]
+        [AdminLog("管理员管理", "修改密码")]
         public async Task<ActionResult> EditPassword(long id, string password)
         {
             if (string.IsNullOrEmpty(password))
@@ -128,7 +129,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         //[Permission("管理员管理_管理员管理")]
         //[Permission("管理员管理_冻结账户")]
-        //[AdminLog("管理员管理", "冻结账户")]
+        [AdminLog("管理员管理", "冻结账户")]
         public async Task<ActionResult> Frozen(long id)
         {
             bool res= await adminService.FrozenAsync(id);
@@ -140,7 +141,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         //[Permission("管理员管理_管理员管理")]
         //[Permission("管理员管理_删除账户")]
-        //[AdminLog("管理员管理", "删除账户")]
+        [AdminLog("管理员管理", "删除账户")]
         public async Task<ActionResult> Del(long id)
         {
             bool res = await adminService.DeleteAsync(id);

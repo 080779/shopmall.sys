@@ -1,5 +1,6 @@
 ﻿using IMS.Common;
 using IMS.IService;
+using IMS.Web.App_Start.Filter;
 using IMS.Web.Areas.Admin.Models.UserTeam;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
+        [AdminLog("团队管理", "查看团队管理列表")]
         public async Task<ActionResult> List(string mobile, long? teamLevel, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
             var res = await userService.GetModelTeamListAsync(mobile, teamLevel, keyword, startTime, endTime, pageIndex, pageSize);

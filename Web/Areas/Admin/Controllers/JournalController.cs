@@ -22,6 +22,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return View();
         }
         //[Permission("积分管理_积分管理")]
+        [AdminLog("佣金记录", "查看佣金记录列表")]
         [HttpPost]
         public async Task<ActionResult> List(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {

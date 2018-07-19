@@ -27,6 +27,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         //[Permission("日志管理_查看日志")]
+        [AdminLog("退货管理", "查看退货管理列表")]
         public async Task<ActionResult> List(long? auditStatusId, string keyword,DateTime? startTime,DateTime? endTime,int pageIndex=1)
         {
             //long orderStateId = await idNameService.GetIdByNameAsync("退货中");
@@ -40,6 +41,7 @@ namespace IMS.Web.Areas.Admin.Controllers
 
         [HttpPost]
         //[Permission("日志管理_查看日志")]
+        [AdminLog("退货管理", "退货管理审核")]
         public async Task<ActionResult> Audit(long id)
         {
             long res = await orderService.ReturnAuditAsync(id, Convert.ToInt64(Session["Platform_AdminUserId"]));
@@ -52,6 +54,7 @@ namespace IMS.Web.Areas.Admin.Controllers
 
         [HttpPost]
         //[Permission("日志管理_查看日志")]
+        [AdminLog("退货管理", "退货管理确认退货")]
         public async Task<ActionResult> Confirm(long id)
         {
             long res = await orderService.ReturnAsync(id);

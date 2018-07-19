@@ -1,6 +1,7 @@
 ﻿using IMS.Common;
 using IMS.DTO;
 using IMS.IService;
+using IMS.Web.App_Start.Filter;
 using IMS.Web.Areas.Admin.Models.Goods;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
+        [AdminLog("商品管理", "查看商品列表")]
         public async Task<ActionResult> List(long? goodsTypeId, long? goodsSecondTypeId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
             var result = await goodsService.GetModelListAsync(null, goodsTypeId, goodsSecondTypeId, keyword, startTime, endTime, pageIndex, pageSize);
@@ -36,6 +38,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [AdminLog("商品管理", "上传商品图片")]
         public async Task<ActionResult> Upload(long id, string[] imgFiles)
         {
             if (imgFiles.Count() <= 0)
@@ -92,6 +95,7 @@ namespace IMS.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateInput(false)]
+        [AdminLog("商品管理", "添加商品")]
         public async Task<ActionResult> Add(GoodsAddEditModel model)
         {
             if(string.IsNullOrEmpty(model.Description))
@@ -111,6 +115,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateInput(false)]
+        [AdminLog("商品管理", "编辑商品")]
         public async Task<ActionResult> Edit(GoodsAddEditModel model)
         {
             if (string.IsNullOrEmpty(model.Description))
@@ -129,6 +134,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Msg = "商品编辑成功" });
         }
         [HttpPost]
+        [AdminLog("商品管理", "删除商品")]
         public async Task<ActionResult> Del(long id)
         {
             bool flag = await goodsService.DeleteAsync(id);
