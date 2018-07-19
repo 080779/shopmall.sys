@@ -40,6 +40,7 @@
             <span class="l_f">
                 <a v-on:click="add" class="btn btn-success"><i class="icon-plus"></i>添加用户</a>
                 <a v-on:click="bonusset" class="btn btn-success"><i class="icon-plus"></i>佣金设置</a>
+                <a v-on:click="upset" class="btn btn-success"><i class="icon-plus"></i>升级设置</a>
             </span>
         </div>
         <div class="search_style">
@@ -146,6 +147,21 @@
             </table>
         </div>
 
+        <!--升级设置图层-->
+        <div class="add_menber" id="upset" style="display:none">
+            <table class="table table-striped table-bordered table-hover" id="sample-table">
+                <tbody>
+                    <tr v-for="userUp in userUps">
+                        <td v-html="userUp.name"></td>
+                        <td>¥<input type="text" v-model="userUp.parm" maxlength="4" onKeyUp="value=value.replace(/[^\d]/g,'')" />元</td>
+                    </tr>
+                    <tr v-for="discount in discounts">
+                        <td v-html="discount.name"></td>
+                        <td><input type="text" v-model="discount.parm" maxlength="3"/>折</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <!--重置密码图层-->
         <div class="add_menber" id="resetpwd" style="display:none">
             <ul class="page-content">
@@ -165,8 +181,10 @@
         data: {
             users: [],
             levels: [],
-            settings:[],
+            settings: [],
             levelId: "",
+            userUps: [],
+            discounts: [],
             pages: {
                 all: "", cur: 1, txtpage: ""
             },
@@ -206,6 +224,8 @@
                     this.users = result.data.data.users;
                     this.pages.all = result.data.data.pageCount;
                     this.settings = result.data.data.settings;
+                    this.userUps = result.data.data.userUps;
+                    this.discounts = result.data.data.discounts;
                 })
             },
             pageclick: function (index) {//页码点击事件
@@ -306,6 +326,44 @@
                     }
                 });
             },
+            upset: function () {
+                var that = this;
+                var parms = new Array();                
+                layer.open({
+                    type: 1,
+                    title: '佣金设置',
+                    maxmin: true,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['800px', ''],
+                    content: $('#upset'),
+                    btn: ['确认', '取消'],
+                    yes: function (index, layero) {
+                        $.each(that.discounts, function (key, val) {
+                            parms.push(val);
+                        });
+                        $.each(that.userUps, function (key, val) {
+                            parms.push(val);
+                        });
+                        that.$http.post('/admin/user/upset', { settings: parms }, { emulateJSON: true }).then(function (result) {
+                            if (result.data.status == 1) {
+                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                                layer.close(index);
+                                that.getpage();
+                            }
+                            else if (result.data.status == 0) {
+                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                                //that.msg = result.data.msg;
+                            }
+                            else if (result.data.status == 302) {
+                                window.location.href = result.data.data;
+                            }
+                            else if (result.data.status == 401) {
+                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                            }
+                        });
+                    }
+                });
+            },
             resetpwd: function (id, mobile) {
                 var that = this;
                 this.resetpwds.mobile = mobile;
@@ -346,7 +404,7 @@
                     }
                 });
             },
-            frozen: function (id,isenabled) {
+            frozen: function (id, isenabled) {
                 var that = this;
                 var msg = '会员冻结后将无法登陆商城，确认冻结吗？';
                 var msg1 = '是否冻结会员';
@@ -430,9 +488,12 @@
                 this.pages.all = result.data.data.pageCount;
                 this.levels = result.data.data.levels;
                 this.settings = result.data.data.settings;
+                this.userUps = result.data.data.userUps;
+                this.discounts = result.data.data.discounts;
             })
         }
     });
+
     laydate({
         elem: '#start',
         event: 'focus'

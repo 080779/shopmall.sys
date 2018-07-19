@@ -398,6 +398,7 @@
     <Compile Include="Models\Journal\JournalListModel.cs" />
     <Compile Include="Models\Notice\NoticeDetailModel.cs" />
     <Compile Include="Models\Notice\NoticeListApiModel.cs" />
+    <Compile Include="Models\Order\OrderReApplysModel.cs" />
     <Compile Include="Models\Order\OrderGoodsListApiModel.cs" />
     <Compile Include="Models\Order\OrderReturnApplyModel.cs" />
     <Compile Include="Models\Order\OrderGoodsSelectModel.cs" />

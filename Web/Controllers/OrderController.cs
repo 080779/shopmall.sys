@@ -31,7 +31,7 @@ namespace IMS.Web.Controllers
         public async Task<ApiResult> List(OrderListModel model)
         {
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
-            OrderSearchResult result= await orderService.GetModelListAsync(user.Id, model.OrderStateId,null, null, null, null, model.PageIndex, model.PageSize);
+            OrderSearchResult result = await orderService.GetModelListAsync(user.Id, model.OrderStateId, null, null, null, null, model.PageIndex, model.PageSize);
             OrderListApiModel res = new OrderListApiModel();
             res.PageCount = result.PageCount;
             res.Orders = result.Orders.Select(o => new Order
@@ -54,22 +54,23 @@ namespace IMS.Web.Controllers
                 payTime = o.PayTime,
                 consignTime = o.ConsignTime,
                 endTime = o.EndTime,
-                closeTime=o.CloseTime,
+                closeTime = o.CloseTime,
+                discountAmount=o.DeductAmount,
                 OrderGoods = orderListService.GetModelList(o.Id).Select(l => new OrderGoods {
-                    name= l.GoodsName,
-                    number= l.Number,
-                    price= l.Price,
-                    realityPrice= l.RealityPrice,
-                    totalFee= l.TotalFee
+                    name = l.GoodsName,
+                    number = l.Number,
+                    price = l.Price,
+                    realityPrice = l.RealityPrice,
+                    totalFee = l.TotalFee
                 }).ToList()
             }).ToList();
-            return new ApiResult { status = 1, data=res };
+            return new ApiResult { status = 1, data = res };
         }
         [HttpPost]
         public async Task<ApiResult> GoodsList(OrderGoodsListModel model)
         {
             string parm = await settingService.GetParmByNameAsync("网站域名");
-            var res= await orderListService.GetModelListAsync(model.OrderId,null,null,null,model.PageIndex,model.PageSize);
+            var res = await orderListService.GetModelListAsync(model.OrderId, null, null, null, model.PageIndex, model.PageSize);
             var result = new OrderGoodsListApiModel();
             result.pageCount = res.PageCount;
             result.goodsLists = res.OrderLists.Select(o => new OrderList
@@ -81,9 +82,9 @@ namespace IMS.Web.Controllers
                 number = o.Number,
                 orderCode = o.OrderCode,
                 orderId = o.OrderId,
-                price=o.Price,
-                tealityPrice=o.RealityPrice,
-                totalFee=o.TotalFee
+                price = o.Price,
+                tealityPrice = o.RealityPrice,
+                totalFee = o.TotalFee
             });
             return new ApiResult { status = 1, data = result };
         }
@@ -93,9 +94,9 @@ namespace IMS.Web.Controllers
         {
             await orderListService.ReSetIsReturnAsync(model.OrderId);
             bool flag = await orderListService.SetIsReturnAsync(model.Id);
-            if(!flag)
+            if (!flag)
             {
-                return new ApiResult { status = 0, msg="选择出错" };
+                return new ApiResult { status = 0, msg = "选择出错" };
             }
             return new ApiResult { status = 1, msg = "成功" };
         }
@@ -104,7 +105,7 @@ namespace IMS.Web.Controllers
         public async Task<ApiResult> ReturnApply(OrderReturnApplyModel model)
         {
             long id = await orderService.ApplyReturnAsync(model.OrderId);
-            if (id<=0)
+            if (id <= 0)
             {
                 return new ApiResult { status = 0, msg = "退货申请失败" };
             }
@@ -115,7 +116,7 @@ namespace IMS.Web.Controllers
         public async Task<ApiResult> Detail(OrderDetailModel model)
         {
             var o = await orderService.GetModelAsync(model.Id);
-            if(o==null)
+            if (o == null)
             {
                 return new ApiResult { status = 0, msg = "订单不存在" };
             }
@@ -246,11 +247,11 @@ namespace IMS.Web.Controllers
             long orderStateId = await idNameService.GetIdByNameAsync("待付款");
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             var dtos = await orderApplyService.GetModelListAsync(user.Id);
-            if(dtos.OrderApplies.Count()<=0)
+            if (dtos.OrderApplies.Count() <= 0)
             {
                 return new ApiResult { status = 0, msg = "下单列表无商品" };
             }
-            long id = await orderService.AddAsync(0,user.Id, model.AddressId, model.PayTypeId, orderStateId,dtos.OrderApplies);
+            long id = await orderService.AddAsync(0, user.Id, model.AddressId, model.PayTypeId, orderStateId, dtos.OrderApplies);
             if (id <= 0)
             {
                 return new ApiResult { status = 0, msg = "生成订单失败" };
@@ -279,12 +280,70 @@ namespace IMS.Web.Controllers
             await orderApplyService.DeleteListAsync(user.Id);
             return new ApiResult { status = 1, msg = "支付成功" };
         }
+
+        [HttpPost]
+        public async Task<ApiResult> ReApplys(OrderReApplysModel model)
+        {
+            long orderStateId = 0;
+            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
+            var order = await orderService.GetModelAsync(model.OrderId);
+            if (order == null)
+            {
+                return new ApiResult { status = 0, msg = "订单不存在" };
+            }
+            long payTypeId = await idNameService.GetIdByNameAsync("余额");
+            if (payTypeId == model.PayTypeId)
+            {
+                long payResId = await userService.BalancePayAsync(user.Id, order.Id, order.Amount);
+                if (payResId == -1)
+                {
+                    return new ApiResult { status = 0, msg = "用户不存在" };
+                }
+                if (payResId == -2)
+                {
+                    return new ApiResult { status = 0, msg = "用户账户余额不足" };
+                }
+                if (payResId == -3)
+                {
+                    return new ApiResult { status = 0, msg = "订单不存在" };
+                }
+                orderStateId = await idNameService.GetIdByNameAsync("待发货");
+                await orderService.UpdateAsync(order.Id, null, null, orderStateId);
+            }
+            await goodsCarService.DeleteListAsync(user.Id);
+            await orderApplyService.DeleteListAsync(user.Id);
+            return new ApiResult { status = 1, msg = "支付成功" };
+        }
         [HttpPost]
         public async Task<ApiResult> State()
         {
             IdNameDTO[] res = await idNameService.GetByTypeNameAsync("订单状态");
+            //var result = res.Where(i=>i.Name!="退货中").Select(i => new { id = i.Id, name = i.Name }).ToList();
             var result = res.Select(i => new { id = i.Id, name = i.Name }).ToList();
-            return new ApiResult { status = 1,data= result };
+            return new ApiResult { status = 1, data = result };
+        }
+
+        [HttpPost]
+        public async Task<ApiResult> Discount()
+        {
+            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
+            var dto = await userService.GetModelAsync(user.Id);
+            decimal discount1 = Convert.ToDecimal(await settingService.GetParmByNameAsync("普通会员优惠"));
+            decimal discount2 = Convert.ToDecimal(await settingService.GetParmByNameAsync("黄金会员优惠"));
+            decimal discount3 = Convert.ToDecimal(await settingService.GetParmByNameAsync("铂金会员优惠"));
+
+            if (dto.LevelName == "普通会员")
+            {
+                return new ApiResult { status = 1, data = (discount1 * 10) / 100 };
+            }
+            else if (dto.LevelName == "黄金会员")
+            {
+                return new ApiResult { status = 1, data = (discount2 * 10) / 100 };
+            }
+            else
+            {
+                return new ApiResult { status = 1, data = (discount3 * 10) / 100 };
+            }
         }
     }
 }

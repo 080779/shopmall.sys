@@ -25,6 +25,7 @@ namespace IMS.Web.Models.Order
         public decimal postFee { get; set; }//邮费
         public DateTime createTime { get; set; }
         public string receiverName { get; set; }
+        public decimal? discountAmount { get; set; }
         public string receiverAddress { get; set; }
         public string receiverMobile { get; set; }
         public DateTime? payTime { get; set; }//支付时间

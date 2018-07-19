@@ -20,6 +20,7 @@ namespace IMS.Web.Controllers
     public class ReturnController : ApiController
     {        
         public IOrderListService orderListService { get; set; }
+        public IOrderService orderService { get; set; }
         [HttpPost]
         public async Task<ApiResult> Select(ReturnSelectModel model)
         {
@@ -29,8 +30,12 @@ namespace IMS.Web.Controllers
         [HttpPost]
         public async Task<ApiResult> Apply(ReturnApplyModel model)
         {
-            bool flag = await orderListService.SetIsReturnAsync(model.OrderId);
-            return new ApiResult { status = 1, msg = "操作成功" };
+            long res = await orderService.ApplyReturnAsync(model.OrderId);
+            if(res<=0)
+            {
+                return new ApiResult { status = 0, msg = "申请退货失败" };
+            }
+            return new ApiResult { status = 1, msg = "申请退货成功" };
         }
     }    
 }

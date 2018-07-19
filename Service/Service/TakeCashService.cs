@@ -76,10 +76,19 @@ namespace IMS.Service.Service
                 {
                     return -2;
                 }
+                if(user.Level.Name=="普通会员")
+                {
+                    return -4;
+                }
                 TakeCashEntity entity = new TakeCashEntity();
                 entity.UserId = userId;
                 entity.PayTypeId = payTypeId;
-                entity.StateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "未结款")).Id;
+                var state = await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "未结款");
+                if(state==null)
+                {
+                    return -3;
+                }
+                entity.StateId = state.Id;
                 entity.Amount = amount;
                 entity.Description = descripton;
                 dbc.TakeCashes.Add(entity);

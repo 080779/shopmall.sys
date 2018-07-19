@@ -1,4 +1,5 @@
 ﻿using IMS.DTO;
+using IMS.IService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +14,14 @@ namespace IMS.Web.Areas.Admin.Models.User
         public long PageCount { get; set; }
         public IdNameDTO[] Levels { get; set; }
         public IdNameDTO[] SettingTypes { get; set; }
-        public List<SettingModel> Settings { get; set; }
+        public List<SettingParm> Settings { get; set; }
+        public List<SettingModel> UserUps { get; set; } 
+        public List<SettingModel> Discounts { get; set; }
     }
     public class SettingModel
     {
         public long Id { get; set; }
+        public string Name { get; set; }
         public string Parm { get; set; }
     }
 }

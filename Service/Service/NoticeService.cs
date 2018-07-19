@@ -80,6 +80,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 NoticeSearchResult result = new NoticeSearchResult();
+                await dbc.GetAll<NoticeEntity>().ForEachAsync(n => { if(n.FailureTime<DateTime.Now){ n.IsEnabled = false;}});
                 var entities = dbc.GetAll<NoticeEntity>();
                 if (!string.IsNullOrEmpty(keyword))
                 {

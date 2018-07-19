@@ -38,7 +38,7 @@ namespace IMS.Service.Service
             return dto;
         }
 
-        public async Task<long> AddAsync(string mobile, string password, long levelTypeId ,string recommendMobile)
+        public async Task<long> AddAsync(string mobile, string password, long levelTypeId, string recommendMobile)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -79,12 +79,12 @@ namespace IMS.Service.Service
                         scope.Commit();
                         return user.Id;
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         scope.Rollback();
                         return -3;
                     }
-                }                
+                }
             }
         }
 
@@ -97,11 +97,11 @@ namespace IMS.Service.Service
                 {
                     return false;
                 }
-                if(nickName!=null)
+                if (nickName != null)
                 {
                     entity.NickName = nickName;
                 }
-                if(headpic!=null)
+                if (headpic != null)
                 {
                     entity.HeadPic = headpic;
                 }
@@ -136,7 +136,7 @@ namespace IMS.Service.Service
                 {
                     return -1;
                 }
-                if(recommend==null)
+                if (recommend == null)
                 {
                     return -2;
                 }
@@ -144,7 +144,7 @@ namespace IMS.Service.Service
                 ruser.UserId = userId;
                 ruser.RecommendId = recommendId;
                 ruser.RecommendGenera = recommend.RecommendGenera + 1;
-                ruser.RecommendPath = recommend.RecommendPath+"-"+userId;
+                ruser.RecommendPath = recommend.RecommendPath + "-" + userId;
 
                 dbc.Recommends.Add(ruser);
                 await dbc.SaveChangesAsync();
@@ -160,18 +160,18 @@ namespace IMS.Service.Service
                 {
                     return false;
                 }
-                var address = dbc.GetAll<AddressEntity>().Where(a=>a.UserId==id);
+                var address = dbc.GetAll<AddressEntity>().Where(a => a.UserId == id);
                 if (address.LongCount() > 0)
                 {
                     await address.ForEachAsync(a => a.IsDeleted = true);
                 }
                 var bankAccounts = dbc.GetAll<BankAccountEntity>().Where(a => a.UserId == id);
-                if (bankAccounts.LongCount()>0)
+                if (bankAccounts.LongCount() > 0)
                 {
                     await bankAccounts.ForEachAsync(a => a.IsDeleted = true);
                 }
-                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(r=>r.UserId==id);
-                if(recommend!=null)
+                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.UserId == id);
+                if (recommend != null)
                 {
                     recommend.IsDeleted = true;
                 }
@@ -209,7 +209,7 @@ namespace IMS.Service.Service
                 {
                     return -2;
                 }
-                entity.Password = CommonHelper.GetMD5(newPassword+entity.Salt);
+                entity.Password = CommonHelper.GetMD5(newPassword + entity.Salt);
                 await dbc.SaveChangesAsync();
                 return entity.Id;
             }
@@ -252,11 +252,11 @@ namespace IMS.Service.Service
                 {
                     return -1;
                 }
-                if(entity.Password!=CommonHelper.GetMD5(password+entity.Salt))
+                if (entity.Password != CommonHelper.GetMD5(password + entity.Salt))
                 {
                     return -2;
                 }
-                if(entity.IsEnabled==false)
+                if (entity.IsEnabled == false)
                 {
                     return -3;
                 }
@@ -264,50 +264,109 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<long> BalancePayAsync(long id,long orderId, decimal amount)
+        public async Task<long> BalancePayAsync(long id, long orderId, decimal amount)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                UserEntity user = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Id == id);
-                if (user == null)
-                {
-                    return -1;
-                }
-                if (amount > user.Amount)
-                {
-                    return -2;
-                }
-                user.Amount = user.Amount - amount;
-                user.BuyAmount = user.BuyAmount + amount;
                 OrderEntity order = await dbc.GetAll<OrderEntity>().SingleOrDefaultAsync(o => o.Id == orderId);
                 if (order == null)
                 {
                     return -3;
                 }
-                string orderCode = order.Code;
-                var orderlists = dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == order.Id).ToList();
-                foreach (var orderlist in orderlists)
+                UserEntity user = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Id == id);
+                if (user == null)
                 {
-                    GoodsEntity goods = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g => g.Id == orderlist.GoodsId);
-                    if (goods == null)
-                    {
-                        continue;
-                    }
-                    if (goods.Inventory < orderlist.Number)
-                    {
-                        return -4;
-                    }
-                    goods.Inventory = goods.Inventory - orderlist.Number;
-                    goods.SaleNum = goods.SaleNum + orderlist.Number;
+                    return -1;
                 }
-                JournalEntity journal = new JournalEntity();
-                journal.UserId = user.Id;
-                journal.BalanceAmount = user.Amount;
-                journal.OutAmount = amount;
-                journal.Remark = "购买商品";
-                journal.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "购物")).Id;
-                journal.OrderCode = orderCode;
-                dbc.Journals.Add(journal);
+                decimal up1 = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员→黄金会员")).Parm);
+                decimal up2 = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员→→铂金会员")).Parm);
+                decimal up3 = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "黄金会员→铂金会员")).Parm);
+                decimal discount1 = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员优惠")).Parm);
+                decimal discount2 = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "黄金会员优惠")).Parm);
+                decimal discount3 = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "铂金会员优惠")).Parm);
+                long level1 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员")).Id;
+                long level2 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "黄金会员")).Id;
+                long level3 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "铂金会员")).Id;
+                if (amount > user.Amount)
+                {
+                    return -2;
+                }
+                
+                if (user.LevelId == level1 && amount > up1 && amount < up2)
+                {
+                    if(!user.IsReturned && !user.IsUpgraded)
+                    {
+                        user.LevelId = level2;
+                    }
+                    else if(user.IsReturned && user.IsUpgraded)
+                    {
+                        if(order.DiscountAmount==null || order.DiscountAmount==0)
+                        {
+                            order.DiscountAmount = up1;
+                        }
+                        else if(order.DiscountAmount==up1)
+                        {
+                            user.LevelId = level2;
+                        }
+                    }
+                }
+                else if (user.LevelId == level1 && amount > up2)
+                {
+                    if (!user.IsReturned && !user.IsUpgraded)
+                    {
+                        user.LevelId = level3;
+                    }
+                    else if (user.IsReturned && user.IsUpgraded)
+                    {
+                        if (order.DiscountAmount == null || order.DiscountAmount == 0)
+                        {
+                            order.DiscountAmount = up2;
+                        }
+                        else if (order.DiscountAmount == up2)
+                        {
+                            user.LevelId = level3;
+                        }
+                    }
+                }
+                else if (user.LevelId == level2 && amount > up3)
+                {
+                    if (!user.IsReturned && !user.IsUpgraded)
+                    {
+                        user.LevelId = level3;
+                    }
+                    else if (user.IsReturned && user.IsUpgraded)
+                    {
+                        if (order.DiscountAmount == null || order.DiscountAmount == 0)
+                        {
+                            order.DiscountAmount = up3;
+                        }
+                        else if (order.DiscountAmount == up3)
+                        {
+                            user.LevelId = level3;
+                        }
+                    }
+                }
+
+                if (user.LevelId == level1)
+                {
+                    user.Amount = user.Amount - (amount * ((discount1 * 10) / 100));
+                    order.DiscountAmount = (amount * ((discount1 * 10) / 100));
+                    user.BuyAmount = user.BuyAmount + amount;
+                }
+                if (user.LevelId == level2)
+                {
+                    user.Amount = user.Amount - (amount * ((discount2 * 10) / 100));
+                    order.DiscountAmount = (amount * ((discount2 * 10) / 100));
+                    user.BuyAmount = user.BuyAmount + amount;
+                }
+                if (user.LevelId == level3)
+                {
+                    user.Amount = user.Amount - (amount * ((discount3 * 10) / 100));
+                    order.DiscountAmount = (amount * ((discount2 * 10) / 100));
+                    user.BuyAmount = user.BuyAmount + amount;
+                }
+
+                string orderCode = order.Code;
                 decimal one;
                 decimal two;
                 decimal three;
@@ -330,7 +389,7 @@ namespace IMS.Service.Service
                     three = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Description == user.Level.Name + "三级分销佣金比例")).Parm) / 100;
                 }
                 UserEntity oneer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == user.Recommend.RecommendId);
-                if (oneer !=null && oneer.Recommend.RecommendPath != "0")
+                if (oneer != null && oneer.Recommend.RecommendPath != "0")
                 {
                     oneer.Amount = oneer.Amount + amount * one;
                     oneer.BonusAmount = oneer.BonusAmount + amount * one;
@@ -345,7 +404,7 @@ namespace IMS.Service.Service
                     dbc.Journals.Add(journal1);
 
                     UserEntity twoer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == oneer.Recommend.RecommendId);
-                    if (twoer!=null && twoer.Recommend.RecommendPath != "0")
+                    if (twoer != null && twoer.Recommend.RecommendPath != "0")
                     {
                         twoer.Amount = twoer.Amount + amount * two;
                         twoer.BonusAmount = twoer.BonusAmount + amount * two;
@@ -360,7 +419,7 @@ namespace IMS.Service.Service
                         dbc.Journals.Add(journal2);
 
                         UserEntity threer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == twoer.Recommend.RecommendId);
-                        if (threer!=null && threer.Recommend.RecommendPath != "0")
+                        if (threer != null && threer.Recommend.RecommendPath != "0")
                         {
                             threer.Amount = threer.Amount + amount * three;
                             threer.BonusAmount = threer.BonusAmount + amount * three;
@@ -376,6 +435,30 @@ namespace IMS.Service.Service
                         }
                     }
                 }
+
+                var orderlists = dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == order.Id).ToList();
+                foreach (var orderlist in orderlists)
+                {
+                    GoodsEntity goods = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g => g.Id == orderlist.GoodsId);
+                    if (goods == null)
+                    {
+                        continue;
+                    }
+                    if (goods.Inventory < orderlist.Number)
+                    {
+                        return -4;
+                    }
+                    goods.Inventory = goods.Inventory - orderlist.Number;
+                    goods.SaleNum = goods.SaleNum + orderlist.Number;
+                }
+                JournalEntity journal = new JournalEntity();
+                journal.UserId = user.Id;
+                journal.BalanceAmount = user.Amount;
+                journal.OutAmount = amount;
+                journal.Remark = "购买商品";
+                journal.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "购物")).Id;
+                journal.OrderCode = orderCode;
+                dbc.Journals.Add(journal);                
                 await dbc.SaveChangesAsync();
                 return 1;
             }
@@ -399,8 +482,8 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserSearchResult result = new UserSearchResult();
-                var user = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u=>u.Mobile==mobile);
-                if(user==null)
+                var user = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Mobile == mobile);
+                if (user == null)
                 {
                     return null;
                 }
@@ -408,16 +491,16 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<UserSearchResult> GetModelListAsync(long? levelId,string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        public async Task<UserSearchResult> GetModelListAsync(long? levelId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserSearchResult result = new UserSearchResult();
                 var users = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false);
 
-                if(levelId!=null)
+                if (levelId != null)
                 {
-                    users = users.Where(a => a.LevelId ==levelId);
+                    users = users.Where(a => a.LevelId == levelId);
                 }
                 if (!string.IsNullOrEmpty(keyword))
                 {
@@ -442,12 +525,12 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserTeamSearchResult result = new UserTeamSearchResult();
-                if(string.IsNullOrEmpty(mobile))
+                if (string.IsNullOrEmpty(mobile))
                 {
-                    mobile = (await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u=>u.Recommend.RecommendGenera==1)).Mobile;
+                    mobile = (await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Recommend.RecommendGenera == 1)).Mobile;
                 }
                 RecommendEntity user = await dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.User.Mobile == mobile);
-                if(user==null)
+                if (user == null)
                 {
                     return result;
                 }
@@ -526,7 +609,7 @@ namespace IMS.Service.Service
                 UserTeamSearchResult result = new UserTeamSearchResult();
                 RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.UserId == userId);
                 var recommends = dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false);
-                if (teamLevel!=null)
+                if (teamLevel != null)
                 {
                     if (recommend.RecommendMobile == "superhero" && recommend.RecommendPath == "1")
                     {
@@ -556,8 +639,8 @@ namespace IMS.Service.Service
                         else if (teamLevel == 3)
                         {
                             recommends = recommends.Where(a => a.RecommendPath.Contains("-" + userId.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 3);
-                        }                                                    
-                    }                    
+                        }
+                    }
                 }
                 else
                 {
@@ -572,9 +655,9 @@ namespace IMS.Service.Service
                         recommends = recommends.Where(a => a.RecommendId == userId ||
                      (a.RecommendPath.Contains("-" + userId.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 2) ||
                      (a.RecommendPath.Contains("-" + userId.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 3));
-                    }                    
+                    }
                 }
-                if(keyword!=null)
+                if (keyword != null)
                 {
                     recommends = recommends.Where(a => a.User.Mobile.Contains(keyword) || a.User.Code.Contains(keyword) || a.User.NickName.Contains(keyword));
                 }

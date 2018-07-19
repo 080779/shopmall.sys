@@ -49,6 +49,8 @@ namespace IMS.Service.Service
             dto.AuditStatusName = entity.AuditStatus.Name;
             dto.DownCycledName = entity.DownCycled.Name;
             dto.ReturnAmount = entity.ReturnAmount;
+            dto.DiscountAmount = entity.DiscountAmount;
+            dto.UpAmount = entity.UpAmount;
             return dto;
         }
 
@@ -124,7 +126,6 @@ namespace IMS.Service.Service
                     entity.Amount = entity.Amount + listEntity.TotalFee;
                     dbc.OrderLists.Add(listEntity);
                 }
-                entity.Amount = entity.Amount + entity.PostFee;
                 await dbc.SaveChangesAsync();
                 return entity.Id;
             }
@@ -372,14 +373,14 @@ namespace IMS.Service.Service
                 long levelId1 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "黄金会员")).Id;
                 //铂金会员id
                 long levelId2 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "铂金会员")).Id;
-                if (user.LevelId == levelId1 && user.IsReturned == false && user.IsUpgraded == true)
+                if (user.LevelId == levelId1 && user.IsReturned == false && user.IsUpgraded == false)
                 {
                     if (totalReturnAmount / totalAmount > (decimal)0.5)
                     {
                         order.DownCycledId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "↓普通会员")).Id;
                     }
                 }
-                if (user.LevelId == levelId2 && user.IsReturned == false && user.IsUpgraded == true)
+                if (user.LevelId == levelId2 && user.IsReturned == false && user.IsUpgraded == false)
                 {
                     if (totalReturnAmount / totalAmount > (decimal)0.5)
                     {
@@ -433,21 +434,23 @@ namespace IMS.Service.Service
                 long levelId1 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "黄金会员")).Id;
                 //铂金会员id
                 long levelId2 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "铂金会员")).Id;
-                if(user.LevelId==levelId1 && user.IsReturned == false && user.IsUpgraded == true)
+                if(user.LevelId==levelId1 && user.IsReturned == false && user.IsUpgraded == false)
                 {
                     if (totalReturnAmount / totalAmount > (decimal)0.5)
                     {
                         user.LevelId = levelId;
                         user.IsReturned = true;
+                        user.IsUpgraded = true;
                         order.DownCycledId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i=>i.Name== "↓普通会员")).Id;
                     }            
                 }
-                if (user.LevelId == levelId2 && user.IsReturned == false && user.IsUpgraded == true)
+                if (user.LevelId == levelId2 && user.IsReturned == false && user.IsUpgraded == false)
                 {
                     if (totalReturnAmount / totalAmount > (decimal)0.5)
                     {
                         user.LevelId = levelId;
                         user.IsReturned = true;
+                        user.IsUpgraded = true;
                         order.DownCycledId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "↓普通会员")).Id;
                     }                        
                 }

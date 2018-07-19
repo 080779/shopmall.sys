@@ -27,7 +27,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         {
             var result = await orderService.GetModelListAsync(null, orderStateId,null, keyword, startTime, endTime, pageIndex, pageSize);
             OrderListViewModel model = new OrderListViewModel();
-            model.Orders = result.Orders;
+            model.Orders = result.Orders; 
             model.PageCount = result.PageCount;
             model.OrderStates = (await idNameService.GetByTypeNameAsync("订单状态"));
             return Json(new AjaxResult { Status = 1, Data = model });

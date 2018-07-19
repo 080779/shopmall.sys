@@ -32,10 +32,13 @@ namespace IMS.Web.Areas.Admin.Controllers
             model.PageCount = result.PageCount;
             model.Users = result.Users;
             model.Levels = await idNameService.GetByTypeNameAsync("会员等级");
-            model.SettingTypes = await idNameService.GetByTypeNameAsync("推荐等级");
+            model.SettingTypes = await idNameService.GetByTypeNameAsync("分销等级");
             long settingTypeId;
             SettingDTO[] settings = await settingService.GetModelListAsync(model.SettingTypes.Select(s => settingTypeId = s.Id).ToArray());
-            model.Settings = settings.Select(s=>new SettingModel { Id=s.Id,Parm=s.Parm}).ToList();
+            model.Settings = settings.Select(s => new SettingParm { Id = s.Id, Parm = s.Parm }).ToList();
+
+            model.UserUps = (await settingService.GetModelListAsync("会员升级")).Select(s => new SettingModel { Id = s.Id, Parm = s.Parm,Name=s.Name}).ToList();
+            model.Discounts = (await settingService.GetModelListAsync("会员优惠")).Select(s => new SettingModel { Id = s.Id, Parm = s.Parm ,Name=s.Name}).ToList();
             return Json(new AjaxResult { Status = 1, Data = model });
         }
         public async Task<ActionResult> Add(string mobile,string recommendMobile,string password)
@@ -48,18 +51,10 @@ namespace IMS.Web.Areas.Admin.Controllers
             {
                 return Json(new AjaxResult { Status = 0, Msg = "注册手机号格式不正确" });
             }
-            //if ((await userService.UserCheck(mobile)) > 0)
-            //{
-            //    return Json(new AjaxResult { Status = 0, Msg = "注册手机号已经存在" });
-            //}
             if (string.IsNullOrEmpty(recommendMobile))
             {
                 return Json(new AjaxResult { Status = 0, Msg = "推荐人账号不能为空" });
             }
-            //if ((await userService.UserCheck(recommendMobile)) == -1)
-            //{
-            //    return Json(new AjaxResult { Status = 0, Msg = "推荐人不存在" });
-            //}
             if (string.IsNullOrEmpty(password))
             {
                 return Json(new AjaxResult { Status = 0, Msg = "登录密码不能为空" });
@@ -89,6 +84,28 @@ namespace IMS.Web.Areas.Admin.Controllers
             }
             bool flag= await settingService.UpdateAsync(settings.ToArray());
             if(!flag)
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "修改失败" });
+            }
+            return Json(new AjaxResult { Status = 1, Msg = "修改成功" });
+        }
+
+        public async Task<ActionResult> UpSet(List<SettingModel> settings)
+        {
+            if (settings.Count() <= 0)
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "无参数" });
+            }
+            foreach (var item in settings)
+            {
+                if (!Regex.IsMatch(item.Parm, @"^\d*[0-9](|.\d*[0-9]|,\d*[0-9])?$"))
+                {
+                    return Json(new AjaxResult { Status = 0, Msg = "参数错误" });
+                }
+            }
+
+            bool flag = await settingService.UpdateAsync(settings.Select(s=>new SettingParm { Id=s.Id,Parm=s.Parm}).ToArray());
+            if (!flag)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "修改失败" });
             }

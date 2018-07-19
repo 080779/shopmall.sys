@@ -356,6 +356,39 @@
                     btn: ['确认', '取消'],
                     yes: function (index, layero) {
                         that.adds.description = editor.txt.html();
+                        if (that.adds.name == "") {
+                            layer.alert('商品名称不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        if (that.adds.price == "") {
+                            layer.alert('商品原价不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        if (that.adds.realityPrice == "") {
+                            layer.alert('商品现价不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        if (that.adds.inventory == "") {
+                            layer.alert('商品库存不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        if (that.adds.code == "") {
+                            layer.alert('商品货号不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        if (that.adds.standard == "") {
+                            layer.alert('商品规格不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        if (that.adds.goodsAreaId == "") {
+                            layer.alert('请选择商品分区', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        if (that.adds.goodsTypeId == "") {
+                            layer.alert('请选择商品类型', { icon: 0, title: '提示框' });
+                            return;
+                        }
+
                         that.$http.post('/admin/goods/add',
                             {
                                 code: that.adds.code, name: that.adds.name, standard: that.adds.standard, price: that.adds.price, realityPrice: that.adds.realityPrice,
@@ -398,7 +431,40 @@
                     content: $('#edit'),
                     btn: ['确认', '取消'],
                     yes: function (index, layero) {
-                        that.edits.description = editor.txt.html();
+                        that.edits.description = editor.txt.html();                        
+                        if (that.edits.name == "") {
+                            layer.alert('商品名称不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        if (that.edits.price == "") {
+                            layer.alert('商品原价不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        if (that.edits.realityPrice == "") {
+                            layer.alert('商品现价不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        if (that.edits.inventory == "") {
+                            layer.alert('商品库存不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        if (that.edits.code == "") {
+                            layer.alert('商品货号不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        if (that.edits.standard == "") {
+                            layer.alert('商品规格不能为空', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        if (that.edits.goodsAreaId == "") {
+                            layer.alert('请选择商品分区', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        if (that.edits.goodsTypeId == "") {
+                            layer.alert('请选择商品类型', { icon: 0, title: '提示框' });
+                            return;
+                        }
+                        
                         that.$http.post('/admin/goods/edit',
                             {
                                 id: id, code: that.edits.code, name: that.edits.name, standard: that.edits.standard, price: that.edits.price, realityPrice: that.edits.realityPrice,

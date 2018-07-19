@@ -13,6 +13,8 @@ namespace IMS.DTO
         public string BuyerNickName { get; set; }
         public string BuyerMobile { get; set; }
         public decimal Amount { get; set; }
+        public decimal? DiscountAmount { get; set; }
+        public decimal? UpAmount { get; set; }
         public long PayTypeId { get; set; }
         public string PayTypeName { get; set; }//支付方式
         public long OrderStateId { get; set; }

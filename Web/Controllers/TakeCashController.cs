@@ -20,6 +20,7 @@ namespace IMS.Web.Controllers
     {
         public ITakeCashService takeCashService { get; set; }
         public IIdNameService idNameService { get; set; }
+        public IUserService userService { get; set; }
         public async Task<ApiResult> List(TakeCashListModel model)
         {
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
@@ -35,7 +36,21 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "提现金额必须大于零" };
             }
+            if (model.PayTypeId <= 0)
+            {
+                return new ApiResult { status = 0, msg = "提现收款类型id必须大于零" };
+            }
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
+            var userres= await userService.GetModelAsync(user.Id);
+            if(userres.LevelName=="普通会员")
+            {
+                return new ApiResult { status = 0, msg = "普通会员不能提现" };
+            }
+            if(user==null)
+            {
+                return new ApiResult { status = 0, msg = "用户不存在"};
+            }
+            
             long id = await takeCashService.AddAsync(user.Id, model.PayTypeId, model.Amount, "佣金提现");
             if(id<=0)
             {
@@ -46,6 +61,10 @@ namespace IMS.Web.Controllers
                 if (id == -2)
                 {
                     return new ApiResult { status = 0, msg = "用户账户余额不足" };
+                }
+                if(id==-4)
+                {
+                    return new ApiResult { status = 0, msg = "-4" };
                 }
                 return new ApiResult { status = 0, msg="申请提现失败" };
             }
