@@ -28,6 +28,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Data = result });
         }
         [AdminLog("首页产品分区管理", "添加分区")]
+        [Permission("首页产品分区管理_新增分区")]
         public async Task<ActionResult> Add(string title, string description, string note)
         {
             if (string.IsNullOrEmpty(title))
@@ -52,6 +53,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Data = model });
         }
         [AdminLog("首页产品分区管理", "编辑分区")]
+        [Permission("首页产品分区管理_修改分区")]
         public async Task<ActionResult> Edit(long id,string title, string description, string note)
         {
             if (string.IsNullOrEmpty(title))
@@ -70,6 +72,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Msg = "编辑首页产品分区成功" });
         }
         [AdminLog("首页产品分区管理", "删除分区")]
+        [Permission("首页产品分区管理_删除分区")]
         public async Task<ActionResult> Del(long id)
         {
             bool flag = await goodsAreaService.DeleteAsync(id);

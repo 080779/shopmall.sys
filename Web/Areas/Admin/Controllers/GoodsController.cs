@@ -39,6 +39,7 @@ namespace IMS.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [AdminLog("商品管理", "上传商品图片")]
+        [Permission("商品管理_上传商品图片")]
         public async Task<ActionResult> Upload(long id, string[] imgFiles)
         {
             if (imgFiles.Count() <= 0)
@@ -96,6 +97,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         [HttpPost]
         [ValidateInput(false)]
         [AdminLog("商品管理", "添加商品")]
+        [Permission("商品管理_新增商品")]
         public async Task<ActionResult> Add(GoodsAddEditModel model)
         {
             if(string.IsNullOrEmpty(model.Description))
@@ -116,6 +118,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         [HttpPost]
         [ValidateInput(false)]
         [AdminLog("商品管理", "编辑商品")]
+        [Permission("商品管理_修改商品")]
         public async Task<ActionResult> Edit(GoodsAddEditModel model)
         {
             if (string.IsNullOrEmpty(model.Description))
@@ -135,6 +138,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [AdminLog("商品管理", "删除商品")]
+        [Permission("商品管理_删除商品")]
         public async Task<ActionResult> Del(long id)
         {
             bool flag = await goodsService.DeleteAsync(id);

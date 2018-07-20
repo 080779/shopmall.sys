@@ -27,6 +27,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Data = result });
         }
         [AdminLog("幻灯片管理", "添加幻灯片")]
+        [Permission("幻灯片管理_新增幻灯片")]
         public async Task<ActionResult> Add(string name, string url, string imgFile, bool isEnabled)
         {
             if(string.IsNullOrEmpty(name))
@@ -60,6 +61,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Data= model });
         }
         [AdminLog("幻灯片管理", "编辑幻灯片")]
+        [Permission("幻灯片管理_修改幻灯片")]
         public async Task<ActionResult> Edit(long id,string name, string url, string imgFile, bool isEnabled)
         {
             if (string.IsNullOrEmpty(name))
@@ -96,6 +98,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Msg = "修改幻灯片成功" });
         }
         [AdminLog("幻灯片管理", "删除幻灯片")]
+        [Permission("幻灯片管理_删除幻灯片")]
         public async Task<ActionResult> Del(long id)
         {
             bool flag = await slideService.DeleteAsync(id);

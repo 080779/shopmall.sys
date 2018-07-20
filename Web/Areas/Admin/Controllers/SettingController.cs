@@ -40,6 +40,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         [HttpPost]
         [ValidateInput(false)]
         [AdminLog("系统设置", "编辑系统设置")]
+        [Permission("系统设置_系统设置")]
         public async Task<ActionResult> Edit(List<SettingParm> parms)
         {
             if(parms.Count()<=0)

@@ -23,6 +23,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [AdminLog("团队管理", "查看团队管理列表")]
+        //[Permission("幻灯片管理_删除幻灯片")]
         public async Task<ActionResult> List(string mobile, long? teamLevel, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
             var res = await userService.GetModelTeamListAsync(mobile, teamLevel, keyword, startTime, endTime, pageIndex, pageSize);

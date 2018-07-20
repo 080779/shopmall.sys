@@ -45,6 +45,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             var res = await orderService.GetModelAsync(id);
             return Json(new AjaxResult { Status = 1, Data = res });
         }
+        [Permission("发货管理_标记发货")]
         [AdminLog("发货管理", "标记发货")]
         public async Task<ActionResult> Edit(long id,string deliverName,string deliverCode)
         {

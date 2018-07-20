@@ -46,7 +46,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Data = model });
         }
         //[Permission("管理员管理_管理员管理")]
-        //[Permission("管理员管理_新增管理")]
+        [Permission("管理员管理_新增管理员")]
         [AdminLog("管理员管理", "新增管理")]
         public async Task<ActionResult> Add(string mobile,string password)
         {
@@ -71,7 +71,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1,Msg= "添加管理员成功", Data = "/admin/admin/list" });
         }
         //[Permission("管理员管理_管理员管理")]
-        //[Permission("管理员管理_修改权限")]
+        [Permission("管理员管理_修改权限")]
         [AdminLog("管理员管理", "修改权限")]
         public async Task<ActionResult> EditPermission(long id, List<long> permissionIds)
         {
@@ -87,7 +87,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Msg = "编辑管理员权限成功", Data = "/admin/admin/list" });
         }
         //[Permission("管理员管理_管理员管理")]
-        //[Permission("管理员管理_修改密码")]
+        [Permission("管理员管理_修改密码")]
         [AdminLog("管理员管理", "修改密码")]
         public async Task<ActionResult> EditPassword(long id, string password)
         {
@@ -128,7 +128,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Data = permissionTypes });
         }
         //[Permission("管理员管理_管理员管理")]
-        //[Permission("管理员管理_冻结账户")]
+        [Permission("管理员管理_冻结管理")]
         [AdminLog("管理员管理", "冻结账户")]
         public async Task<ActionResult> Frozen(long id)
         {
@@ -140,7 +140,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Msg = "冻结、解冻管理员账号操作成功" });
         }
         //[Permission("管理员管理_管理员管理")]
-        //[Permission("管理员管理_删除账户")]
+        [Permission("管理员管理_删除用户")]
         [AdminLog("管理员管理", "删除账户")]
         public async Task<ActionResult> Del(long id)
         {

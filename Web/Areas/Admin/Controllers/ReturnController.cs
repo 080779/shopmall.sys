@@ -53,7 +53,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        //[Permission("日志管理_查看日志")]
+        [Permission("退货管理_标记退货成功")]
         [AdminLog("退货管理", "退货管理确认退货")]
         public async Task<ActionResult> Confirm(long id)
         {

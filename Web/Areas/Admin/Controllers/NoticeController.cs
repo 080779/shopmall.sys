@@ -28,6 +28,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         [ValidateInput(false)]
         [AdminLog("公告栏管理", "添加公告管理")]
+        [Permission("公告栏管理_新增公告")]
         public async Task<ActionResult> Add(string code, string content, DateTime failureTime)
         {
             if (string.IsNullOrEmpty(code))
@@ -54,6 +55,7 @@ namespace IMS.Web.Areas.Admin.Controllers
 
         [ValidateInput(false)]
         [AdminLog("公告栏管理", "添加公告管理")]
+        [Permission("公告栏管理_修改公告")]
         public async Task<ActionResult> Edit(long id, string code, string content, DateTime failureTime)
         {
             if (string.IsNullOrEmpty(code))
@@ -73,6 +75,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Msg = "修改公告成功" });
         }
         [AdminLog("公告栏管理", "删除公告管理")]
+        [Permission("公告栏管理_删除公告")]
         public async Task<ActionResult> Del(long id)
         {
             bool flag = await noticeService.DeleteAsync(id);

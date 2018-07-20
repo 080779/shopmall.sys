@@ -127,8 +127,20 @@
             },
             getpage: function () {
                 this.$http.post('/admin/adminlog/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
-                    this.adminLogs = result.data.data.adminLogs;
-                    this.pages.all = result.data.data.pageCount;
+                    if (result.data.status == 1) {
+                        this.adminLogs = result.data.data.adminLogs;
+                        this.pages.all = result.data.data.pageCount;
+                    }
+                    else if (result.data.status == 0) {
+                        layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                        //that.msg = result.data.msg;
+                    }
+                    else if (result.data.status == 302) {
+                        window.location.href = result.data.data;
+                    }
+                    else if (result.data.status == 401) {
+                        layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                    }
                 })
             },
             pageclick: function (index) {//页码点击事件
@@ -177,9 +189,21 @@
             }
         },
         mounted: function () {
-            this.$http.post('/admin/adminlog/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
-                this.adminLogs = result.data.data.adminLogs;
-                this.pages.all = result.data.data.pageCount;
+            this.$http.post('/admin/adminlog/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {                
+                if (result.data.status == 1) {
+                    this.adminLogs = result.data.data.adminLogs;
+                    this.pages.all = result.data.data.pageCount;
+                }
+                else if (result.data.status == 0) {
+                    layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                    //that.msg = result.data.msg;
+                }
+                else if (result.data.status == 302) {
+                    window.location.href = result.data.data;
+                }
+                else if (result.data.status == 401) {
+                    layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                }
             })
         }
     });

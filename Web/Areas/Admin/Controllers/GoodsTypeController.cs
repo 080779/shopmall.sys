@@ -28,6 +28,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Data = result });
         }
         [AdminLog("商品分类", "添加商品分类")]
+        [Permission("商品分类_新增分类")]
         public async Task<ActionResult> Add(string name, string imgFile, string description)
         {
             if (string.IsNullOrEmpty(name))
@@ -57,6 +58,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Data = model });
         }
         [AdminLog("商品分类", "编辑商品分类")]
+        [Permission("商品分类_修改分类")]
         public async Task<ActionResult> Edit(long id, string name, string imgFile, string description)
         {
             if (string.IsNullOrEmpty(name))
@@ -88,6 +90,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Msg = "编辑商品类别成功" });
         }
         [AdminLog("商品分类", "删除商品分类")]
+        [Permission("商品分类_删除分类")]
         public async Task<ActionResult> Del(long id)
         {
             bool flag = await goodsTypeService.DeleteAsync(id);

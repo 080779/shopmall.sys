@@ -52,6 +52,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Data = model });
         }
         [AdminLog("订单管理", "导出订单管理列表")]
+        [Permission("订单管理_订单导出")]
         public async Task<ActionResult> ExportExcel()
         {
             var res = await orderService.GetAllAsync();

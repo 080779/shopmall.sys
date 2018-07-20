@@ -35,6 +35,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [AdminLog("佣金结款", "确认结款")]
+        [Permission("佣金记录_标记结款")]
         public async Task<ActionResult> Confirm(long id)
         {
             long res = await takeCashService.Confirm(id, Convert.ToInt64(Session["Platform_AdminUserId"]));
