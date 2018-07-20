@@ -71,11 +71,11 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1,Msg= "添加管理员成功", Data = "/admin/admin/list" });
         }
         //[Permission("管理员管理_管理员管理")]
-        [Permission("管理员管理_修改权限")]
+        //[Permission("管理员管理_修改权限")]
         [AdminLog("管理员管理", "修改权限")]
         public async Task<ActionResult> EditPermission(long id, List<long> permissionIds)
         {
-            if (permissionIds.Count <= 0)
+            if (permissionIds==null)
             {
                 permissionIds = new List<long>();
             }
@@ -104,7 +104,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         public async Task<ActionResult> GetPerm(long id,List<long> permissionIds)
         {
-            if(permissionIds.Count<=0)
+            if(permissionIds==null)
             {
                 permissionIds = new List<long>();
             }
