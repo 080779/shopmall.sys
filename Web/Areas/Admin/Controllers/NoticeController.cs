@@ -21,9 +21,9 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [AdminLog("公告栏管理", "查看公告管理列表")]
-        public async Task<ActionResult> List(string mobile, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
+        public async Task<ActionResult> List(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
-            var result = await noticeService.GetModelListAsync(mobile, startTime, endTime, pageIndex, pageSize);
+            var result = await noticeService.GetModelListAsync(keyword, startTime, endTime, pageIndex, pageSize);
             return Json(new AjaxResult { Status = 1, Data = result });
         }
         [ValidateInput(false)]

@@ -21,7 +21,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         {
             return View();
         }
-        [Permission("佣金结款_查看记录")]
+        [Permission("佣金记录_查看记录")]
         [AdminLog("佣金记录", "查看佣金记录列表")]
         [HttpPost]
         public async Task<ActionResult> List(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)

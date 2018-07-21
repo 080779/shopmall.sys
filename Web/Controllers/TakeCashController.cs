@@ -35,6 +35,10 @@ namespace IMS.Web.Controllers
             if(model.Amount<=0)
             {
                 return new ApiResult { status = 0, msg = "提现金额必须大于零" };
+            }            
+            if(model.Amount%100!=0)
+            {
+                return new ApiResult { status = 0, msg = "提现金额必是100的倍数" };
             }
             if (model.PayTypeId <= 0)
             {

@@ -126,9 +126,20 @@
                 });
             },
             getpage: function () {
-                this.$http.post('/admin/journal/list', { stateId: this.stateId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
-                    this.journals = result.data.data.journals;
-                    this.pages.all = result.data.data.pageCount;
+                this.$http.post('/admin/journal/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {                    
+                    if (result.data.status == 1) {
+                        this.journals = result.data.data.journals;
+                        this.pages.all = result.data.data.pageCount;
+                    }
+                    else if (result.data.status == 0) {
+                        layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                    }
+                    else if (result.data.status == 302) {
+                        window.location.href = result.data.data;
+                    }
+                    else if (result.data.status == 401) {
+                        layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                    }
                 })
             },
             pageclick: function (index) {//页码点击事件
@@ -177,9 +188,20 @@
             }
         },
         mounted: function () {
-            this.$http.post('/admin/journal/list', { stateId: this.stateId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
-                this.journals = result.data.data.journals;
-                this.pages.all = result.data.data.pageCount;
+            this.$http.post('/admin/journal/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
+                if (result.data.status == 1) {
+                    this.journals = result.data.data.journals;
+                    this.pages.all = result.data.data.pageCount;
+                }
+                else if (result.data.status == 0) {
+                    layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                }
+                else if (result.data.status == 302) {
+                    window.location.href = result.data.data;
+                }
+                else if (result.data.status == 401) {
+                    layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                }
             })
         }
     });
