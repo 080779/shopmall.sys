@@ -9,7 +9,7 @@ namespace IMS.Common
     public class WeChatPay
     {
         public string appid { get; set; }= System.Configuration.ConfigurationManager.AppSettings["APPID"];
-        public string mch_id { get; set; } = "";
+        public string mch_id { get; set; } = "1508371911";
         public string nonce_str { get; set; } = CommonHelper.GetCaptcha(10);
         public string sign { get; set; } = "";
         public string sign_type { get; set; } = "MD5";

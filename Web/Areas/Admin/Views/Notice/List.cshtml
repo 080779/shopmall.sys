@@ -30,7 +30,8 @@
     <script type="text/javascript" src="~/js/H-ui.js"></script>
     <script type="text/javascript" src="~/js/H-ui.admin.js"></script>
     <script src="~/assets/layer/layer.js" type="text/javascript"></script>
-    <script src="~/assets/laydate/laydate.js" type="text/javascript"></script>
+    @*<script src="~/assets/laydate/laydate.js" type="text/javascript"></script>*@
+    <script src="~/assets/src/laydate.js"></script>
     <script src="~/js/wangEditor.min.js"></script>
     <title>公告栏管理</title>
 </head>
@@ -98,7 +99,7 @@
         <div class="add_menber" id="add" style="display:none">
             <ul class="page-content">
                 <li><label class="label_name">公告标题：</label><span class="add_name"><input value="" placeholder="公告标题" v-model="adds.code" type="text" class="text_add" /></span><div class="prompt r_f"></div></li>
-                <li><label class="label_name">失效时间：</label><span class="add_name"><input class="inline laydate-icon" id="failureTime" style=" margin-left:10px;" v-on:focus='getfailuretime' /></span><div class="prompt r_f"></div></li>
+                <li><label class="label_name">失效时间：</label><span class="add_name"><input class="layui-input" id="failureTime" style=" margin-left:10px;" v-on:click='getfailuretime' /></span><div class="prompt r_f"></div></li>
                 <li><label class="label_name">公告内容：</label><div class="prompt r_f"></div></li>
                 <li>
                     <div id="content1" style="width:1000px"></div>
@@ -110,7 +111,7 @@
         <div class="add_menber" id="edit" style="display:none">
             <ul class="page-content">
                 <li><label class="label_name">公告标题：</label><span class="add_name"><input value="" placeholder="公告标题" v-model="edits.code" type="text" class="text_add" /></span><div class="prompt r_f"></div></li>
-                <li><label class="label_name">失效时间：</label><span class="add_name"><input class="inline laydate-icon" id="failureTime1" style=" margin-left:10px;" v-on:focus='getfailuretime1' /></span><div class="prompt r_f"></div></li>                
+                <li><label class="label_name">失效时间：</label><span class="add_name"><input class="layui-input" id="failureTime1" style=" margin-left:10px;" v-on:focus='getfailuretime1' /></span><div class="prompt r_f"></div></li>                
                 <li><label class="label_name">公告内容：</label><div class="prompt r_f"></div></li>
                 <li>
                     <div id="content2" style="width:1000px"></div>
@@ -127,6 +128,7 @@
         el: "#app",
         data: {
             notices: [],
+            testtime:"",
             pages: {
                 all: "", cur: 1, txtpage: ""
             },
@@ -144,9 +146,10 @@
             getfailuretime: function () {
                 var that = this;
                 that.adds.failureTime = "";
-                laydate({
+                laydate.render({
                     elem: '#failureTime',
-                    choose: function (date) {
+                    type: 'datetime',
+                    done: function (date) {
                         that.adds.failureTime = date;
                     }
                 });
@@ -154,9 +157,9 @@
             getfailuretime1: function () {
                 var that = this;
                 that.edits.failureTime = "";
-                laydate({
-                    elem: '#failureTime1',
-                    choose: function (date) {
+                laydate.render({
+                    elem: '#failureTime1',                    type: 'datetime',
+                    done: function (date) {
                         that.edits.failureTime = date;
                     }
                 });
@@ -182,11 +185,11 @@
                 }
                 this.getpage();
             },
-            add: function () {
-                this.adds.code=""
-                this.adds.content = editor1.txt.html();
-                this.adds.failureTime = "";
+            add: function () {                
                 var that = this;
+                that.adds.code = "";
+                that.adds.failureTime = "";
+                that.adds.content = "";
                 layer.open({
                     type: 1,
                     title: '添加公告',
@@ -195,20 +198,20 @@
                     area: ['1200px', '600px'],
                     content: $('#add'),
                     btn: ['确认', '取消'],
-                    yes: function (index, layero) {
+                    yes: function (index, layero) {                        
                         if (that.adds.code == "") {
                             layer.alert('公告标题不能为空', { icon: 0, title: '提示框' });
                             return;
                         }                        
-                        if (that.adds.faliureTime == "") {
+                        if (that.adds.failureTime == "") {
                             layer.alert('失效时间不能为空', { icon: 0, title: '提示框' });
                             return;
                         }
+                        that.adds.content = editor1.txt.html();
                         if (that.adds.content == "") {
                             layer.alert('公告内容不能为空', { icon: 0, title: '提示框' });
                             return;
                         }
-                        this.adds.content = editor1.txt.html();
                         that.$http.post('/admin/notice/add', { code: that.adds.code, content: that.adds.content, failureTime: that.adds.failureTime }, { emulateJSON: true }).then(function (result) {
                             if (result.data.status == 1) {
                                 layer.alert(result.data.msg, { icon: 6, title: '提示框' });
@@ -252,11 +255,11 @@
                             layer.alert('失效时间不能为空', { icon: 0, title: '提示框' });
                             return;
                         }
+                        that.edits.content = editor2.txt.html();
                         if (that.edits.content == "") {
                             layer.alert('公告内容不能为空', { icon: 0, title: '提示框' });
                             return;
                         }
-                        that.edits.content = editor2.txt.html();
                         that.$http.post('/admin/notice/edit', { id: id, code: that.edits.code, content: that.edits.content, failureTime: that.edits.failureTime }, { emulateJSON: true }).then(function (result) {
                             if (result.data.status == 1) {
                                 layer.alert(result.data.msg, { icon: 6, title: '提示框' });
@@ -343,12 +346,12 @@
     var editor2 = new E('#content2');
     editor2.create();
 
-    laydate({
-        elem: 'failureTime',
-        event: 'focus'
-    });
-    laydate({
-        elem: 'failureTime1',
-        event: 'focus'
-    });
+    //laydate.render({
+    //    elem: 'failureTime',
+    //    event: 'focus',    //    type: 'datetime'
+    //});
+    //laydate.render({
+    //    elem: 'failureTime1',
+    //    event: 'focus',    //    type: 'datetime'
+    //});
 </script>

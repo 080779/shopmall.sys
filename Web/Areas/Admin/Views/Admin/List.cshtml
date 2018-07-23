@@ -238,7 +238,7 @@
             permedit: function (id, permissionIds) {
                 this.permissionIds = [];
                 var that = this;
-                that.$http.post('/admin/admin/getperm', { id: id, permissionIds: this.permissionIds }, { emulateJSON: true }).then(function (result) {
+                that.$http.post('/admin/admin/getperm', { id: id, permissionIds: permissionIds }, { emulateJSON: true }).then(function (result) {
                     that.permissionTypes = result.data.data;
                 });
                 layer.open({

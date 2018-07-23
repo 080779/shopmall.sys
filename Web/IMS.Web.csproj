@@ -249,6 +249,9 @@
     <Content Include="assets\layer\skin\default\loading-2.gif" />
     <Content Include="assets\layer\skin\layer.css" />
     <Content Include="assets\layer\skin\layer.ext.css" />
+    <Content Include="assets\src\laydate.js" />
+    <Content Include="assets\src\theme\default\font\iconfont.svg" />
+    <Content Include="assets\src\theme\default\laydate.css" />
     <Content Include="css\easyui_style.css" />
     <Content Include="css\login.css" />
     <Content Include="css\my_pagination.css" />
@@ -473,6 +476,9 @@
     <Content Include="Areas\Admin\Views\Deliver\List.cshtml" />
     <Content Include="Areas\Admin\Views\Return\List.cshtml" />
     <Content Include="Areas\Admin\Views\Setting\List.cshtml" />
+    <Content Include="assets\src\theme\default\font\iconfont.eot" />
+    <Content Include="assets\src\theme\default\font\iconfont.ttf" />
+    <Content Include="assets\src\theme\default\font\iconfont.woff" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">
