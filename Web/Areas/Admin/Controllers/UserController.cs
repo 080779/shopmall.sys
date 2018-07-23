@@ -142,9 +142,9 @@ namespace IMS.Web.Areas.Admin.Controllers
             bool res= await userService.FrozenAsync(id);
             if (!res)
             {
-                return Json(new AjaxResult { Status = 0, Msg = "冻结用户失败" });
+                return Json(new AjaxResult { Status = 0, Msg = "冻结、解冻用户失败" });
             }
-            return Json(new AjaxResult { Status = 1, Msg = "冻结用户成功" });
+            return Json(new AjaxResult { Status = 1, Msg = "冻结、解冻用户成功" });
         }
         [AdminLog("会员管理", "删除用户")]
         [Permission("会员管理_删除用户")]

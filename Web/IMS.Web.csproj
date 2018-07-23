@@ -409,7 +409,6 @@
     <Compile Include="Models\Order\OrderDetailModel.cs" />
     <Compile Include="Models\Order\OrderGoodsListModel.cs" />
     <Compile Include="Models\Order\OrderListModel.cs" />
-    <Compile Include="Models\Order\WeChatPay.cs" />
     <Compile Include="Models\Order\OrderApplysModel.cs" />
     <Compile Include="Models\Order\OrderPlaceListApiModel.cs" />
     <Compile Include="Models\Order\OrderApplyModel.cs" />

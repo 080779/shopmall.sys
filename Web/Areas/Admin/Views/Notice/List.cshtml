@@ -99,7 +99,7 @@
         <div class="add_menber" id="add" style="display:none">
             <ul class="page-content">
                 <li><label class="label_name">公告标题：</label><span class="add_name"><input value="" placeholder="公告标题" v-model="adds.code" type="text" class="text_add" /></span><div class="prompt r_f"></div></li>
-                <li><label class="label_name">失效时间：</label><span class="add_name"><input class="layui-input" id="failureTime" style=" margin-left:10px;" v-on:click='getfailuretime' /></span><div class="prompt r_f"></div></li>
+                <li><label class="label_name">失效时间：</label><span class="add_name"><input class="layui-input" id="failureTime" style=" margin-left:10px;" v-on:focus='getfailuretime' /></span><div class="prompt r_f"></div></li>
                 <li><label class="label_name">公告内容：</label><div class="prompt r_f"></div></li>
                 <li>
                     <div id="content1" style="width:1000px"></div>
@@ -331,6 +331,20 @@
             }
         },
         mounted: function () {
+            var that = this;
+            laydate.render({
+                elem: '#failureTime',
+                type: 'datetime',
+                done: function (date) {
+                    that.adds.failureTime = date;
+                }
+            });
+            laydate.render({
+                elem: '#failureTime1',                type: 'datetime',
+                done: function (date) {
+                    that.edits.failureTime = date;
+                }
+            });
             this.$http.post('/admin/notice/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
                 this.notices = result.data.data.notices;
                 this.pages.all = result.data.data.pageCount;

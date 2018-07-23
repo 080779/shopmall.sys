@@ -11,14 +11,13 @@ namespace IMS.Common
         public string appid { get; set; }= System.Configuration.ConfigurationManager.AppSettings["APPID"];
         public string mch_id { get; set; } = "1508371911";
         public string nonce_str { get; set; } = CommonHelper.GetCaptcha(10);
-        public string sign { get; set; } = "";
         public string sign_type { get; set; } = "MD5";
-        public string body { get; set; } = "";
-        public string detail { get; set; } = "";
-        public string out_trade_no { get; set; } = "";
+        public string body { get; set; } = "test";
+        public string detail { get; set; } = "testdetail";
+        public string out_trade_no { get; set; } = "124578ds5685798";
         public string fee_type { get; set; } = "CNY";
-        public string total_fee { get; set; } = "";
-        public string notify_url { get; set; } = "";
+        public string total_fee { get; set; } = "1";
+        public string notify_url { get; set; } = "http://1823.demo.wohuicn.com/api/order/return";
         public string trade_type { get; set; } = "JSAPI";
         public string openid { get; set; } = "";
     }

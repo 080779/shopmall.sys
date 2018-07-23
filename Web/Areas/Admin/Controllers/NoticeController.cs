@@ -39,7 +39,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             {
                 return Json(new AjaxResult { Status = 0, Msg = "公告内容不能为空" });
             }            
-            long id = await noticeService.AddAsync(content, code, failureTime);
+            long id = await noticeService.AddAsync(code, content, failureTime);
             if (id <= 0)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "添加公告失败" });

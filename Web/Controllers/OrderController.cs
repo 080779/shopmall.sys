@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -344,6 +345,28 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 1, data = (discount3 * 10) / 100 };
             }
+        }
+
+        [HttpPost]
+        public async Task<ApiResult> Pay()
+        {
+            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
+            WeChatPay weChatPay = new WeChatPay();
+            weChatPay.openid = user.Code.Substring(3, 28);
+            string parm = HttpClientHelper.BuildParam(weChatPay);
+            parm = parm + "&key=" + System.Configuration.ConfigurationManager.AppSettings["KEY"];
+            string sign = CommonHelper.GetMD5(parm);
+            HttpClient httpClient = new HttpClient();
+            string xml = HttpClientHelper.ObjSerializeXml(weChatPay, sign);
+
+            string res = await HttpClientHelper.GetResponseByPostXMLAsync(httpClient, xml, "https://api.mch.weixin.qq.com/pay/unifiedorder");
+            return new ApiResult { status = 1,data= res };
+        }
+
+        [HttpPost]
+        public string Return()
+        {
+            return "ok";
         }
     }
 }

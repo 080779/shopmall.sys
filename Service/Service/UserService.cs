@@ -291,80 +291,49 @@ namespace IMS.Service.Service
                 {
                     return -2;
                 }
-                
-                if (user.LevelId == level1 && amount > up1 && amount < up2)
-                {
-                    if(!user.IsReturned && !user.IsUpgraded)
-                    {
-                        user.LevelId = level2;
-                    }
-                    else if(user.IsReturned && user.IsUpgraded)
-                    {
-                        if(order.DiscountAmount==null || order.DiscountAmount==0)
-                        {
-                            order.DiscountAmount = up1;
-                        }
-                        else if(order.DiscountAmount==up1)
-                        {
-                            user.LevelId = level2;
-                        }
-                    }
-                }
-                else if (user.LevelId == level1 && amount > up2)
-                {
-                    if (!user.IsReturned && !user.IsUpgraded)
-                    {
-                        user.LevelId = level3;
-                    }
-                    else if (user.IsReturned && user.IsUpgraded)
-                    {
-                        if (order.DiscountAmount == null || order.DiscountAmount == 0)
-                        {
-                            order.DiscountAmount = up2;
-                        }
-                        else if (order.DiscountAmount == up2)
-                        {
-                            user.LevelId = level3;
-                        }
-                    }
-                }
-                else if (user.LevelId == level2 && amount > up3)
-                {
-                    if (!user.IsReturned && !user.IsUpgraded)
-                    {
-                        user.LevelId = level3;
-                    }
-                    else if (user.IsReturned && user.IsUpgraded)
-                    {
-                        if (order.DiscountAmount == null || order.DiscountAmount == 0)
-                        {
-                            order.DiscountAmount = up3;
-                        }
-                        else if (order.DiscountAmount == up3)
-                        {
-                            user.LevelId = level3;
-                        }
-                    }
-                }
-
-                if (user.LevelId == level1)
+                long levelId = user.LevelId;
+                if (levelId == level1)
                 {
                     user.Amount = user.Amount - (amount * ((discount1 * 10) / 100));
                     order.DiscountAmount = (amount * ((discount1 * 10) / 100));
                     user.BuyAmount = user.BuyAmount + amount;
+                    if (!user.IsReturned && !user.IsUpgraded && amount >= up1 && amount < up2)
+                    {
+                        user.LevelId = level2;
+                    }
+                    else if (!user.IsReturned && !user.IsUpgraded && amount >= up2)
+                    {
+                        user.LevelId = level3;
+                    }
+                    else if(user.IsReturned && user.IsUpgraded && amount >= (up1*2) && amount < (up2*2))
+                    {
+                        user.LevelId = level2;
+                    }
+                    else if (user.IsReturned && user.IsUpgraded && amount >= (up2 * 2))
+                    {
+                        user.LevelId = level3;
+                    }
                 }
-                if (user.LevelId == level2)
+                else if (levelId == level2)
                 {
                     user.Amount = user.Amount - (amount * ((discount2 * 10) / 100));
                     order.DiscountAmount = (amount * ((discount2 * 10) / 100));
                     user.BuyAmount = user.BuyAmount + amount;
+                    if (!user.IsReturned && !user.IsUpgraded && amount > up3)
+                    {
+                        user.LevelId = level3;
+                    }
+                    else if (user.IsReturned && user.IsUpgraded && amount > (up3*2))
+                    {
+                        user.LevelId = level3;
+                    }
                 }
-                if (user.LevelId == level3)
+                else if (levelId == level3)
                 {
                     user.Amount = user.Amount - (amount * ((discount3 * 10) / 100));
-                    order.DiscountAmount = (amount * ((discount2 * 10) / 100));
+                    order.DiscountAmount = (amount * ((discount3 * 10) / 100));
                     user.BuyAmount = user.BuyAmount + amount;
-                }
+                }               
 
                 string orderCode = order.Code;
                 decimal one;

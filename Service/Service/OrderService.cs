@@ -189,7 +189,7 @@ namespace IMS.Service.Service
                 }
                 if (!string.IsNullOrEmpty(keyword))
                 {
-                    entities = entities.Where(g => g.Code.Contains(keyword) || g.Buyer.Mobile.Contains(keyword));
+                    entities = entities.Where(g =>g.Code.Contains(keyword) || g.Code.Contains(keyword) || g.Buyer.Mobile.Contains(keyword));
                 }
                 if (startTime != null)
                 {
@@ -340,6 +340,8 @@ namespace IMS.Service.Service
                 var orderLists = dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == order.Id).ToList();
                 decimal totalAmount = 0;
                 decimal totalReturnAmount = 0;
+                decimal totalDiscountReturnAmount = 0;
+                decimal totalDiscountAmount = 0;
                 foreach (var item in orderLists)
                 {
                     totalAmount = totalAmount + item.TotalFee;
@@ -347,6 +349,11 @@ namespace IMS.Service.Service
                     {
                         totalReturnAmount = totalReturnAmount + item.TotalFee;
                     }
+                }                
+                if (order.DiscountAmount != null && totalAmount != 0)
+                {
+                    totalDiscountAmount = totalAmount * (order.DiscountAmount.Value / totalAmount);
+                    totalDiscountReturnAmount = totalReturnAmount * (order.DiscountAmount.Value / totalAmount);
                 }
                 if (totalReturnAmount <= 0)
                 {
@@ -354,8 +361,8 @@ namespace IMS.Service.Service
                 }
                 decimal percent = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Name == "退货扣除比例")).Parm) / 100;
                 order.ApplyTime = DateTime.Now;
-                order.ReturnAmount = totalReturnAmount;
-                order.DeductAmount = totalReturnAmount * percent;
+                order.ReturnAmount = totalDiscountReturnAmount;
+                order.DeductAmount = totalDiscountReturnAmount * percent;
                 order.RefundAmount = order.ReturnAmount - order.DeductAmount;
                 order.DownCycledId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "--不降级")).Id;
                 order.AuditStatusId= (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "未审核")).Id;
@@ -375,14 +382,14 @@ namespace IMS.Service.Service
                 long levelId2 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "铂金会员")).Id;
                 if (user.LevelId == levelId1 && user.IsReturned == false && user.IsUpgraded == false)
                 {
-                    if (totalReturnAmount / totalAmount > (decimal)0.5)
+                    if (totalDiscountReturnAmount / totalDiscountAmount > (decimal)0.5)
                     {
                         order.DownCycledId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "↓普通会员")).Id;
                     }
                 }
                 if (user.LevelId == levelId2 && user.IsReturned == false && user.IsUpgraded == false)
                 {
-                    if (totalReturnAmount / totalAmount > (decimal)0.5)
+                    if (totalDiscountReturnAmount / totalDiscountAmount > (decimal)0.5)
                     {
                         order.DownCycledId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "↓普通会员")).Id;
                     }
@@ -404,6 +411,8 @@ namespace IMS.Service.Service
                 var orderLists = dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == order.Id).ToList();
                 decimal totalAmount = 0;
                 decimal totalReturnAmount = 0;
+                decimal totalDiscountReturnAmount = 0;
+                decimal totalDiscountAmount = 0;
                 foreach (var item in orderLists)
                 {
                     totalAmount = totalAmount + item.TotalFee;
@@ -411,14 +420,19 @@ namespace IMS.Service.Service
                     {
                         totalReturnAmount = totalReturnAmount + item.TotalFee;
                     }
-                }
+                } 
+                if(order.DiscountAmount!=null && totalAmount!=0)
+                {
+                    totalDiscountAmount = totalAmount * (order.DiscountAmount.Value / totalAmount);
+                    totalDiscountReturnAmount = totalReturnAmount * (order.DiscountAmount.Value / totalAmount);
+                }                
                 if(totalReturnAmount<=0)
                 {
                     return -2;
                 }
                 decimal percent = Convert.ToDecimal((await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(s => s.Name == "退货扣除比例")).Parm) / 100;
-                order.ReturnAmount = totalReturnAmount;
-                order.DeductAmount = totalReturnAmount * percent;
+                order.ReturnAmount = totalDiscountReturnAmount;
+                order.DeductAmount = totalDiscountReturnAmount * percent;
                 order.RefundAmount = order.ReturnAmount - order.DeductAmount;
                 order.OrderStateId= (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "退货完成")).Id;
                 UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u=>u.Id==order.BuyerId);
@@ -427,7 +441,7 @@ namespace IMS.Service.Service
                     return -3;
                 }
                 //会员扣除金额、降级
-                user.Amount = user.Amount - order.RefundAmount.Value;
+                user.Amount = user.Amount + order.RefundAmount.Value;
                 //普通会员id
                 long levelId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员")).Id;
                 //黄金会员id
@@ -458,7 +472,7 @@ namespace IMS.Service.Service
                 JournalEntity journal = new JournalEntity();
                 journal.OrderCode = order.Code;
                 journal.UserId = user.Id;
-                journal.OutAmount = order.RefundAmount;
+                journal.InAmount = order.RefundAmount;
                 journal.Remark = "退货退款";
                 journal.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "退货退款")).Id;
                 journal.BalanceAmount = user.Amount;

@@ -502,7 +502,9 @@
                         }
                     });
                 });},
-            search: function () { },
+            search: function () {
+                this.getpage();
+            },
             upload: function (id) {
                 this.imgList = [];
                 var that = this;

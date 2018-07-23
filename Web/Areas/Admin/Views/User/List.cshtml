@@ -87,7 +87,7 @@
                         <td v-html="user.isEnabled==true?'已启用':'停用'"></td>
                         <td>
                             <a v-on:click="resetpwd(user.id,user.mobile)" href="javascript:;" title="重置密码" class="btn btn-xs btn-success">重置密码</a>
-                            <a v-on:click="frozen(user.id,user.isEnabled)" href="javascript:;" title="冻结用户" class="btn btn-xs btn-success">冻结用户</a>
+                            <a v-on:click="frozen(user.id,user.isEnabled)" href="javascript:;" title="冻结用户" class="btn btn-xs btn-success" v-html="user.isEnabled?'冻结用户':'解冻用户'"></a>
                             <a title="删除用户" href="javascript:;" v-on:click="del(user.id)" class="btn btn-xs btn-warning">删除用户</a>
                         </td>
                     </tr>

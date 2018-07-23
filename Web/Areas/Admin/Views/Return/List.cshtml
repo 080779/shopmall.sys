@@ -59,6 +59,7 @@
                         <th width="100">申请退货时间</th>
                         <th width="120">订单号</th>
                         <th width="60">订单金额</th>
+                        <th width="60">优惠金额</th>
                         <th width="60">退货金额</th>
                         <th width="60">扣除金额</th>
                         <th width="100">会员账号</th>
@@ -76,6 +77,7 @@
                         <td v-html="order.applyTime"></td>
                         <td v-html="order.code"></td>
                         <td v-html="order.amount"></td>
+                        <td v-html="order.discountAmount"></td>
                         <td v-html="order.returnAmount"></td>
                         <td v-html="order.deductAmount"></td>
                         <td v-html="order.buyerMobile"></td>

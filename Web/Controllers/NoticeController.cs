@@ -19,7 +19,7 @@ namespace IMS.Web.Controllers
         {
             NoticeSearchResult result= await noticeService.GetModelListAsync(null,null,null,1,100);
             List<NoticeListApiModel> model;
-            model = result.Notices.Select(n => new NoticeListApiModel { id = n.Id, content = n.Content, code = n.Code }).ToList(); ;
+            model = result.Notices.Where(n=>n.IsEnabled==true).Select(n => new NoticeListApiModel { id = n.Id, content = n.Content, code = n.Code }).ToList(); ;
             return new ApiResult { status = 1, data = model };
         }
         public async Task<ApiResult> Detail(NoticeDetailModel model)

@@ -8,6 +8,7 @@ using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace IMS.Common
 {
@@ -96,11 +97,47 @@ namespace IMS.Common
             return result;
         }
 
+        public static async Task<string> GetResponseByPostXMLAsync(HttpClient httpClient, string xml, string url)
+        {
+            string result = "";
+            StringContent content = new StringContent(xml);
+            var response = await httpClient.PostAsync(url, content);
+            if (response.IsSuccessStatusCode)
+            {
+                Stream myResponseStream = await response.Content.ReadAsStreamAsync();
+                StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.UTF8);
+                result = await myStreamReader.ReadToEndAsync();
+                myStreamReader.Close();
+                myResponseStream.Close();
+            }
+            return result;
+        }
+
         private static string Encode(string content, Encoding encode = null)
         {
             if (encode == null) return content;
 
             return System.Web.HttpUtility.UrlEncode(content, Encoding.UTF8);
+        }
+
+        public static string ObjSerializeXml<T>(T obj,string sign, Encoding encode = null)
+        {
+            string xml = "";
+
+            if (encode == null) encode = Encoding.UTF8;
+            Type type = typeof(T);
+            var props = type.GetProperties();
+            List<PropertyInfo> lists = props.OrderBy(p => p.Name).ToList(); ;
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("<xml>");
+            foreach(var list in lists)
+            {
+                sb.Append("<").Append(list.Name).Append("><![CDATA[").Append(Encode(list.GetValue(obj).ToString(), encode)).Append("]]></").Append(list.Name).AppendLine(">");
+            }
+            sb.Append("<sign>").Append(sign).AppendLine("</sign>");
+            sb.AppendLine("</xml>");
+            xml = sb.ToString();
+            return xml;
         }
 
         private static string BuildParam(List<KeyValuePair<string, string>> paramArray, Encoding encode = null)
