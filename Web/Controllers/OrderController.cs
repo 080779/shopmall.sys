@@ -11,7 +11,10 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace IMS.Web.Controllers
 {
@@ -224,7 +227,7 @@ namespace IMS.Web.Controllers
             OrderDTO dto = await orderService.GetModelAsync(id);
             if (payTypeId == model.PayTypeId)
             {
-                long payResId = await userService.BalancePayAsync(user.Id, id, dto.Amount);
+                long payResId = await userService.BalancePayAsync(id);
                 if (payResId == -1)
                 {
                     return new ApiResult { status = 0, msg = "用户不存在" };
@@ -260,24 +263,48 @@ namespace IMS.Web.Controllers
             await goodsCarService.DeleteListAsync(user.Id);
             await orderApplyService.DeleteListAsync(user.Id);
             long payTypeId = await idNameService.GetIdByNameAsync("余额");
+            long payTypeId1 = await idNameService.GetIdByNameAsync("微信");
+
             OrderDTO dto = await orderService.GetModelAsync(id);
             if (payTypeId == model.PayTypeId)
             {
-                long payResId = await userService.BalancePayAsync(user.Id, id, dto.Amount);
+                long payResId = await userService.BalancePayAsync(id);
                 if (payResId == -1)
-                {
-                    return new ApiResult { status = 0, msg = "用户不存在" };
-                }
-                if (payResId == -2)
-                {
-                    return new ApiResult { status = 0, msg = "用户账户余额不足" };
-                }
-                if (payResId == -3)
                 {
                     return new ApiResult { status = 0, msg = "订单不存在" };
                 }
-                orderStateId = await idNameService.GetIdByNameAsync("待发货");
-                await orderService.UpdateAsync(id, null, null, orderStateId);
+                if (payResId == -2)
+                {
+                    return new ApiResult { status = 0, msg = "用户不存在" };
+                }
+                if (payResId == -3)
+                {
+                    return new ApiResult { status = 0, msg = "商品库存不足" };
+                }
+                if (payResId == -4)
+                {
+                    return new ApiResult { status = 0, msg = "用户账户余额不足" };
+                }
+            }
+            else if (payTypeId1 == model.PayTypeId)
+            {
+                long payResId = await userService.WeChatPayAsync(id,user.Code.Substring(3,28));
+                if (payResId == -1)
+                {
+                    return new ApiResult { status = 0, msg = "订单不存在" };
+                }
+                if (payResId == -2)
+                {
+                    return new ApiResult { status = 0, msg = "用户不存在" };
+                }
+                if (payResId == -3)
+                {
+                    return new ApiResult { status = 0, msg = "商品库存不足" };
+                }
+                if (payResId == -4)
+                {
+                    return new ApiResult { status = 0, msg = "微信支付错误" };
+                }
             }
             return new ApiResult { status = 1, msg = "支付成功" };
         }
@@ -295,7 +322,7 @@ namespace IMS.Web.Controllers
             long payTypeId = await idNameService.GetIdByNameAsync("余额");
             if (payTypeId == model.PayTypeId)
             {
-                long payResId = await userService.BalancePayAsync(user.Id, order.Id, order.Amount);
+                long payResId = await userService.BalancePayAsync(order.Id);
                 if (payResId == -1)
                 {
                     return new ApiResult { status = 0, msg = "用户不存在" };
@@ -360,13 +387,31 @@ namespace IMS.Web.Controllers
             string xml = HttpClientHelper.ObjSerializeXml(weChatPay, sign);
 
             string res = await HttpClientHelper.GetResponseByPostXMLAsync(httpClient, xml, "https://api.mch.weixin.qq.com/pay/unifiedorder");
-            return new ApiResult { status = 1,data= res };
+            if (!res.Contains("SUCCESS"))
+            {
+                return new ApiResult { status = 0, msg = res };
+            }
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(res);
+            XmlNode Child = xmlDoc.SelectSingleNode("xml/prepay_id");
+
+            return new ApiResult { status = 1,data=Child.InnerText };
         }
 
         [HttpPost]
         public string Return()
         {
-            return "ok";
+            HttpContextBase context = (HttpContextBase)Request.Properties["MS_HttpContext"];//获取传统context
+            HttpRequestBase request = context.Request;//定义传统request对象
+            
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("<xml>");
+            sb.AppendLine("<return_code><![CDATA[SUCCESS]]></return_code>");
+            sb.AppendLine("<return_code><![CDATA[OK]]></return_code>");
+            sb.AppendLine("<xml>");
+            
+            return sb.ToString();
         }
     }
 }

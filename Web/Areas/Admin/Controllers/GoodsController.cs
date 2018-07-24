@@ -20,6 +20,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         public IGoodsSecondTypeService goodsSecondTypeService { get; set; }
         public IGoodsImgService goodsImgService { get; set; }
         public IGoodsAreaService goodsAreaService { get; set; }
+        public IBonusRatioService bonusRatioService { get; set; }
         public ActionResult List()
         {
             return View();
@@ -153,6 +154,12 @@ namespace IMS.Web.Areas.Admin.Controllers
         {            
             GoodsDTO res = await goodsService.GetModelAsync(id);
             return Json(new AjaxResult { Status = 1, Data=res });
+        }
+        [HttpPost]
+        public async Task<ActionResult> GetBonusRatio(long id)
+        {
+            BonusRatio res = await bonusRatioService.GetModelAsync(id);
+            return Json(new AjaxResult { Status = 1, Data = new { BonusRatio = res } });
         }
     }
 }

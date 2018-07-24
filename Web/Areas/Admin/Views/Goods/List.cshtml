@@ -94,6 +94,7 @@
                             <a class="btn btn-xs btn-info" v-on:click="upload(item.id)">上传图片</a>
                             <a v-on:click="edit(item.id)" href="javascript:;" title="修改公告" class="btn btn-xs btn-success">修改商品</a>
                             <a title="删除" href="javascript:;" v-on:click="del(item.id)" class="btn btn-xs btn-warning">删除商品</a>
+                            <a v-on:click="bonusset(item.id)" class="btn btn-success"><i class="icon-plus"></i>佣金设置</a>
                         </td>
                     </tr>
                 </tbody>
@@ -198,6 +199,41 @@
                 </li>
             </ul>
         </div>
+
+        <!--佣金设置图层-->
+        <div class="add_menber" id="bonusset" style="display:none">
+            <table class="table table-striped table-bordered table-hover" id="sample-table">
+                <thead>
+                    <tr>
+                        <th width="60"></th>
+                        <th width="100">一级分销</th>
+                        <th width="100">二级分销</th>
+                        <th width="100">三级分销</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>普通会员</td>
+                        <td><input type="text" v-model="bonusRatio.commonOne" maxlength="3" onKeyUp="value=value.replace(/[^\d]/g,'')" />%</td>
+                        <td><input type="text" v-model="bonusRatio.commonTwo" maxlength="3" onKeyUp="value=value.replace(/[^\d]/g,'')" />%</td>
+                        <td><input type="text" v-model="bonusRatio.commonThree" maxlength="3" onKeyUp="value=value.replace(/[^\d]/g,'')" />%</td>
+                    </tr>
+                    <tr>
+                        <td>黄金会员</td>
+                        <td><input type="text" v-model="bonusRatio.goldOne" maxlength="3" onKeyUp="value=value.replace(/[^\d]/g,'')" />%</td>
+                        <td><input type="text" v-model="bonusRatio.goldTwo" maxlength="3" onKeyUp="value=value.replace(/[^\d]/g,'')" />%</td>
+                        <td><input type="text" v-model="bonusRatio.goldThree" maxlength="3" onKeyUp="value=value.replace(/[^\d]/g,'')" />%</td>
+                    </tr>
+                    <tr>
+                        <td>铂金会员</td>
+                        <td><input type="text" v-model="bonusRatio.platinumOne" maxlength="3" onKeyUp="value=value.replace(/[^\d]/g,'')" />%</td>
+                        <td><input type="text" v-model="bonusRatio.platinumOne" maxlength="3" onKeyUp="value=value.replace(/[^\d]/g,'')" />%</td>
+                        <td><input type="text" v-model="bonusRatio.platinumThree" maxlength="3" onKeyUp="value=value.replace(/[^\d]/g,'')" />%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
         <!--上传图片层-->
         <div class="add_menber" id="upload" style="display:none">
             <div class="hello">
@@ -234,6 +270,7 @@
             goodsSecondTypes: [],
             goodsSecondTypeId: "",
             goodsAreas: [],
+            bonusRatio:[],
             pages: {
                 all: "", cur: 1, txtpage: ""
             },
@@ -313,7 +350,7 @@
                 this.imgList.splice(index, 1);
             },
             getpage: function () {
-                this.$http.post('/admin/goods/list', { levelId: this.levelId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
+                this.$http.post('/admin/goods/list', { goodsTypeId: this.goodsTypeId, goodsSecondTypeId: this.goodsSecondTypeId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
                     this.goods = result.data.data.goods;
                     this.goodsTypes = result.data.data.goodsTypes;
                     this.pages.all = result.data.data.pageCount;
@@ -543,6 +580,51 @@
                         });
                     }
                 });
+            },
+            bonusset: function (id) {
+                var that = this;
+                that.$http.post('/admin/goods/getbonusratio', { id: id }, { emulateJSON: true }).then(function (result) {
+                    if (result.data.status == 1) {
+                        that.bonusRatio = result.data.data.bonusRatio;
+                    }
+                    else if (result.data.status == 0) {
+                        layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                    }
+                    else if (result.data.status == 302) {
+                        window.location.href = result.data.data;
+                    }
+                    else if (result.data.status == 401) {
+                        layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                    }
+                });
+                layer.open({
+                    type: 1,
+                    title: '佣金设置',
+                    maxmin: true,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['800px', ''],
+                    content: $('#bonusset'),
+                    btn: ['确认', '取消'],
+                    yes: function (index, layero) {
+                        that.bonusRatio.id = id;
+                        that.$http.post('/admin/goods/bonusset', { bonusRatio: that.bonusRatio }, { emulateJSON: true }).then(function (result) {
+                            if (result.data.status == 1) {
+                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
+                                layer.close(index);
+                                that.getpage();
+                            }
+                            else if (result.data.status == 0) {
+                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                            }
+                            else if (result.data.status == 302) {
+                                window.location.href = result.data.data;
+                            }
+                            else if (result.data.status == 401) {
+                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
+                            }
+                        });
+                    }
+                });
             }
         },
         computed: {
@@ -572,7 +654,7 @@
             }
         },
         mounted: function () {
-            this.$http.post('/admin/goods/list', { levelId: this.levelId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
+            this.$http.post('/admin/goods/list', { goodsTypeId: this.goodsTypeId, goodsSecondTypeId: this.goodsSecondTypeId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
                 this.goods = result.data.data.goods;
                 this.goodsTypes = result.data.data.goodsTypes;
                 this.goodsAreas = result.data.data.goodsAreas;

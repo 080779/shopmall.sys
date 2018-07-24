@@ -55,6 +55,10 @@ namespace IMS.Service.Service
                 entity.Standard = goods.Standard;
                 dbc.Goods.Add(entity);
                 await dbc.SaveChangesAsync();
+                BonusRatioEntity bonusRatio = new BonusRatioEntity();
+                bonusRatio.GoodsId = entity.Id;
+                dbc.BonusRatios.Add(bonusRatio);
+                await dbc.SaveChangesAsync();
                 return entity.Id;
             }
         }

@@ -52,7 +52,8 @@ namespace IMS.IService
         Task<long> ResetPasswordAsync(long id, string password);
         Task<long> UserCheck(string mobile);
         Task<long> CheckLoginAsync(string mobile, string password);
-        Task<long> BalancePayAsync(long id, long orderId, decimal amount);
+        Task<long> BalancePayAsync(long orderId);
+        Task<long> WeChatPayAsync(long orderId,string openId);
         /// <summary>
         /// 根据id获得用户模型
         /// </summary>

@@ -41,6 +41,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -60,6 +61,7 @@
     <Compile Include="Config\GoodsSecondTypeConfig.cs" />
     <Compile Include="Config\GoodsImgConfig.cs" />
     <Compile Include="Config\DeliveryConfig.cs" />
+    <Compile Include="Config\BonusRatioConfig.cs" />
     <Compile Include="Config\MainGoodsTypeConfig.cs" />
     <Compile Include="Config\IdNameConfig.cs" />
     <Compile Include="Config\MessageConfig.cs" />
@@ -83,6 +85,7 @@
     <Compile Include="Config\TakeCashConfig.cs" />
     <Compile Include="Entity\GoodsCarEntity.cs" />
     <Compile Include="Entity\DeliveryEntity.cs" />
+    <Compile Include="Entity\BonusRatioEntity.cs" />
     <Compile Include="Entity\MainGoodsTypeEntity.cs" />
     <Compile Include="Entity\IdNameEntity.cs" />
     <Compile Include="Entity\MessageEntity.cs" />
@@ -117,6 +120,7 @@
     <Compile Include="Service\AdminService.cs" />
     <Compile Include="Service\AddressService.cs" />
     <Compile Include="Service\GoodsImgService.cs" />
+    <Compile Include="Service\BonusRatioService.cs" />
     <Compile Include="Service\JournalService.cs" />
     <Compile Include="Service\OrderApplyService.cs" />
     <Compile Include="Service\SettingService.cs" />
