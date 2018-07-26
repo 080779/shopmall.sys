@@ -29,7 +29,11 @@ namespace IMS.Web.Controllers
             string path = "";
             var userDTO = await userService.GetModelAsync(user.Id);
             string parmUrl = await settingService.GetParmByNameAsync("网站域名");
-            if (userDTO== null)
+            if(userDTO==null)
+            {
+                return new ApiResult { status = 0, msg="会员不存在" };
+            }
+            if (string.IsNullOrEmpty(userDTO.ShareCode))
             {                
                 string getTokenUrl = string.Format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}", APPID, APPSECRET);
                 HttpClient httpClient = new HttpClient();

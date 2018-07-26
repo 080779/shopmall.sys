@@ -29,6 +29,8 @@ namespace IMS.Service.Service
             dto.TotalFee = entity.TotalFee;
             dto.GoodsCode = entity.Goods.Code;
             dto.IsReturn = entity.IsReturn;
+            dto.Inventory = entity.Goods.Inventory;
+            dto.Discount = entity.Order.UpAmount.Value;
             return dto;
         }
         public async Task<long> AddAsync(long orderId, long goodsId, long number)

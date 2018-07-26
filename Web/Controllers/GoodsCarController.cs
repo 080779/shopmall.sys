@@ -25,7 +25,7 @@ namespace IMS.Web.Controllers
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             GoodsCarSearchResult result = await goodsCarService.GetModelListAsync(user.Id, null, null, null, 1, 100);
             GoodsCarListApiModel model = new GoodsCarListApiModel();
-            model.goodsCars = result.GoodsCars.Select(g => new GoodsCarModel { id = g.Id, goodsId = g.GoodsId, goodsName = g.Name, realityPrice = g.RealityPrice, number = g.Number, goodsAmount = g.GoodsAmount, imgUrl = parm + g.ImgUrl, isSelected = g.IsSelected }).ToList();
+            model.goodsCars = result.GoodsCars.Select(g => new GoodsCarModel { id = g.Id, inventory=g.Inventory, price = g.Price, goodsId = g.GoodsId, goodsName = g.Name, realityPrice = g.RealityPrice, number = g.Number, goodsAmount = g.GoodsAmount, imgUrl = parm + g.ImgUrl, isSelected = g.IsSelected }).ToList();
             model.totalAmount = result.TotalAmount;
             return new ApiResult { status = 1, data = model };
         }
@@ -36,7 +36,7 @@ namespace IMS.Web.Controllers
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             GoodsCarSearchResult result = await goodsCarService.GetModelListAsync(user.Id,true, null, null, null, 1, 100);
             GoodsCarListApiModel model = new GoodsCarListApiModel();
-            model.goodsCars = result.GoodsCars.Select(g => new GoodsCarModel { id = g.Id, goodsId = g.GoodsId, goodsName = g.Name, realityPrice = g.RealityPrice, number = g.Number, goodsAmount = g.GoodsAmount, imgUrl = parm + g.ImgUrl, isSelected = g.IsSelected }).ToList();
+            model.goodsCars = result.GoodsCars.Select(g => new GoodsCarModel { id = g.Id, inventory = g.Inventory, price = g.Price, goodsId = g.GoodsId, goodsName = g.Name, realityPrice = g.RealityPrice, number = g.Number, goodsAmount = g.GoodsAmount, imgUrl = parm + g.ImgUrl, isSelected = g.IsSelected }).ToList();
             model.totalAmount = result.TotalAmount;
             return new ApiResult { status = 1, data = model };
         }

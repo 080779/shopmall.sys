@@ -1,4 +1,5 @@
-﻿<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -389,6 +390,7 @@
     <Compile Include="Models\Address\AddressEditModel.cs" />
     <Compile Include="Models\Address\AddressAddModel.cs" />
     <Compile Include="Models\Address\AddressDetailModel.cs" />
+    <Compile Include="Models\Address\AddressListModel.cs" />
     <Compile Include="Models\Address\AddressListApiModel.cs" />
     <Compile Include="Models\BankAccount\BankAccountInfoApiModel.cs" />
     <Compile Include="Models\BankAccount\BankAccountEditModel.cs" />
@@ -411,6 +413,10 @@
     <Compile Include="Models\Journal\JournalListModel.cs" />
     <Compile Include="Models\Notice\NoticeDetailModel.cs" />
     <Compile Include="Models\Notice\NoticeListApiModel.cs" />
+    <Compile Include="Models\Order\OrderPayModel.cs" />
+    <Compile Include="Models\Order\OrderDeliveryTypetModel.cs" />
+    <Compile Include="Models\Order\OrderDeliveryCodeModel.cs" />
+    <Compile Include="Models\Order\OrderReceiptModel.cs" />
     <Compile Include="Models\Order\OrderReApplysModel.cs" />
     <Compile Include="Models\Order\OrderGoodsListApiModel.cs" />
     <Compile Include="Models\Order\OrderReturnApplyModel.cs" />
@@ -436,8 +442,10 @@
     <Compile Include="Models\UserCenter\UserCenterEditNickNameModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterDetailApiModel.cs" />
     <Compile Include="Models\UserCenter\UserCenterResetPwdModel.cs" />
+    <Compile Include="Models\UserTeam\UserTeamListApiModel.cs" />
     <Compile Include="Models\UserTeam\UserTeamListModel.cs" />
     <Compile Include="Models\User\UserLoginModel1.cs" />
+    <Compile Include="Models\User\UserForgetPwdModel.cs" />
     <Compile Include="Models\User\WeChatErrorResultModel.cs" />
     <Compile Include="Models\User\WeChatResultModel.cs" />
     <Compile Include="Models\User\UserSendMsgCacheModel.cs" />
@@ -445,6 +453,9 @@
     <Compile Include="Models\User\UserLoginModel.cs" />
     <Compile Include="Models\User\UserRegisterModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="wxpay.ashx.cs">
+      <DependentUpon>wxpay.ashx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -496,6 +507,7 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+    <Content Include="wxpay.ashx" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

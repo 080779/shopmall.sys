@@ -37,7 +37,7 @@ namespace IMS.Common
         public static async Task<string> GetResponseByGetAsync(HttpClient httpClient, List<KeyValuePair<string, string>> paramArray, string url)
         {
             string result = "";
-            url = url + "?" + BuildParam(paramArray);
+            url = url + "?" + KeyValueBuildParam(paramArray);
             var response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
@@ -140,7 +140,26 @@ namespace IMS.Common
             return xml;
         }
 
-        private static string BuildParam(List<KeyValuePair<string, string>> paramArray, Encoding encode = null)
+        public static string ObjSerializeXml<T>(T obj, string sign)
+        {
+            string xml = "";
+
+            Type type = typeof(T);
+            var props = type.GetProperties();
+            List<PropertyInfo> lists = props.OrderBy(p => p.Name).ToList(); ;
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("<xml>");
+            foreach (var list in lists)
+            {
+                sb.Append("<").Append(list.Name).Append("><![CDATA[").Append(list.GetValue(obj).ToString()).Append("]]></").Append(list.Name).AppendLine(">");
+            }
+            sb.Append("<sign>").Append(sign).AppendLine("</sign>");
+            sb.AppendLine("</xml>");
+            xml = sb.ToString();
+            return xml;
+        }
+
+        private static string KeyValueBuildParam(List<KeyValuePair<string, string>> paramArray, Encoding encode = null)
         {
             string url = "";
 
@@ -187,6 +206,30 @@ namespace IMS.Common
                 }
                 url += parms;
 
+            }
+            return url;
+        }
+
+        public static string BuildParam<T>(T obj)
+        {
+            string url = "";
+
+            Type type = typeof(T);
+            var props = type.GetProperties();
+            List<PropertyInfo> lists = props.OrderBy(p => p.Name).ToList(); ;
+
+            if (lists != null && lists.Count > 0)
+            {
+                var parms = "";
+                foreach (var item in lists)
+                {
+                    parms += string.Format("{0}={1}&", item.Name, item.GetValue(obj).ToString());
+                }
+                if (parms != "")
+                {
+                    parms = parms.TrimEnd('&');
+                }
+                url += parms;
             }
             return url;
         }

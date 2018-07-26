@@ -39,7 +39,6 @@
         <div class="clearfix" style="margin-top:20px">
             <span class="l_f">
                 <a v-on:click="add" class="btn btn-success"><i class="icon-plus"></i>添加用户</a>
-                <a v-on:click="bonusset" class="btn btn-success"><i class="icon-plus"></i>佣金设置</a>
                 <a v-on:click="upset" class="btn btn-success"><i class="icon-plus"></i>升级设置</a>
             </span>
         </div>
@@ -119,34 +118,6 @@
             </ul>
         </div>
 
-        <!--佣金设置图层-->
-        <div class="add_menber" id="bonusset" style="display:none">
-            <table class="table table-striped table-bordered table-hover" id="sample-table">
-                <thead>
-                    <tr>
-                        <th width="60"></th>
-                        <th width="100">一级分销</th>
-                        <th width="100">二级分销</th>
-                        <th width="100">三级分销</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>普通会员</td>
-                        <td v-for="setting in settings.slice(0,3)"><input type="text" v-model="setting.parm" maxlength="3" onKeyUp="value=value.replace(/[^\d]/g,'')" />%</td>
-                    </tr>
-                    <tr>
-                        <td>黄金会员</td>
-                        <td v-for="setting in settings.slice(3,6)"><input type="text" v-model="setting.parm" maxlength="3" onKeyUp="value=value.replace(/[^\d]/g,'')" />%</td>
-                    </tr>
-                    <tr>
-                        <td>铂金会员</td>
-                        <td v-for="setting in settings.slice(6,9)"><input type="text" v-model="setting.parm" maxlength="3" onKeyUp="value=value.replace(/[^\d]/g,'')" />%</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
         <!--升级设置图层-->
         <div class="add_menber" id="upset" style="display:none">
             <table class="table table-striped table-bordered table-hover" id="sample-table">
@@ -181,7 +152,6 @@
         data: {
             users: [],
             levels: [],
-            settings: [],
             levelId: "",
             userUps: [],
             discounts: [],
@@ -223,7 +193,6 @@
                 this.$http.post('/admin/user/list', { levelId: this.levelId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
                     this.users = result.data.data.users;
                     this.pages.all = result.data.data.pageCount;
-                    this.settings = result.data.data.settings;
                     this.userUps = result.data.data.userUps;
                     this.discounts = result.data.data.discounts;
                 })
@@ -283,37 +252,6 @@
                             }
                             else if (result.data.status == 0) {
                                 layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                            }
-                            else if (result.data.status == 302) {
-                                window.location.href = result.data.data;
-                            }
-                            else if (result.data.status == 401) {
-                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                            }
-                        });
-                    }
-                });
-            },
-            bonusset: function () {
-                var that = this;
-                layer.open({
-                    type: 1,
-                    title: '佣金设置',
-                    maxmin: true,
-                    shadeClose: false, //点击遮罩关闭层
-                    area: ['800px', ''],
-                    content: $('#bonusset'),
-                    btn: ['确认', '取消'],
-                    yes: function (index, layero) {
-                        that.$http.post('/admin/user/bonusset', { settings: that.settings }, { emulateJSON: true }).then(function (result) {
-                            if (result.data.status == 1) {
-                                layer.alert(result.data.msg, { icon: 6, title: '提示框' });
-                                layer.close(index);
-                                that.getpage();
-                            }
-                            else if (result.data.status == 0) {
-                                layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                                //that.msg = result.data.msg;
                             }
                             else if (result.data.status == 302) {
                                 window.location.href = result.data.data;
@@ -482,7 +420,6 @@
                 this.users = result.data.data.users;
                 this.pages.all = result.data.data.pageCount;
                 this.levels = result.data.data.levels;
-                this.settings = result.data.data.settings;
                 this.userUps = result.data.data.userUps;
                 this.discounts = result.data.data.discounts;
             })

@@ -41,6 +41,7 @@ namespace IMS.Web.Controllers
             model.levelName = result.LevelName;
             model.mobile = result.Mobile;
             model.nickName = result.NickName;
+            model.recommonder = result.Recommender;
 
             return new ApiResult { status = 1, data = model };
         }

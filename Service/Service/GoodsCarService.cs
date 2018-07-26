@@ -37,6 +37,7 @@ namespace IMS.Service.Service
             dto.Number = entity.Number;
             dto.IsSelected = entity.IsSelected;
             dto.GoodsAmount = entity.Goods.RealityPrice * entity.Number;
+            dto.Inventory = entity.Goods.Inventory;
             return dto;
         }
         public async Task<long> AddAsync(long userId, long goodsId, long num)

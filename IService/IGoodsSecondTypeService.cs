@@ -9,7 +9,7 @@ namespace IMS.IService
     /// </summary>
     public interface IGoodsSecondTypeService : IServiceSupport
     {
-        Task<long> AddAsync(string name, string description);
+        Task<long> AddAsync(long goodsTypeId, string name, string description);
         Task<bool> UpdateAsync(long id, string name, string description);
         Task<bool> DeleteAsync(long id);
         Task<GoodsSecondTypeDTO> GetModelAsync(long id);

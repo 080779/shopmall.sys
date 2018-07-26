@@ -28,14 +28,14 @@ namespace IMS.Web.Areas.Admin.Controllers
             return Json(new AjaxResult { Status = 1, Data = result });
         }
         [AdminLog("商品分类", "添加商品二级分类")]
-        public async Task<ActionResult> Add(string name, string description)
+        public async Task<ActionResult> Add(long id,string name, string description)
         {
             if (string.IsNullOrEmpty(name))
             {
                 return Json(new AjaxResult { Status = 0, Msg = "商品二级分类名不能为空" });
             }
-            long id = await goodsSecondTypeService.AddAsync(name, description);
-            if (id <= 0)
+            long res = await goodsSecondTypeService.AddAsync(id,name, description);
+            if (res <= 0)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "添加商品二级分类失败" });
             }

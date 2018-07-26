@@ -25,7 +25,7 @@ namespace IMS.Web.Controllers
         public async Task<ApiResult> Select(ReturnSelectModel model)
         {
             bool flag = await orderListService.SetIsReturnAsync(model.Id);
-            return new ApiResult { status = 1, msg = "操作成功" };
+            return new ApiResult { status = 1, msg = "操作成功" }; 
         }
         [HttpPost]
         public async Task<ApiResult> Apply(ReturnApplyModel model)

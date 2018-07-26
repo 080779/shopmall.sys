@@ -5,7 +5,7 @@ using System.Web;
 
 namespace IMS.Web.Models.Order
 {
-    public class OrderReApplysModel
+    public class OrderDeliveryCodeModel
     {
         public long OrderId { get; set; }
     }

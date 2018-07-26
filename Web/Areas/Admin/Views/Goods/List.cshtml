@@ -58,7 +58,7 @@
                 </li>
                 <li>
                     <label class="l_f">商品信息</label>
-                    <input name="" v-model="searchs.keyword" type="text" class="text_add" placeholder="商品信息" style=" width:150px" />
+                    <input name="" v-model="searchs.keyword" type="text" class="text_add" placeholder="商品信息" style="width:150px" />
                 </li>
                 <li style="width:90px;"><button type="button" v-on:click="search" class="btn_search"><i class="icon-search"></i>查询</button></li>
             </ul>
@@ -76,7 +76,7 @@
                         <th width="80">商品分类</th>
                         <th width="60">是否上架</th>
                         <th width="60">是否推荐</th>
-                        <th width="120">操作</th>
+                        <th width="160">操作</th>
                     </tr>
                 </thead>
                 <tbody v-for="item in goods">
@@ -94,7 +94,7 @@
                             <a class="btn btn-xs btn-info" v-on:click="upload(item.id)">上传图片</a>
                             <a v-on:click="edit(item.id)" href="javascript:;" title="修改公告" class="btn btn-xs btn-success">修改商品</a>
                             <a title="删除" href="javascript:;" v-on:click="del(item.id)" class="btn btn-xs btn-warning">删除商品</a>
-                            <a v-on:click="bonusset(item.id)" class="btn btn-success"><i class="icon-plus"></i>佣金设置</a>
+                            <a v-on:click="bonusset(item.id)" class="btn btn-xs btn-success">佣金设置</a>
                         </td>
                     </tr>
                 </tbody>
@@ -227,7 +227,7 @@
                     <tr>
                         <td>铂金会员</td>
                         <td><input type="text" v-model="bonusRatio.platinumOne" maxlength="3" onKeyUp="value=value.replace(/[^\d]/g,'')" />%</td>
-                        <td><input type="text" v-model="bonusRatio.platinumOne" maxlength="3" onKeyUp="value=value.replace(/[^\d]/g,'')" />%</td>
+                        <td><input type="text" v-model="bonusRatio.platinumTwo" maxlength="3" onKeyUp="value=value.replace(/[^\d]/g,'')" />%</td>
                         <td><input type="text" v-model="bonusRatio.platinumThree" maxlength="3" onKeyUp="value=value.replace(/[^\d]/g,'')" />%</td>
                     </tr>
                 </tbody>
@@ -270,7 +270,9 @@
             goodsSecondTypes: [],
             goodsSecondTypeId: "",
             goodsAreas: [],
-            bonusRatio:[],
+            bonusRatio: {
+                goodsId: 0, commonOne: "", commonTwo: "", commonThree: "", goldOne: "", goldTwo: "", goldThree: "", platinumOne: "", platinumTwo: "", platinumThree: ""
+            },
             pages: {
                 all: "", cur: 1, txtpage: ""
             },
@@ -462,7 +464,7 @@
                     content: $('#edit'),
                     btn: ['确认', '取消'],
                     yes: function (index, layero) {
-                        that.edits.description = editor.txt.html();                        
+                        that.edits.description = editor1.txt.html();
                         if (that.edits.name == "") {
                             layer.alert('商品名称不能为空', { icon: 0, title: '提示框' });
                             return;
@@ -495,7 +497,7 @@
                             layer.alert('请选择商品类型', { icon: 0, title: '提示框' });
                             return;
                         }
-                        
+
                         that.$http.post('/admin/goods/edit',
                             {
                                 id: id, code: that.edits.code, name: that.edits.name, standard: that.edits.standard, price: that.edits.price, realityPrice: that.edits.realityPrice,
@@ -538,7 +540,8 @@
                             layer.alert(result.data.msg, { icon: 6, title: '提示框' });
                         }
                     });
-                });},
+                });
+            },
             search: function () {
                 this.getpage();
             },
@@ -606,7 +609,7 @@
                     content: $('#bonusset'),
                     btn: ['确认', '取消'],
                     yes: function (index, layero) {
-                        that.bonusRatio.id = id;
+                        that.bonusRatio.goodsId = id;
                         that.$http.post('/admin/goods/bonusset', { bonusRatio: that.bonusRatio }, { emulateJSON: true }).then(function (result) {
                             if (result.data.status == 1) {
                                 layer.alert(result.data.msg, { icon: 6, title: '提示框' });
@@ -668,7 +671,7 @@
     var editor = new E('#adddesc')
     editor.customConfig.uploadImgMaxSize = 3 * 1024 * 1024
     editor.customConfig.uploadImgMaxLength = 1
-    editor.customConfig.uploadImgShowBase64 = true 
+    editor.customConfig.uploadImgShowBase64 = true
     editor.customConfig.uploadFileName = 'imgfile'
     editor.customConfig.uploadImgServer = '/admin/goods/uploaddescpic'
     editor.create()

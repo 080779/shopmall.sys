@@ -24,6 +24,7 @@ namespace IMS.IService
         public GoodsCarDTO[] GoodsCars { get; set; }
         public long PageCount { get; set; }
         public decimal TotalAmount { get; set; }
+        public decimal TotalDiscountAmount { get; set; }
     }
     public class Goods
     {

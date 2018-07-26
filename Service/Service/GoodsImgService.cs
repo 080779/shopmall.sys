@@ -65,7 +65,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entities = dbc.GetAll<GoodsImgEntity>();
+                var entities = dbc.GetAll<GoodsImgEntity>().Where(g=>g.GoodsId==goodsId);
                 if(entities.Count()<=0)
                 {
                     return "";

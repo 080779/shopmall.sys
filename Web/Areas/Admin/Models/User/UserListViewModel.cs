@@ -14,7 +14,6 @@ namespace IMS.Web.Areas.Admin.Models.User
         public long PageCount { get; set; }
         public IdNameDTO[] Levels { get; set; }
         public IdNameDTO[] SettingTypes { get; set; }
-        public List<SettingParm> Settings { get; set; }
         public List<SettingModel> UserUps { get; set; } 
         public List<SettingModel> Discounts { get; set; }
     }

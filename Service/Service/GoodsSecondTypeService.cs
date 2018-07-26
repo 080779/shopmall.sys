@@ -21,13 +21,14 @@ namespace IMS.Service.Service
             dto.Name = entity.Name;
             return dto;
         }
-        public async Task<long> AddAsync(string name, string description)
+        public async Task<long> AddAsync(long goodsTypeId,string name, string description)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 GoodsSecondTypeEntity entity = new GoodsSecondTypeEntity();
                 entity.Description = description;
                 entity.Name = name;
+                entity.GoodsTypeId = goodsTypeId;
                 dbc.GoodsSecondTypes.Add(entity);
                 await dbc.SaveChangesAsync();
                 return entity.Id;

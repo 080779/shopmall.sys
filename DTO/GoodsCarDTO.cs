@@ -19,6 +19,7 @@ namespace IMS.DTO
         public string Description { get; set; }
         public long Number { get; set; }
         public decimal GoodsAmount { get; set; }
+        public long Inventory { get; set; }
         public bool IsSelected { get; set; }
     }
 }

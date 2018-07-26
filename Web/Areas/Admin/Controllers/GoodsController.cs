@@ -159,7 +159,33 @@ namespace IMS.Web.Areas.Admin.Controllers
         public async Task<ActionResult> GetBonusRatio(long id)
         {
             BonusRatio res = await bonusRatioService.GetModelAsync(id);
+            if(res==null)
+            {
+                res = new BonusRatio();
+            }
             return Json(new AjaxResult { Status = 1, Data = new { BonusRatio = res } });
+        }
+        [HttpPost]
+        [AdminLog("商品管理", "佣金设置")]
+        [Permission("商品管理_佣金设置")]
+        public async Task<ActionResult> Bonusset(BonusRatio bonusRatio)
+        {
+            Type type = typeof(BonusRatio);
+            var props = type.GetProperties();
+            decimal val;
+            foreach(var prop in props)
+            {
+                if(!decimal.TryParse(prop.GetValue(bonusRatio).ToString(),out val))
+                {
+                    return Json(new AjaxResult { Status = 1, Msg = "佣金设置参数错误" });
+                }
+                if(val<=0)
+                {
+                    return Json(new AjaxResult { Status = 1, Msg = "佣金设置参数必须大于零" });
+                }
+            }
+            bool flag = await bonusRatioService.UpdateAsync(bonusRatio);
+            return Json(new AjaxResult { Status = 1,Msg="佣金设置成功" });
         }
     }
 }

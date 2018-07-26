@@ -39,7 +39,7 @@ namespace IMS.Service.Service
             return dto;
         }
 
-        public async Task<long> AddAsync(string mobile, string password, long levelTypeId, string recommendMobile)
+        public async Task<long> AddAsync(string mobile, string password, long levelTypeId, string recommendMobile,string nickName,string avatarUrl)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -57,6 +57,8 @@ namespace IMS.Service.Service
                         user.Mobile = mobile;
                         user.Salt = CommonHelper.GetCaptcha(4);
                         user.Password = CommonHelper.GetMD5(password + user.Salt);
+                        user.NickName = string.IsNullOrEmpty(nickName)?"无昵称":nickName;
+                        user.HeadPic = string.IsNullOrEmpty(avatarUrl)?"":avatarUrl;
                         dbc.Users.Add(user);
                         await dbc.SaveChangesAsync();
 
@@ -86,6 +88,21 @@ namespace IMS.Service.Service
                         return -3;
                     }
                 }
+            }
+        }
+
+        public async Task<bool> AddAmountAsync(string mobile, decimal amount)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserEntity user= await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Mobile == mobile);
+                if(user==null)
+                {
+                    return false;
+                }
+                user.Amount = user.Amount + amount;
+                await dbc.SaveChangesAsync();
+                return true;
             }
         }
 
@@ -231,6 +248,21 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<long> ResetPasswordAsync(string mobile, string password)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserEntity entity = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Mobile == mobile);
+                if (entity == null)
+                {
+                    return -1;
+                }
+                entity.Password = CommonHelper.GetMD5(password + entity.Salt);
+                await dbc.SaveChangesAsync();
+                return entity.Id;
+            }
+        }
+
         public async Task<long> UserCheck(string mobile)
         {
             using (MyDbContext dbc = new MyDbContext())
@@ -301,28 +333,23 @@ namespace IMS.Service.Service
                     decimal one = 0;
                     decimal two = 0;
                     decimal three = 0;
-                    if (user.Level.Name == "普通会员" && bonusRatio != null)
-                    {
-                        one = bonusRatio.CommonOne / 100;
-                        two = bonusRatio.CommonTwo / 100;
-                        three = bonusRatio.CommonThree / 100;
-                    }
-                    else if (user.Level.Name == "黄金会员" && bonusRatio != null)
-                    {
-                        one = bonusRatio.GoldOne / 100;
-                        two = bonusRatio.GoldTwo / 100;
-                        three = bonusRatio.GoldThree / 100;
-                    }
-                    else if (user.Level.Name == "铂金会员" && bonusRatio != null)
-                    {
-                        one = bonusRatio.PlatinumOne / 100;
-                        two = bonusRatio.PlatinumTwo / 100;
-                        three = bonusRatio.PlatinumThree / 100;
-                    }
 
                     UserEntity oneer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == user.Recommend.RecommendId);
-                    if (oneer != null && oneer.Recommend.RecommendPath != "0" && one > 0)
+                    if (oneer != null && oneer.Recommend.RecommendPath != "0")
                     {
+                        if (oneer.Level.Name == "普通会员" && bonusRatio != null)
+                        {
+                            one = bonusRatio.CommonOne / 100;
+                        }
+                        else if (oneer.Level.Name == "黄金会员" && bonusRatio != null)
+                        {
+                            one = bonusRatio.GoldOne / 100;
+                        }
+                        else if (oneer.Level.Name == "铂金会员" && bonusRatio != null)
+                        {
+                            one = bonusRatio.PlatinumOne / 100;
+                        }
+
                         oneer.Amount = oneer.Amount + orderlist.TotalFee * one;
                         oneer.BonusAmount = oneer.BonusAmount + orderlist.TotalFee * one;
 
@@ -336,8 +363,21 @@ namespace IMS.Service.Service
                         dbc.Journals.Add(journal1);
 
                         UserEntity twoer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == oneer.Recommend.RecommendId);
-                        if (twoer != null && twoer.Recommend.RecommendPath != "0" && two > 0)
+                        if (twoer != null && twoer.Recommend.RecommendPath != "0")
                         {
+                            if (twoer.Level.Name == "普通会员" && bonusRatio != null)
+                            {
+                                two = bonusRatio.CommonTwo / 100;
+                            }
+                            else if (twoer.Level.Name == "黄金会员" && bonusRatio != null)
+                            {
+                                two = bonusRatio.GoldTwo / 100;
+                            }
+                            else if (twoer.Level.Name == "铂金会员" && bonusRatio != null)
+                            {
+                                two = bonusRatio.PlatinumTwo / 100;
+                            }
+
                             twoer.Amount = twoer.Amount + orderlist.TotalFee * two;
                             twoer.BonusAmount = twoer.BonusAmount + orderlist.TotalFee * two;
 
@@ -351,8 +391,21 @@ namespace IMS.Service.Service
                             dbc.Journals.Add(journal2);
 
                             UserEntity threer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == twoer.Recommend.RecommendId);
-                            if (threer != null && threer.Recommend.RecommendPath != "0" && three > 0)
+                            if (threer != null && threer.Recommend.RecommendPath != "0")
                             {
+                                if (threer.Level.Name == "普通会员" && bonusRatio != null)
+                                {
+                                    three = bonusRatio.CommonThree / 100;
+                                }
+                                else if (threer.Level.Name == "黄金会员" && bonusRatio != null)
+                                {
+                                    three = bonusRatio.GoldThree / 100;
+                                }
+                                else if (threer.Level.Name == "铂金会员" && bonusRatio != null)
+                                {
+                                    three = bonusRatio.PlatinumThree / 100;
+                                }
+
                                 threer.Amount = threer.Amount + orderlist.TotalFee * three;
                                 threer.BonusAmount = threer.BonusAmount + orderlist.TotalFee * three;
 
@@ -399,6 +452,10 @@ namespace IMS.Service.Service
                 user.Amount = user.Amount - order.Amount;
                 user.BuyAmount = user.BuyAmount + order.Amount;
                 order.OrderStateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "待发货")).Id;
+                if (order.Deliver== "无需物流")
+                {
+                    order.OrderStateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "已完成")).Id;
+                }            
                 if (levelId == level1)
                 {
                     if (order.Amount >= up1 && order.Amount < up2)
@@ -431,17 +488,22 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<long> WeChatPayAsync(long orderId, string openId)
+        public long WeChatPay(string code)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                OrderEntity order = await dbc.GetAll<OrderEntity>().SingleOrDefaultAsync(o => o.Id == orderId);
+                OrderEntity order = dbc.GetAll<OrderEntity>().SingleOrDefault(o => o.Code == code);
                 if (order == null)
                 {
                     return -1;
                 }
 
-                UserEntity user = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Id == order.BuyerId);
+                if(order.OrderState.Name=="待发货" || order.OrderState.Name=="已完成")
+                {
+                    return -4;
+                }
+
+                UserEntity user = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == order.BuyerId);
                 if (user == null)
                 {
                     return -2;
@@ -451,7 +513,7 @@ namespace IMS.Service.Service
                 decimal totalAmount = 0;
                 foreach (var orderlist in orderlists)
                 {
-                    GoodsEntity goods = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g => g.Id == orderlist.GoodsId);
+                    GoodsEntity goods = dbc.GetAll<GoodsEntity>().SingleOrDefault(g => g.Id == orderlist.GoodsId);
                     totalAmount = totalAmount + orderlist.TotalFee;
                     if (goods == null)
                     {
@@ -463,32 +525,27 @@ namespace IMS.Service.Service
                         return -3;
                     }
 
-                    BonusRatioEntity bonusRatio = await dbc.GetAll<BonusRatioEntity>().SingleOrDefaultAsync(b => b.GoodsId == goods.Id);
+                    BonusRatioEntity bonusRatio = dbc.GetAll<BonusRatioEntity>().SingleOrDefault(b => b.GoodsId == goods.Id);
                     decimal one = 0;
                     decimal two = 0;
                     decimal three = 0;
-                    if (user.Level.Name == "普通会员" && bonusRatio != null)
-                    {
-                        one = bonusRatio.CommonOne/100;
-                        two = bonusRatio.CommonTwo / 100;
-                        three = bonusRatio.CommonThree / 100;
-                    }
-                    else if (user.Level.Name == "黄金会员" && bonusRatio != null)
-                    {
-                        one = bonusRatio.GoldOne / 100;
-                        two = bonusRatio.GoldTwo / 100;
-                        three = bonusRatio.GoldThree / 100;
-                    }
-                    else if (user.Level.Name == "铂金会员" && bonusRatio != null)
-                    {
-                        one = bonusRatio.PlatinumOne / 100;
-                        two = bonusRatio.PlatinumTwo / 100;
-                        three = bonusRatio.PlatinumThree / 100;
-                    }
 
                     UserEntity oneer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == user.Recommend.RecommendId);
-                    if (oneer != null && oneer.Recommend.RecommendPath != "0" && one > 0)
+                    if (oneer != null && oneer.Recommend.RecommendPath != "0")
                     {
+                        if (oneer.Level.Name == "普通会员" && bonusRatio != null)
+                        {
+                            one = bonusRatio.CommonOne / 100;
+                        }
+                        else if (oneer.Level.Name == "黄金会员" && bonusRatio != null)
+                        {
+                            one = bonusRatio.GoldOne / 100;
+                        }
+                        else if (oneer.Level.Name == "铂金会员" && bonusRatio != null)
+                        {
+                            one = bonusRatio.PlatinumOne / 100;
+                        }
+
                         oneer.Amount = oneer.Amount + orderlist.TotalFee * one;
                         oneer.BonusAmount = oneer.BonusAmount + orderlist.TotalFee * one;
 
@@ -497,13 +554,26 @@ namespace IMS.Service.Service
                         journal1.BalanceAmount = oneer.Amount;
                         journal1.InAmount = orderlist.TotalFee * one;
                         journal1.Remark = "商品佣金收入";
-                        journal1.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "佣金收入")).Id;
+                        journal1.JournalTypeId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "佣金收入").Id;
                         journal1.OrderCode = order.Code;
                         dbc.Journals.Add(journal1);
 
                         UserEntity twoer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == oneer.Recommend.RecommendId);
-                        if (twoer != null && twoer.Recommend.RecommendPath != "0" && two > 0)
+                        if (twoer != null && twoer.Recommend.RecommendPath != "0")
                         {
+                            if (twoer.Level.Name == "普通会员" && bonusRatio != null)
+                            {
+                                two = bonusRatio.CommonTwo / 100;
+                            }
+                            else if (twoer.Level.Name == "黄金会员" && bonusRatio != null)
+                            {
+                                two = bonusRatio.GoldTwo / 100;
+                            }
+                            else if (twoer.Level.Name == "铂金会员" && bonusRatio != null)
+                            {
+                                two = bonusRatio.PlatinumTwo / 100;
+                            }
+
                             twoer.Amount = twoer.Amount + orderlist.TotalFee * two;
                             twoer.BonusAmount = twoer.BonusAmount + orderlist.TotalFee * two;
 
@@ -512,13 +582,26 @@ namespace IMS.Service.Service
                             journal2.BalanceAmount = twoer.Amount;
                             journal2.InAmount = orderlist.TotalFee * two;
                             journal2.Remark = "商品佣金收入";
-                            journal2.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "佣金收入")).Id;
+                            journal2.JournalTypeId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "佣金收入").Id;
                             journal2.OrderCode = order.Code;
                             dbc.Journals.Add(journal2);
 
                             UserEntity threer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == twoer.Recommend.RecommendId);
-                            if (threer != null && threer.Recommend.RecommendPath != "0" && three > 0)
+                            if (threer != null && threer.Recommend.RecommendPath != "0")
                             {
+                                if (threer.Level.Name == "普通会员" && bonusRatio != null)
+                                {
+                                    three = bonusRatio.CommonThree / 100;
+                                }
+                                else if (threer.Level.Name == "黄金会员" && bonusRatio != null)
+                                {
+                                    three = bonusRatio.GoldThree / 100;
+                                }
+                                else if (threer.Level.Name == "铂金会员" && bonusRatio != null)
+                                {
+                                    three = bonusRatio.PlatinumThree / 100;
+                                }
+
                                 threer.Amount = threer.Amount + orderlist.TotalFee * three;
                                 threer.BonusAmount = threer.BonusAmount + orderlist.TotalFee * three;
 
@@ -527,7 +610,7 @@ namespace IMS.Service.Service
                                 journal3.BalanceAmount = threer.Amount;
                                 journal3.InAmount = orderlist.TotalFee * three;
                                 journal3.Remark = "商品佣金收入";
-                                journal3.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "佣金收入")).Id;
+                                journal3.JournalTypeId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "佣金收入").Id;
                                 journal3.OrderCode = order.Code;
                                 dbc.Journals.Add(journal3);
                             }
@@ -539,9 +622,9 @@ namespace IMS.Service.Service
                 decimal up1 = 0;
                 decimal up2 = 0;
                 decimal up3 = 0;
-                SettingEntity upSetting1 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员→黄金会员");
-                SettingEntity upSetting2 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员→→铂金会员");
-                SettingEntity upSetting3 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "黄金会员→铂金会员");
+                SettingEntity upSetting1 = dbc.GetAll<SettingEntity>().SingleOrDefault(i => i.Name == "普通会员→黄金会员");
+                SettingEntity upSetting2 = dbc.GetAll<SettingEntity>().SingleOrDefault(i => i.Name == "普通会员→→铂金会员");
+                SettingEntity upSetting3 = dbc.GetAll<SettingEntity>().SingleOrDefault(i => i.Name == "黄金会员→铂金会员");
                 if (upSetting1 != null)
                 {
                     decimal.TryParse(upSetting1.Parm, out up1);
@@ -554,16 +637,22 @@ namespace IMS.Service.Service
                 {
                     decimal.TryParse(upSetting3.Parm, out up3);
                 }
-                long level1 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员")).Id;
-                long level2 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "黄金会员")).Id;
-                long level3 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "铂金会员")).Id;
+                long level1 = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "普通会员").Id;
+                long level2 = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "黄金会员").Id;
+                long level3 = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "铂金会员").Id;
                 //if (order.Amount > user.Amount)
                 //{
                 //    return -4;
                 //}
                 long levelId = user.LevelId;
                 user.BuyAmount = user.BuyAmount + order.Amount;
-                order.OrderStateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "待发货")).Id;
+
+                order.OrderStateId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "待发货").Id;
+                if (order.Deliver == "无需物流")
+                {
+                    order.OrderStateId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "已完成").Id;
+                }
+
                 if (levelId == level1)
                 {
                     if (order.Amount >= up1 && order.Amount < up2)
@@ -588,32 +677,11 @@ namespace IMS.Service.Service
                 journal.BalanceAmount = user.Amount;
                 journal.OutAmount = order.Amount;
                 journal.Remark = "微信支付购买商品";
-                journal.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "购物")).Id;
+                journal.JournalTypeId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "购物").Id;
                 journal.OrderCode = order.Code;
-                dbc.Journals.Add(journal);
+                dbc.Journals.Add(journal);         
 
-                if(order.Amount>0)
-                {
-                    //微信支付
-                    WeChatPay weChatPay = new WeChatPay();
-                    weChatPay.openid = openId;
-                    string[] strs = (order.Amount * 100).ToString().Split('.');
-                    weChatPay.total_fee = strs[0];
-                    weChatPay.out_trade_no = order.Code;
-
-                    string parm = HttpClientHelper.BuildParam(weChatPay);
-                    parm = parm + "&key=" + System.Configuration.ConfigurationManager.AppSettings["KEY"];
-                    string sign = CommonHelper.GetMD5(parm);
-                    HttpClient httpClient = new HttpClient();
-                    string xml = HttpClientHelper.ObjSerializeXml(weChatPay, sign);
-                    string res = await HttpClientHelper.GetResponseByPostXMLAsync(httpClient, xml, "https://api.mch.weixin.qq.com/pay/unifiedorder");
-                    if(!res.Contains("SUCCESS"))
-                    {
-                        return -4;
-                    }
-                }               
-
-                await dbc.SaveChangesAsync();
+                dbc.SaveChanges();
                 return 1;
             }
         }
@@ -749,6 +817,7 @@ namespace IMS.Service.Service
                 {
                     recommends = recommends.Where(a => a.User.CreateTime.Year <= endTime.Value.Year && a.User.CreateTime.Month <= endTime.Value.Month && a.User.CreateTime.Day <= endTime.Value.Day);
                 }
+                result.TotalCount = recommends.LongCount();
                 result.PageCount = (int)Math.Ceiling(recommends.LongCount() * 1.0f / pageSize);
                 result.TeamLeader = ToDTO(user.User);
                 var userResult = await recommends.OrderByDescending(a => a.User.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
@@ -823,6 +892,7 @@ namespace IMS.Service.Service
                 {
                     recommends = recommends.Where(a => a.User.CreateTime.Year <= endTime.Value.Year && a.User.CreateTime.Month <= endTime.Value.Month && a.User.CreateTime.Day <= endTime.Value.Day);
                 }
+                result.TotalCount = recommends.LongCount();
                 result.PageCount = (int)Math.Ceiling(recommends.LongCount() * 1.0f / pageSize);
                 var userResult = await recommends.OrderByDescending(a => a.User.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 result.Members = userResult.Select(a => ToDTO(a.User)).ToArray();

@@ -32,6 +32,7 @@ namespace IMS.Web.Models.Order
         public DateTime? consignTime { get; set; }//发货时间
         public DateTime? endTime { get; set; }//交易完成时间
         public DateTime? closeTime { get; set; }//交易结束时间
+        public decimal totalAmount { get; set; }
         public List<OrderGoods> OrderGoods { get; set; }
     }
     public class OrderGoods
@@ -41,5 +42,7 @@ namespace IMS.Web.Models.Order
         public decimal realityPrice { get; set; }
         public decimal totalFee { get; set; }
         public long number { get; set; }
+        public long inventory { get; set; }
+        public string imgUrl { get; set; }
     }
 }

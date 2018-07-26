@@ -24,19 +24,22 @@ namespace IMS.Web.Controllers
         {
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             var res= await userService.GetModelTeamListAsync(user.Id,model.TeamLevelId,null,null,null,model.PageIndex, model.PageSize);
-            var result = res.Members.Select(u => new
+            UserTeamListApiModel result = new UserTeamListApiModel();
+            result.members = res.Members.Select(u => new member
             {
                 id = u.Id,
                 mobile = u.Mobile,
                 nickName = u.NickName,
                 levelId = u.LevelId,
                 levelName = u.LevelName,
-                status = u.IsEnabled == true ? "正常" : "已冻结",
-                bonusAmount=u.BonusAmount,
-                amount=u.Amount,
-                buyAmount=u.BuyAmount,
+                status = (u.IsEnabled==true?"已启用":"已冻结"),
+                bonusAmount = u.BonusAmount,
+                amount = u.Amount,
+                buyAmount = u.BuyAmount,
                 recommender = u.Recommender
-            });
+            }).ToList();
+            result.totalCount = res.TotalCount;
+            result.pageCount = res.PageCount;
             return new ApiResult { status = 1,data= result };
         }
         [HttpPost]

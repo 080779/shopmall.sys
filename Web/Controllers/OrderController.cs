@@ -4,8 +4,10 @@ using IMS.IService;
 using IMS.Web.App_Start.Filter;
 using IMS.Web.Models.Goods;
 using IMS.Web.Models.Order;
+using log4net;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -21,6 +23,7 @@ namespace IMS.Web.Controllers
     [AllowAnonymous]
     public class OrderController : ApiController
     {
+        private static ILog log = LogManager.GetLogger(typeof(OrderController));
         public IOrderService orderService { get; set; }
         public IOrderListService orderListService { get; set; }
         public IIdNameService idNameService { get; set; }
@@ -34,6 +37,7 @@ namespace IMS.Web.Controllers
         [HttpPost]
         public async Task<ApiResult> List(OrderListModel model)
         {
+            string parm = await settingService.GetParmByNameAsync("网站域名");
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             OrderSearchResult result = await orderService.GetModelListAsync(user.Id, model.OrderStateId, null, null, null, null, model.PageIndex, model.PageSize);
             OrderListApiModel res = new OrderListApiModel();
@@ -59,13 +63,16 @@ namespace IMS.Web.Controllers
                 consignTime = o.ConsignTime,
                 endTime = o.EndTime,
                 closeTime = o.CloseTime,
-                discountAmount=o.DeductAmount,
+                discountAmount = o.DiscountAmount,
+                totalAmount = orderListService.GetModelList(o.Id).Sum(ol => ol.TotalFee),
                 OrderGoods = orderListService.GetModelList(o.Id).Select(l => new OrderGoods {
                     name = l.GoodsName,
                     number = l.Number,
                     price = l.Price,
                     realityPrice = l.RealityPrice,
-                    totalFee = l.TotalFee
+                    totalFee = l.TotalFee,
+                    inventory = l.Inventory,
+                    imgUrl = parm + l.ImgUrl
                 }).ToList()
             }).ToList();
             return new ApiResult { status = 1, data = res };
@@ -88,7 +95,9 @@ namespace IMS.Web.Controllers
                 orderId = o.OrderId,
                 price = o.Price,
                 tealityPrice = o.RealityPrice,
-                totalFee = o.TotalFee
+                totalFee = o.TotalFee,
+                inventory = o.Inventory,
+                discountFee=o.TotalFee*o.Discount
             });
             return new ApiResult { status = 1, data = result };
         }
@@ -119,6 +128,7 @@ namespace IMS.Web.Controllers
         [HttpPost]
         public async Task<ApiResult> Detail(OrderDetailModel model)
         {
+            string parm = await settingService.GetParmByNameAsync("网站域名");
             var o = await orderService.GetModelAsync(model.Id);
             if (o == null)
             {
@@ -145,13 +155,16 @@ namespace IMS.Web.Controllers
                 consignTime = o.ConsignTime,
                 endTime = o.EndTime,
                 closeTime = o.CloseTime,
+                totalAmount = orderListService.GetModelList(o.Id).Sum(ol => ol.TotalFee),
                 OrderGoods = orderListService.GetModelList(o.Id).Select(l => new OrderGoods
                 {
                     name = l.GoodsName,
                     number = l.Number,
                     price = l.Price,
                     realityPrice = l.RealityPrice,
-                    totalFee = l.TotalFee
+                    totalFee = l.TotalFee,
+                    inventory = l.Inventory,
+                    imgUrl = parm + l.ImgUrl
                 }).ToList()
             };
             return new ApiResult { status = 1, data = order };
@@ -174,6 +187,7 @@ namespace IMS.Web.Controllers
             dto.Name = goods.Name;
             dto.Number = model.Number;
             dto.RealityPrice = goods.RealityPrice;
+            dto.Price = goods.Price;
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             await orderApplyService.DeleteListAsync(user.Id);
             dto.UserId = user.Id;
@@ -205,11 +219,12 @@ namespace IMS.Web.Controllers
 
         public async Task<ApiResult> PlaceList()
         {
+            string parm = await settingService.GetParmByNameAsync("网站域名");
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             var res = await orderApplyService.GetModelListAsync(user.Id);
             OrderPlaceListApiModel model = new OrderPlaceListApiModel();
             model.totalAmount = res.ToTalAmount;
-            model.orderPlaces = res.OrderApplies.Select(o => new OrderPlace { GoodsId = o.GoodsId, GoodsName = o.GoodsName, ImgUrl = o.ImgUrl, Number = o.Number, Price = o.Price, TotalFee = o.TotalFee, UserId = o.UserId }).ToList();
+            model.orderPlaces = res.OrderApplies.Select(o => new OrderPlace { GoodsId = o.GoodsId, GoodsName = o.GoodsName, ImgUrl =parm + o.ImgUrl, Number = o.Number, Price = o.Price, TotalFee = o.TotalFee, UserId = o.UserId }).ToList();
             return new ApiResult { status = 1, data = model };
         }
 
@@ -255,7 +270,7 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "下单列表无商品" };
             }
-            long id = await orderService.AddAsync(0, user.Id, model.AddressId, model.PayTypeId, orderStateId, dtos.OrderApplies);
+            long id = await orderService.AddAsync(model.DeliveryTypeId,0, user.Id, model.AddressId, model.PayTypeId, orderStateId, dtos.OrderApplies);
             if (id <= 0)
             {
                 return new ApiResult { status = 0, msg = "生成订单失败" };
@@ -263,7 +278,6 @@ namespace IMS.Web.Controllers
             await goodsCarService.DeleteListAsync(user.Id);
             await orderApplyService.DeleteListAsync(user.Id);
             long payTypeId = await idNameService.GetIdByNameAsync("余额");
-            long payTypeId1 = await idNameService.GetIdByNameAsync("微信");
 
             OrderDTO dto = await orderService.GetModelAsync(id);
             if (payTypeId == model.PayTypeId)
@@ -285,10 +299,23 @@ namespace IMS.Web.Controllers
                 {
                     return new ApiResult { status = 0, msg = "用户账户余额不足" };
                 }
-            }
-            else if (payTypeId1 == model.PayTypeId)
+            }            
+            return new ApiResult { status = 1, msg = "支付成功" };
+        }
+
+        [HttpPost]
+        public async Task<ApiResult> ReApplys(OrderReApplysModel model)
+        {
+            long orderStateId = 0;
+            long payTypeId = await idNameService.GetIdByNameAsync("余额");
+            var order = await orderService.GetModelAsync(model.OrderId);
+            if(order==null)
             {
-                long payResId = await userService.WeChatPayAsync(id,user.Code.Substring(3,28));
+                return new ApiResult { status = 0, msg = "订单不存在" };
+            }
+            if (payTypeId == order.PayTypeId)
+            {
+                long payResId = await userService.BalancePayAsync(model.OrderId);
                 if (payResId == -1)
                 {
                     return new ApiResult { status = 0, msg = "订单不存在" };
@@ -303,43 +330,11 @@ namespace IMS.Web.Controllers
                 }
                 if (payResId == -4)
                 {
-                    return new ApiResult { status = 0, msg = "微信支付错误" };
-                }
-            }
-            return new ApiResult { status = 1, msg = "支付成功" };
-        }
-
-        [HttpPost]
-        public async Task<ApiResult> ReApplys(OrderReApplysModel model)
-        {
-            long orderStateId = 0;
-            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
-            var order = await orderService.GetModelAsync(model.OrderId);
-            if (order == null)
-            {
-                return new ApiResult { status = 0, msg = "订单不存在" };
-            }
-            long payTypeId = await idNameService.GetIdByNameAsync("余额");
-            if (payTypeId == model.PayTypeId)
-            {
-                long payResId = await userService.BalancePayAsync(order.Id);
-                if (payResId == -1)
-                {
-                    return new ApiResult { status = 0, msg = "用户不存在" };
-                }
-                if (payResId == -2)
-                {
                     return new ApiResult { status = 0, msg = "用户账户余额不足" };
                 }
-                if (payResId == -3)
-                {
-                    return new ApiResult { status = 0, msg = "订单不存在" };
-                }
                 orderStateId = await idNameService.GetIdByNameAsync("待发货");
-                await orderService.UpdateAsync(order.Id, null, null, orderStateId);
+                await orderService.UpdateAsync(model.OrderId, null, null, orderStateId);
             }
-            await goodsCarService.DeleteListAsync(user.Id);
-            await orderApplyService.DeleteListAsync(user.Id);
             return new ApiResult { status = 1, msg = "支付成功" };
         }
         [HttpPost]
@@ -375,16 +370,42 @@ namespace IMS.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ApiResult> Pay()
+        public async Task<ApiResult> Pay(OrderPayModel model)
         {
+            long orderStateId = await idNameService.GetIdByNameAsync("待付款");
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
+            var dtos = await orderApplyService.GetModelListAsync(user.Id);
+            if (dtos.OrderApplies.Count() <= 0)
+            {
+                return new ApiResult { status = 0, msg = "下单列表无商品" };
+            }
+            long id = await orderService.AddAsync(model.DeliveryTypeId, 0, user.Id, model.AddressId, model.PayTypeId, orderStateId, dtos.OrderApplies);
+            if (id <= 0)
+            {
+                return new ApiResult { status = 0, msg = "生成订单失败" };
+            }
+            OrderDTO order = await orderService.GetModelAsync(id);
+            await goodsCarService.DeleteListAsync(user.Id);
+            await orderApplyService.DeleteListAsync(user.Id);
+            long payTypeId1 = await idNameService.GetIdByNameAsync("微信");
+
+            if (payTypeId1 != model.PayTypeId)
+            {
+                return new ApiResult { status = 0, msg = "请选择微信支付" };
+            }
+
             WeChatPay weChatPay = new WeChatPay();
+            weChatPay.body = "订单支付";
+            weChatPay.out_trade_no = order.Code;
             weChatPay.openid = user.Code.Substring(3, 28);
             string parm = HttpClientHelper.BuildParam(weChatPay);
-            parm = parm + "&key=" + System.Configuration.ConfigurationManager.AppSettings["KEY"];
+            string key= System.Configuration.ConfigurationManager.AppSettings["KEY"];
+            parm = parm + "&key=" + key;
             string sign = CommonHelper.GetMD5(parm);
             HttpClient httpClient = new HttpClient();
             string xml = HttpClientHelper.ObjSerializeXml(weChatPay, sign);
+
+            CacheHelper.SetCache("App_Order_Pay" + weChatPay.out_trade_no, sign, DateTime.UtcNow.AddMinutes(2), TimeSpan.Zero);
 
             string res = await HttpClientHelper.GetResponseByPostXMLAsync(httpClient, xml, "https://api.mch.weixin.qq.com/pay/unifiedorder");
             if (!res.Contains("SUCCESS"))
@@ -395,23 +416,164 @@ namespace IMS.Web.Controllers
             xmlDoc.LoadXml(res);
             XmlNode Child = xmlDoc.SelectSingleNode("xml/prepay_id");
 
-            return new ApiResult { status = 1,data=Child.InnerText };
+            log.DebugFormat("微信支付统一下单：{0}，缓存sign：{1}", res,CacheHelper.GetCache("App_Order_Pay" + weChatPay.out_trade_no));
+
+            TimeSpan ts = DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0);            
+            GetWechat getWeChat = new GetWechat();
+            getWeChat.timeStamp= Convert.ToInt64(ts.TotalSeconds).ToString();
+            getWeChat.package = "prepay_id" + Child.InnerText;
+            parm = HttpClientHelper.BuildParam(getWeChat);
+            parm = parm.Replace("prepay_id", "prepay_id=");
+            parm = parm + "&key=" + key;
+            string paySign = CommonHelper.GetMD5(parm);
+
+            GetWechat1 getWeChat1 = new GetWechat1();
+            getWeChat1.appId = getWeChat.appId;
+            getWeChat1.nonceStr = getWeChat.nonceStr;
+            getWeChat1.package = "prepay_id=" + Child.InnerText;
+            getWeChat1.signType = getWeChat.signType;
+            getWeChat1.timeStamp = getWeChat.timeStamp;
+            getWeChat1.paySign = paySign;
+
+            return new ApiResult { status = 1, data = getWeChat1 };
         }
 
         [HttpPost]
-        public string Return()
+        public async Task<ApiResult> RePay(OrderReApplysModel model)
         {
-            HttpContextBase context = (HttpContextBase)Request.Properties["MS_HttpContext"];//获取传统context
-            HttpRequestBase request = context.Request;//定义传统request对象
-            
+            //long orderStateId = await idNameService.GetIdByNameAsync("待付款");
+            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
 
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("<xml>");
-            sb.AppendLine("<return_code><![CDATA[SUCCESS]]></return_code>");
-            sb.AppendLine("<return_code><![CDATA[OK]]></return_code>");
-            sb.AppendLine("<xml>");
-            
-            return sb.ToString();
+            OrderDTO order = await orderService.GetModelAsync(model.OrderId);
+            if(order==null)
+            {
+                return new ApiResult { status = 0, msg = "订单不存在" };
+            }
+            long payTypeId1 = await idNameService.GetIdByNameAsync("微信");
+
+            if (payTypeId1 != order.PayTypeId)
+            {
+                return new ApiResult { status = 0, msg = "请选择微信支付" };
+            }
+
+            WeChatPay weChatPay = new WeChatPay();
+            weChatPay.body = "订单支付";
+            weChatPay.out_trade_no = order.Code;
+            weChatPay.openid = user.Code.Substring(3, 28);
+            string parm = HttpClientHelper.BuildParam(weChatPay);
+            string key = System.Configuration.ConfigurationManager.AppSettings["KEY"];
+            parm = parm + "&key=" + key;
+            string sign = CommonHelper.GetMD5(parm);
+            HttpClient httpClient = new HttpClient();
+            string xml = HttpClientHelper.ObjSerializeXml(weChatPay, sign);
+
+            CacheHelper.SetCache("App_Order_Pay" + weChatPay.out_trade_no, sign, DateTime.UtcNow.AddMinutes(2), TimeSpan.Zero);
+
+            string res = await HttpClientHelper.GetResponseByPostXMLAsync(httpClient, xml, "https://api.mch.weixin.qq.com/pay/unifiedorder");
+            if (!res.Contains("SUCCESS"))
+            {
+                return new ApiResult { status = 0, msg = res };
+            }
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(res);
+            XmlNode Child = xmlDoc.SelectSingleNode("xml/prepay_id");
+
+            log.DebugFormat("微信支付统一下单：{0}，缓存sign：{1}", res, CacheHelper.GetCache("App_Order_Pay" + weChatPay.out_trade_no));
+
+            TimeSpan ts = DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            GetWechat getWeChat = new GetWechat();
+            getWeChat.timeStamp = Convert.ToInt64(ts.TotalSeconds).ToString();
+            getWeChat.package = "prepay_id" + Child.InnerText;
+            parm = HttpClientHelper.BuildParam(getWeChat);
+            parm = parm.Replace("prepay_id", "prepay_id=");
+            parm = parm + "&key=" + key;
+            string paySign = CommonHelper.GetMD5(parm);
+
+            GetWechat1 getWeChat1 = new GetWechat1();
+            getWeChat1.appId = getWeChat.appId;
+            getWeChat1.nonceStr = getWeChat.nonceStr;
+            getWeChat1.package = "prepay_id=" + Child.InnerText;
+            getWeChat1.signType = getWeChat.signType;
+            getWeChat1.timeStamp = getWeChat.timeStamp;
+            getWeChat1.paySign = paySign;
+
+            return new ApiResult { status = 1, data = getWeChat1 };
+        }
+
+        [HttpPost]
+        public async Task<ApiResult> Receipt(OrderReceiptModel model)
+        {
+            var order = await orderService.GetModelAsync(model.OrderId);
+            if(order==null)
+            {
+                return new ApiResult { status = 0, msg = "订单不存在" };
+            }
+            long orderStateId = await idNameService.GetIdByNameAsync("已完成");
+            bool flag = await orderService.UpdateAsync(model.OrderId, null, null, orderStateId);
+            if(!flag)
+            {
+                return new ApiResult { status = 0, msg = "确认收货失败" };
+            }
+            return new ApiResult { status = 1, msg = "确认收货成功" };
+        }
+
+        [HttpPost]
+        public ApiResult DeliveryType()
+        {
+            OrderDeliveryTypetModel model = new OrderDeliveryTypetModel();
+            List<DeliveryType> deliveryTypes = new List<DeliveryType>();
+            deliveryTypes.Add(new DeliveryType { id = 1, tpye = "有快递单号" });
+            deliveryTypes.Add(new DeliveryType { id = 2, tpye = "无需物流" });
+            deliveryTypes.Add(new DeliveryType { id = 3, tpye = "同城自取" });
+            model.deliveryTypes = deliveryTypes;
+            return new ApiResult { status = 1, data= model };
+        }
+
+        [HttpPost]
+        public async Task<ApiResult> GetDeliveryCode(OrderDeliveryCodeModel model)
+        {
+            var order = await orderService.GetModelAsync(model.OrderId);
+            if(order==null)
+            {
+                return new ApiResult { status = 0, msg = "订单不存在" };
+            }
+            string deliverCode = "";
+            string deliverName = "";
+            if(!string.IsNullOrEmpty(order.DeliverCode))
+            {
+                deliverCode = order.DeliverCode;
+            }
+            if(!string.IsNullOrEmpty(order.DeliverName))
+            {
+                deliverName = order.DeliverName;
+            }
+            return new ApiResult { status = 1, data = new { deliverCode = deliverCode, deliverName = deliverName } };
+        }
+
+        [HttpGet]
+        public ApiResult TestWechat(string code)
+        {
+            long id = userService.WeChatPay(code);
+            return new ApiResult { status = 1, msg = id.ToString() };
+        }
+
+        public class GetWechat
+        {
+            public string appId { get; set; } = System.Configuration.ConfigurationManager.AppSettings["APPID"];
+            public string timeStamp { get; set; }
+            public string nonceStr { get; set; } = CommonHelper.GetCaptcha(10);
+            public string package { get; set; }
+            public string signType { get; set; } = "MD5";
+        }
+
+        public class GetWechat1
+        {
+            public string appId { get; set; } 
+            public string timeStamp { get; set; }
+            public string nonceStr { get; set; }
+            public string package { get; set; }
+            public string signType { get; set; }
+            public string paySign { get; set; }
         }
     }
 }

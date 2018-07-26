@@ -20,19 +20,20 @@ namespace IMS.Web.Controllers
         public IAddressService addressService { get; set; }
 
         [HttpPost]
-        public async Task<ApiResult> List()
+        public async Task<ApiResult> List(AddressListModel model)
         {
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
-            AddressSearchResult result = await addressService.GetModelListAsync(user.Id, null, null, null, 1, 100);
-            List<AddressApiModel> model;
-            model = result.Address.Select(a => new AddressApiModel { id = a.Id, address = a.Address, name = a.Name, mobile = a.Mobile, isDefault = a.IsDefault }).ToList();
-            return new ApiResult { status = 1, data = model };
+            AddressSearchResult result = await addressService.GetModelListAsync(user.Id, null, null, null, model.PageIndex, model.PageSize);
+            AddressListApiModel res = new AddressListApiModel();
+            res.pageCount = result.PageCount;
+            res.addressList = result.Address.Select(a => new AddressList { id = a.Id, address = a.Address, name = a.Name, mobile = a.Mobile, isDefault = a.IsDefault }).ToList();
+            return new ApiResult { status = 1, data = res };
         }
         [HttpPost]
         public async Task<ApiResult> Detail(AddressDetailModel model)
         {
             AddressDTO result = await addressService.GetModelAsync(model.Id);
-            AddressApiModel apiModel = new AddressApiModel();
+            AddressList apiModel = new AddressList();
             apiModel.address = result.Address;
             apiModel.id = result.Id;
             apiModel.mobile = result.Mobile;
@@ -51,7 +52,7 @@ namespace IMS.Web.Controllers
             }
             else
             {
-                AddressApiModel apiModel = new AddressApiModel();
+                AddressList apiModel = new AddressList();
                 apiModel.address = result.Address;
                 apiModel.id = result.Id;
                 apiModel.mobile = result.Mobile;

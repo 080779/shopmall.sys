@@ -13,7 +13,8 @@ namespace IMS.IService
         /// <param name="password">密码</param>
         /// <param name="levelTypeId">等级id</param>
         /// <returns></returns>
-        Task<long> AddAsync(string mobile, string password, long levelTypeId, string recommendMobile);
+        Task<long> AddAsync(string mobile, string password, long levelTypeId, string recommendMobile, string nickName, string avatarUrl);
+        Task<bool> AddAmountAsync(string mobile,decimal amount);
         /// <summary>
         /// 修改头像，昵称
         /// </summary>
@@ -50,10 +51,11 @@ namespace IMS.IService
         /// <returns></returns>
         Task<long> ResetPasswordAsync(long id, string password, string newPassword);
         Task<long> ResetPasswordAsync(long id, string password);
+        Task<long> ResetPasswordAsync(string mobile, string password);
         Task<long> UserCheck(string mobile);
         Task<long> CheckLoginAsync(string mobile, string password);
         Task<long> BalancePayAsync(long orderId);
-        Task<long> WeChatPayAsync(long orderId,string openId);
+        long WeChatPay(string code);
         /// <summary>
         /// 根据id获得用户模型
         /// </summary>
@@ -101,5 +103,6 @@ namespace IMS.IService
         public UserDTO TeamLeader { get; set; }
         public UserDTO[] Members { get; set; }
         public long PageCount { get; set; }
+        public long TotalCount { get; set; }
     }
 }

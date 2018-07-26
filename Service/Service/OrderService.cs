@@ -94,7 +94,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<long> AddAsync(decimal? postFee,long buyerId, long addressId, long payTypeId, long orderStateId, params OrderApplyDTO[] orderApplies)
+        public async Task<long> AddAsync(long? deliveryTypeId,decimal? postFee,long buyerId, long addressId, long payTypeId, long orderStateId, params OrderApplyDTO[] orderApplies)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -109,6 +109,18 @@ namespace IMS.Service.Service
                         entity.PayTypeId = payTypeId;
                         entity.OrderStateId = orderStateId;
                         entity.PostFee = postFee.Value;
+                        if(deliveryTypeId==1)
+                        {
+                            entity.Deliver = "快递";
+                        }
+                        if (deliveryTypeId == 2)
+                        {
+                            entity.Deliver = "无需发货";
+                        }
+                        if (deliveryTypeId == 3)
+                        {
+                            entity.Deliver = "同城自取";
+                        }
                         dbc.Orders.Add(entity);
                         await dbc.SaveChangesAsync();
 
@@ -264,7 +276,7 @@ namespace IMS.Service.Service
                 }
                 if (!string.IsNullOrEmpty(keyword))
                 {
-                    entities = entities.Where(g =>g.Code.Contains(keyword) || g.Code.Contains(keyword) || g.Buyer.Mobile.Contains(keyword));
+                    entities = entities.Where(g =>g.Code.Contains(keyword) ||  g.Buyer.Mobile.Contains(keyword));
                 }
                 if (startTime != null)
                 {
@@ -327,7 +339,7 @@ namespace IMS.Service.Service
                 OrderSearchResult result = new OrderSearchResult();
                 long deliverStateId1 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "待发货")).Id;
                 long deliverStateId2 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "已发货")).Id;
-                var entities = dbc.GetAll<OrderEntity>().Where(o => o.OrderStateId == deliverStateId1 || o.OrderStateId == deliverStateId2);     
+                var entities = dbc.GetAll<OrderEntity>().Where(o => o.OrderStateId == deliverStateId1 || o.OrderStateId == deliverStateId2 || o.Deliver== "无需物流" || o.Deliver== "同城自取");
                 if (buyerId != null)
                 {
                     entities = entities.Where(a => a.BuyerId == buyerId);
@@ -457,14 +469,14 @@ namespace IMS.Service.Service
                 long levelId2 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "铂金会员")).Id;
                 if (user.LevelId == levelId1 && !user.IsReturned)
                 {
-                    if (totalReturnAmount / totalAmount > (decimal)0.5)
+                    if (totalReturnAmount / totalAmount >= (decimal)0.5)
                     {
                         order.DownCycledId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "↓普通会员")).Id;
                     }
                 }
                 if (user.LevelId == levelId2 && !user.IsReturned)
                 {
-                    if (totalReturnAmount / totalAmount > (decimal)0.5)
+                    if (totalReturnAmount / totalAmount >= (decimal)0.5)
                     {
                         order.DownCycledId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "↓普通会员")).Id;
                     }

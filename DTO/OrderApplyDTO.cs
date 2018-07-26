@@ -12,6 +12,7 @@ namespace IMS.DTO
         public string GoodsName { get; set; }
         public long GoodsId { get; set; }
         public long Number { get; set; }
+        public decimal RealityPrice { get; set; }
         public decimal Price { get; set; }
         //public decimal PostFee { get; set; } 
         //public decimal Poundage { get; set; }

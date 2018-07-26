@@ -10,7 +10,7 @@ namespace IMS.IService
     public interface IOrderService : IServiceSupport
     {
         Task<long> AddAsync(long buyerId,long addressId,long payTypeId, long orderStateId, long goodsId, long number);
-        Task<long> AddAsync(decimal? postFee, long buyerId, long addressId, long payTypeId, long orderStateId, params OrderApplyDTO[] orderApplies);
+        Task<long> AddAsync(long? deliveryTypeId, decimal? postFee, long buyerId, long addressId, long payTypeId, long orderStateId, params OrderApplyDTO[] orderApplies);
         Task<bool> UpdateAsync(long id, long? addressId, long? payTypeId, long? orderStateId);
         Task<bool> UpdateDeliverStateAsync(long id, string deliveryName, string deliveryCode);
         Task<bool> DeleteAsync(long id);

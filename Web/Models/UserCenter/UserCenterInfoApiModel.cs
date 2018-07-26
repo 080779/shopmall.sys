@@ -16,6 +16,7 @@ namespace IMS.Web.Models.UserCenter
         public decimal bonusAmount { get; set; }
         public long levelId { get; set; }
         public string levelName { get; set; }
+        public string recommonder { get; set; }
         public DateTime createTime { get; set; }
     }
 }

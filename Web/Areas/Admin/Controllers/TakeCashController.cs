@@ -41,7 +41,11 @@ namespace IMS.Web.Areas.Admin.Controllers
             long res = await takeCashService.Confirm(id, Convert.ToInt64(Session["Platform_AdminUserId"]));
             if(res<=0)
             {
-                return Json(new AjaxResult { Status = 1, Msg = "结款失败" });
+                if(res==-3)
+                {
+                    return Json(new AjaxResult { Status = 0, Msg = "账户余额不足,结款失败" });
+                }
+                return Json(new AjaxResult { Status = 0, Msg = "结款失败" });
             }
             return Json(new AjaxResult { Status = 1, Msg = "结款成功" });
         }

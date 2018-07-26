@@ -23,5 +23,7 @@ namespace IMS.Web.Models.Order
         public decimal totalFee { get; set; }
         public string imgUrl { get; set; }
         public bool isReturn { get; set; }
+        public long inventory { get; set; }
+        public decimal discountFee { get; set; }
     }
 }

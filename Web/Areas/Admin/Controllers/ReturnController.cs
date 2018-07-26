@@ -40,7 +40,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        //[Permission("日志管理_查看日志")]
+        [Permission("退货管理_退货审核")]
         [AdminLog("退货管理", "退货管理审核")]
         public async Task<ActionResult> Audit(long id)
         {

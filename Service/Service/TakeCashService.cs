@@ -111,6 +111,10 @@ namespace IMS.Service.Service
                 {
                     return -2;
                 }
+                if(takeCash.Amount>user.Amount)
+                {
+                    return -3;
+                }
                 user.Amount = user.Amount - takeCash.Amount;
                 takeCash.StateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "已结款")).Id;
                 takeCash.AdminMobile = (await dbc.GetAll<AdminEntity>().SingleOrDefaultAsync(a => a.Id == adminId)).Mobile;

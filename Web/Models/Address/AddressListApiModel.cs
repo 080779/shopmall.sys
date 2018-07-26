@@ -5,7 +5,12 @@ using System.Web;
 
 namespace IMS.Web.Models.Address
 {
-    public class AddressApiModel
+    public class AddressListApiModel
+    {
+        public IEnumerable<AddressList> addressList { get; set; }
+        public long pageCount { get; set; }
+    }
+    public class AddressList
     {
         public long id { get; set; }
         public string name { get; set; }//收货人姓名

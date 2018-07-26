@@ -33,11 +33,6 @@ namespace IMS.Web.Areas.Admin.Controllers
             model.PageCount = result.PageCount;
             model.Users = result.Users;
             model.Levels = await idNameService.GetByTypeNameAsync("会员等级");
-            model.SettingTypes = await idNameService.GetByTypeNameAsync("分销等级");
-            long settingTypeId;
-            SettingDTO[] settings = await settingService.GetModelListAsync(model.SettingTypes.Select(s => settingTypeId = s.Id).ToArray());
-            model.Settings = settings.Select(s => new SettingParm { Id = s.Id, Parm = s.Parm }).ToList();
-
             model.UserUps = (await settingService.GetModelListAsync("会员升级")).Select(s => new SettingModel { Id = s.Id, Parm = s.Parm,Name=s.Name}).ToList();
             model.Discounts = (await settingService.GetModelListAsync("会员优惠")).Select(s => new SettingModel { Id = s.Id, Parm = s.Parm ,Name=s.Name}).ToList();
             return Json(new AjaxResult { Status = 1, Data = model });
@@ -63,7 +58,7 @@ namespace IMS.Web.Areas.Admin.Controllers
                 return Json(new AjaxResult { Status = 0, Msg = "登录密码不能为空" });
             }
             long levelId= await idNameService.GetIdByNameAsync("普通会员");
-            long id= await userService.AddAsync(mobile,password,levelId,recommendMobile);
+            long id= await userService.AddAsync(mobile,password,levelId,recommendMobile,null,null);
             if(id<=0)
             {
                 if (id == -1)
@@ -78,21 +73,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             }            
             return Json(new AjaxResult { Status = 1, Msg = "会员添加成功" });
         }
-        [AdminLog("会员管理", "用户佣金管理")]
-        [Permission("会员管理_佣金设置")]
-        public async Task<ActionResult> BonusSet(List<SettingParm> settings)
-        {
-            if (settings.Count() <= 0)
-            {
-                return Json(new AjaxResult { Status = 0, Msg = "无参数" });
-            }
-            bool flag= await settingService.UpdateAsync(settings.ToArray());
-            if(!flag)
-            {
-                return Json(new AjaxResult { Status = 0, Msg = "修改失败" });
-            }
-            return Json(new AjaxResult { Status = 1, Msg = "修改成功" });
-        }
+        
         [AdminLog("会员管理", "用户升级管理")]
         [Permission("会员管理_升级设置")]
         public async Task<ActionResult> UpSet(List<SettingModel> settings)

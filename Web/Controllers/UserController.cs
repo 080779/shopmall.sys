@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
+using static IMS.Web.Controllers.ShareController;
 
 namespace IMS.Web.Controllers
 {    
@@ -73,7 +74,7 @@ namespace IMS.Web.Controllers
                 return new ApiResult { status = 0, msg = "手机验证码错误" };
             }
             long levelId= await idNameService.GetIdByNameAsync("普通会员");
-            long id= await userService.AddAsync(model.Mobile, model.Password, levelId,model.RecommendMobile);
+            long id= await userService.AddAsync(model.Mobile, model.Password, levelId,model.RecommendMobile,model.NickName,model.AvatarUrl);
             if(id<=0)
             {
                 return new ApiResult { status = 0, msg = "注册失败" };
@@ -143,6 +144,28 @@ namespace IMS.Web.Controllers
             setUser.Code = CommonHelper.GetCaptcha(3) + rightModel.OpenId + CommonHelper.GetCaptcha(2);
             string token = JwtHelper.JwtEncrypt<User>(setUser);
             long tokenId = await userTokenService.UpdateAsync(userId, token);
+
+            var userDTO = await userService.GetModelAsync(userId);
+            if (userDTO == null)
+            {
+                return new ApiResult { status = 0, msg = "会员不存在" };
+            }
+            if (string.IsNullOrEmpty(userDTO.ShareCode))
+            {
+                string getTokenUrl = string.Format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}", appid, secret);
+                string res = await HttpClientHelper.GetResponseByGetAsync(httpClient, getTokenUrl);
+                if (res.Contains(@"errcode\"))
+                {
+                    return new ApiResult { status = 1, data = res };
+                }
+                GetAccessToken getAccessToken = JsonConvert.DeserializeObject<GetAccessToken>(res);
+                Parm parm = new Parm();
+                parm.scene = userDTO.Mobile;
+                string getCodeUrl = string.Format("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={0}", getAccessToken.access_token);
+                var result1 = await HttpClientHelper.GetResponseStringByPostJsonAsync(httpClient, parm, getCodeUrl);
+                string path = ImageHelper.SaveByte(result1);
+                await userService.UpdateShareCodeAsync(userId, path);
+            }
             return new ApiResult { status = 1, msg = "登录成功", data = new { token = token } };
         }
         [HttpPost]
@@ -165,7 +188,28 @@ namespace IMS.Web.Controllers
             }
             WeChatResultModel rightModel = JsonConvert.DeserializeObject<WeChatResultModel>(result);
             User user= JwtHelper.JwtDecrypt<User>(ControllerContext);
-            if (rightModel.OpenId != user.Code.Substring(3, 30))
+            var userDTO = await userService.GetModelAsync(user.Id);
+            if(userDTO==null)
+            {
+                return new ApiResult { status = 0, msg = "会员不存在" };
+            }
+            if(string.IsNullOrEmpty(userDTO.ShareCode))
+            {
+                string getTokenUrl = string.Format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}", appid, secret);
+                string res = await HttpClientHelper.GetResponseByGetAsync(httpClient, getTokenUrl);
+                if (res.Contains(@"errcode\"))
+                {
+                    return new ApiResult { status = 1, data = res };
+                }
+                GetAccessToken getAccessToken = JsonConvert.DeserializeObject<GetAccessToken>(res);
+                Parm parm = new Parm();
+                parm.scene = userDTO.Mobile;
+                string getCodeUrl = string.Format("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={0}", getAccessToken.access_token);
+                var result1 = await HttpClientHelper.GetResponseStringByPostJsonAsync(httpClient, parm, getCodeUrl);
+                string path = ImageHelper.SaveByte(result1);
+                await userService.UpdateShareCodeAsync(user.Id, path);
+            }
+            if (rightModel.OpenId != user.Code.Substring(3, 28))
             {
                 return new ApiResult { status = 0, msg = "登录失败" };
             }
@@ -201,6 +245,67 @@ namespace IMS.Web.Controllers
                 return new ApiResult { status = 0, msg = "发送短信返回消息：" + msgState };
             }
             return new ApiResult { status = 1, msg = "发送短信返回消息："+msgState };
-        }        
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ApiResult> ForgetPwd(UserForgetPwdModel model)
+        {
+            if (string.IsNullOrEmpty(model.Mobile))
+            {
+                return new ApiResult { status = 0, msg = "手机号不能为空" };
+            }
+            if (!Regex.IsMatch(model.Mobile, @"^1\d{10}$"))
+            {
+                return new ApiResult { status = 0, msg = "注册手机号格式不正确" };
+            }
+            if ((await userService.UserCheck(model.Mobile)) <= 0)
+            {
+                return new ApiResult { status = 0, msg = "手机号不存在" };
+            }
+            if (string.IsNullOrEmpty(model.Password))
+            {
+                return new ApiResult { status = 0, msg = "新密码不能为空" };
+            }
+            if (string.IsNullOrEmpty(model.Code))
+            {
+                return new ApiResult { status = 0, msg = "短信验证码不能为空" };
+            }
+            object obj = CacheHelper.GetCache("App_User_SendMsg" + model.Mobile);
+            if (obj == null)
+            {
+                return new ApiResult { status = 0, msg = "手机号不一致" };
+            }
+            if (obj.ToString() != model.Code)
+            {
+                return new ApiResult { status = 0, msg = "手机验证码错误" };
+            }
+            long res = await userService.ResetPasswordAsync(model.Mobile, model.Password);
+            if(res==-1)
+            {
+                return new ApiResult { status = 0, msg = "会员不存在" };
+            }
+            return new ApiResult { status = 1, msg = "新密码修改成功" };
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ApiResult> AddAmount(string mobile,decimal amount)
+        {
+            if (string.IsNullOrEmpty(mobile))
+            {
+                return new ApiResult { status = 0, msg = "手机号不能为空" };
+            }
+            if (!Regex.IsMatch(mobile, @"^1\d{10}$"))
+            {
+                return new ApiResult { status = 0, msg = "手机号格式不正确" };
+            }
+            bool flag = await userService.AddAmountAsync(mobile, amount);
+            if(!flag)
+            {
+                return new ApiResult { status = 0, msg = "失败" };
+            }
+            return new ApiResult { status = 1, msg = "成功"};
+        }
     }    
 }

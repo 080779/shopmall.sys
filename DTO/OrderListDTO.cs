@@ -19,5 +19,7 @@ namespace IMS.DTO
         public decimal TotalFee { get; set; }
         public string ImgUrl { get; set; }
         public bool IsReturn { get; set; }
+        public long Inventory { get; set; }
+        public decimal Discount { get; set; }
     }
 }

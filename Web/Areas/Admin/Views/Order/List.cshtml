@@ -76,7 +76,7 @@
                         <th width="60">收货电话</th>
                         <th width="60">支付方式</th>
                         <th width="60">订单金额</th>
-                        <th width="60">折扣后金额</th>
+                        @*<th width="60">折扣后金额</th>*@
                         <th width="60">订单状态</th>
                         <th width="120">操作</th>
                     </tr>
@@ -91,7 +91,7 @@
                         <td v-html="order.receiverMobile"></td>
                         <td v-html="order.payTypeName"></td>
                         <td v-html="order.amount"></td>
-                        <td v-html="order.discountAmount"></td>
+                        @*<td v-html="order.discountAmount"></td>*@
                         <td v-html="order.orderStateName"></td>
                         <td>
                             <a class="btn btn-xs btn-info" v-bind:href="'/admin/order/detail?id='+order.id">查看详情</a>
