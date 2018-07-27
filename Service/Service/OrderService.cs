@@ -220,6 +220,22 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<bool> AddUserDeliverAsync(long orderId, string userDeliverCode, string userDeliverName)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                OrderEntity entity = await dbc.GetAll<OrderEntity>().SingleOrDefaultAsync(g => g.Id == orderId);
+                if (entity == null)
+                {
+                    return false;
+                }
+                entity.UserDeliverCode = userDeliverCode;
+                entity.UserDeliverName = userDeliverName;
+                await dbc.SaveChangesAsync();
+                return true;
+            }
+        }
+
         public async Task<bool> DeleteAsync(long id)
         {
             using (MyDbContext dbc = new MyDbContext())
