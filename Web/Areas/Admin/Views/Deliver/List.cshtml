@@ -82,7 +82,7 @@
                         <td v-html="order.orderStateName"></td>
                         <td>
                             <button title="标记发货" href="javascript:;" v-on:click="detail(order.id)" class="btn btn-xs btn-warning">查看详情</button>
-                            <button title="标记发货" href="javascript:;" v-bind:disabled="order.orderStateName=='已发货'" v-on:click="confirm(order.id)" class="btn btn-xs btn-warning">标记发货</button>
+                            <button title="标记发货" href="javascript:;" v-bind:disabled="(order.orderStateName=='已发货' || order.deliver=='无需物流' || order.deliver=='同城自取')" v-on:click="confirm(order.id)" class="btn btn-xs btn-warning">标记发货</button>
                         </td>
                     </tr>
                 </tbody>

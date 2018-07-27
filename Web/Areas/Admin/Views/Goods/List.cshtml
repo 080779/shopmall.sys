@@ -91,7 +91,7 @@
                         <td v-html="item.isPutaway==true?'是':'否'"></td>
                         <td v-html="item.isRecommend==true?'是':'否'"></td>
                         <td>
-                            <a class="btn btn-xs btn-info" v-on:click="upload(item.id)">上传图片</a>
+                            <a class="btn btn-xs btn-info" v-on:click="upload(item.id)">上传商品封面</a>
                             <a v-on:click="edit(item.id)" href="javascript:;" title="修改公告" class="btn btn-xs btn-success">修改商品</a>
                             <a title="删除" href="javascript:;" v-on:click="del(item.id)" class="btn btn-xs btn-warning">删除商品</a>
                             <a v-on:click="bonusset(item.id)" class="btn btn-xs btn-success">佣金设置</a>
@@ -150,7 +150,7 @@
                     <label class="label_name"><input type="checkbox" v-model="adds.isPutaway" />上架</label><span class="add_name"><input type="checkbox" v-model="adds.isRecommend" />推荐</span><div class="prompt r_f"></div>
                 </li>
                 <li>
-                    <label class="label_name">商品描述：</label><span class="add_name"></span><div class="prompt r_f"></div>
+                    <label class="label_name">商品详情：</label><span class="add_name"></span><div class="prompt r_f"></div>
                 </li>
                 <li>
                     <div id="adddesc" style="width:1000px"></div>
@@ -192,7 +192,7 @@
                     <label class="label_name"><input type="checkbox" v-model="edits.isPutaway" />上架</label><span class="add_name"><input type="checkbox" v-model="edits.isRecommend" />推荐</span><div class="prompt r_f"></div>
                 </li>
                 <li>
-                    <label class="label_name">商品描述：</label><span class="add_name"></span><div class="prompt r_f"></div>
+                    <label class="label_name">商品详情：</label><span class="add_name"></span><div class="prompt r_f"></div>
                 </li>
                 <li>
                     <div id="editdesc" style="width:1000px"></div>

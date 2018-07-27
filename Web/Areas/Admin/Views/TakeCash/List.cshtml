@@ -115,7 +115,7 @@
         <!--查看银行账户图层-->
         <div class="add_menber" id="paycode" style="display:none">
             <ul class="page-content">
-                <li><label class="label_name"></label><span class="add_name"><img v-bind:src="payCode.codeUrl" /></span><div class="prompt r_f"></div></li>
+                <li><label class="label_name"></label><span class="add_name"><img v-bind:src="payCode.codeUrl" style="width:200px;height:200px" /></span><div class="prompt r_f"></div></li>
             </ul>
         </div>
     </div>
@@ -203,7 +203,7 @@
                         title: '查看收款码',
                         maxmin: true,
                         shadeClose: false, //点击遮罩关闭层
-                        area: ['400px', ''],
+                        area: ['400px', '400px'],
                         content: $('#paycode')
                     });
                 }

@@ -46,6 +46,8 @@ namespace IMS.Service.Entity
         public string Deliver { get; set; } = "快递";
         public string DeliverName { get; set; }
         public string DeliverCode { get; set; }
+        public string UserDeliverName { get; set; }
+        public string UserDeliverCode { get; set; }
         public string BuyerMessage { get; set; }//买家留言
         public bool IsRated { get; set; } = false;//是否评价
         /// <summary>

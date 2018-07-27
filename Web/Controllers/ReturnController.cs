@@ -33,6 +33,10 @@ namespace IMS.Web.Controllers
             long res = await orderService.ApplyReturnAsync(model.OrderId);
             if(res<=0)
             {
+                if(res==-4)
+                {
+                    return new ApiResult { status = 0, msg = "申请退货失败,确认收货三天后不能退货" };
+                }
                 return new ApiResult { status = 0, msg = "申请退货失败" };
             }
             return new ApiResult { status = 1, msg = "申请退货成功" };

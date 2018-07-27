@@ -34,8 +34,22 @@ namespace IMS.Web.Controllers
             model.amount = result.Amount;
             model.bonusAmount = result.BonusAmount;
             model.buyAmount = result.BuyAmount;
-            model.createTime = result.CreateTime;
-            model.headPic = parm + result.HeadPic;
+            model.createTime = result.CreateTime.ToString("yyyy-MM-dd HH:mm:ss");
+            if(!string.IsNullOrEmpty(result.HeadPic))
+            {
+                if(result.HeadPic.Contains("https:"))
+                {
+                    model.headPic = result.HeadPic;
+                }
+                else
+                {
+                    model.headPic = parm + result.HeadPic;
+                }                
+            }
+            else
+            {
+                model.headPic = parm;
+            }           
             model.id = result.Id;
             model.levelId = result.LevelId;
             model.levelName = result.LevelName;
@@ -55,11 +69,25 @@ namespace IMS.Web.Controllers
             PayCodeDTO[] payCodes = await payCodeService.GetModelByUserIdAsync(user.Id);
             BankAccountDTO bankAccount = await bankAccountService.GetModelByUserIdAsync(user.Id);
             UserCenterDetailApiModel model = new UserCenterDetailApiModel();
-            model.qrCode = payCodes.Count() <= 0 ? null : parm + payCodes.First().CodeUrl;
-            model.bankAccount = bankAccount == null ? null : bankAccount.BankAccount;
+            model.qrCode = payCodes.Count() <= 0 ? "" : parm + payCodes.First().CodeUrl;
+            model.bankAccount = bankAccount == null ? "" : bankAccount.BankAccount;
             if (userdto != null)
             {
-                model.headPic = parm + userdto.HeadPic;
+                if (!string.IsNullOrEmpty(userdto.HeadPic))
+                {
+                    if (userdto.HeadPic.Contains("https:"))
+                    {
+                        model.headPic = userdto.HeadPic;
+                    }
+                    else
+                    {
+                        model.headPic = parm + userdto.HeadPic;
+                    }
+                }
+                else
+                {
+                    model.headPic = parm;
+                }
                 model.nickName = userdto.NickName;
             }
             return new ApiResult { status = 1, data = model };

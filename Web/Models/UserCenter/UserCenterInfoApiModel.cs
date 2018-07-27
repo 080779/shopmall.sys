@@ -17,6 +17,6 @@ namespace IMS.Web.Models.UserCenter
         public long levelId { get; set; }
         public string levelName { get; set; }
         public string recommonder { get; set; }
-        public DateTime createTime { get; set; }
+        public string createTime { get; set; }
     }
 }

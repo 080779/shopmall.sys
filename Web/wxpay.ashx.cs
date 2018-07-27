@@ -46,10 +46,18 @@ namespace IMS.Web
                 XmlDocument xmlDoc = new XmlDocument();
                 xmlDoc.LoadXml(xmlData);
                 XmlNode orderCode = xmlDoc.SelectSingleNode("xml/out_trade_no");
-
-                long id = userService.WeChatPay(orderCode.InnerText);
-                log.DebugFormat("支付后表操作：{0}", id);
-                if(id<=0)
+                log.DebugFormat("支付前表操作,订单号：{0}",orderCode.InnerText);
+                long id=0;
+                try
+                {
+                    id = userService.WeChatPay(orderCode.InnerText);
+                }
+                catch(Exception ex)
+                {
+                    log.DebugFormat("支付异常：{0},订单号：{1}", ex.ToString(), orderCode.InnerText);
+                }
+                log.DebugFormat("支付后表操作：{0},订单号：{1}", id, orderCode.InnerText);
+                if (id<=0)
                 {
                     if(id==-4)
                     {

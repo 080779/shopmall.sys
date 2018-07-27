@@ -2,6 +2,7 @@
 using IMS.DTO;
 using IMS.IService;
 using IMS.Service.Entity;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -14,6 +15,7 @@ namespace IMS.Service.Service
 {
     public class UserService : IUserService
     {
+        private static ILog log = LogManager.GetLogger(typeof(UserService));
         public UserDTO ToDTO(UserEntity entity)
         {
             UserDTO dto = new UserDTO();
@@ -58,7 +60,7 @@ namespace IMS.Service.Service
                         user.Salt = CommonHelper.GetCaptcha(4);
                         user.Password = CommonHelper.GetMD5(password + user.Salt);
                         user.NickName = string.IsNullOrEmpty(nickName)?"无昵称":nickName;
-                        user.HeadPic = string.IsNullOrEmpty(avatarUrl)?"":avatarUrl;
+                        user.HeadPic = string.IsNullOrEmpty(avatarUrl)? "/images/headpic.png" : avatarUrl;
                         dbc.Users.Add(user);
                         await dbc.SaveChangesAsync();
 
@@ -451,6 +453,8 @@ namespace IMS.Service.Service
                 long levelId = user.LevelId;
                 user.Amount = user.Amount - order.Amount;
                 user.BuyAmount = user.BuyAmount + order.Amount;
+
+                order.PayTime = DateTime.Now;
                 order.OrderStateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "待发货")).Id;
                 if (order.Deliver== "无需物流")
                 {
@@ -647,6 +651,7 @@ namespace IMS.Service.Service
                 long levelId = user.LevelId;
                 user.BuyAmount = user.BuyAmount + order.Amount;
 
+                order.PayTime = DateTime.Now;
                 order.OrderStateId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "待发货").Id;
                 if (order.Deliver == "无需物流")
                 {
@@ -682,7 +687,21 @@ namespace IMS.Service.Service
                 dbc.Journals.Add(journal);         
 
                 dbc.SaveChanges();
+                log.DebugFormat("微信支付后订单状态：{0}", order.OrderStateId);
                 return 1;
+            }
+        }
+
+        public async Task<CalcAmountResult> CalcCount()
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                CalcAmountResult res = new CalcAmountResult();
+                var users = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false);
+                res.TotalAmount = await users.SumAsync(u => u.Amount);
+                res.TotalBonusAmount = await users.SumAsync(u => u.BonusAmount);
+                res.TotalBuyAmount = await users.SumAsync(u => u.BuyAmount);
+                return res;
             }
         }
 
@@ -834,7 +853,7 @@ namespace IMS.Service.Service
                 var recommends = dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false);
                 if (teamLevel != null)
                 {
-                    if (recommend.RecommendMobile == "superhero" && recommend.RecommendPath == "1")
+                    if (recommend.RecommendMobile == "superhero" && recommend.RecommendGenera == 1)
                     {
                         if (teamLevel == 1)
                         {

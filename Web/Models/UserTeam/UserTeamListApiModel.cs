@@ -22,6 +22,7 @@ namespace IMS.Web.Models.User
         public decimal bonusAmount { get; set; }
         public decimal amount { get; set; }
         public decimal buyAmount { get; set; }
+        public string headPic { get; set; }
         public string recommender { get; set; }
     }
 }

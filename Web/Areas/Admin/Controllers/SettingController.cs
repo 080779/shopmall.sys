@@ -35,6 +35,8 @@ namespace IMS.Web.Areas.Admin.Controllers
             model.Logo = new SettingParm { Id = logo.Id, Parm = logo.Parm };
             var about = await settingService.GetModelByNameAsync("关于我们");
             model.About = new SettingParm { Id = about.Id, Parm = about.Parm };
+            var deduct= await settingService.GetModelByNameAsync("退货扣除比例");
+            model.Deduct = new SettingParm { Id = deduct.Id, Parm = deduct.Parm };
             return Json(new AjaxResult { Status = 1, Data = model });
         }
         [HttpPost]

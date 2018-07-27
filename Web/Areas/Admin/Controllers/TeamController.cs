@@ -29,6 +29,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             var res = await userService.GetModelTeamListAsync(mobile, teamLevel, keyword, startTime, endTime, pageIndex, pageSize);
             UserTeamListViewModel model = new UserTeamListViewModel();
             model.PageCount = res.PageCount;
+            model.TotalCount = res.TotalCount;
             model.Members = res.Members;
             model.TeamLevels = await settingService.GetModelListAsync("代理等级");
             model.TeamLeader = res.TeamLeader;

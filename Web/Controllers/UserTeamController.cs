@@ -22,6 +22,7 @@ namespace IMS.Web.Controllers
         [HttpPost]
         public async Task<ApiResult> List(UserTeamListModel model)
         {
+            string parm = await settingService.GetParmByNameAsync("网站域名");
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             var res= await userService.GetModelTeamListAsync(user.Id,model.TeamLevelId,null,null,null,model.PageIndex, model.PageSize);
             UserTeamListApiModel result = new UserTeamListApiModel();
@@ -32,11 +33,12 @@ namespace IMS.Web.Controllers
                 nickName = u.NickName,
                 levelId = u.LevelId,
                 levelName = u.LevelName,
-                status = (u.IsEnabled==true?"已启用":"已冻结"),
+                status = (u.IsEnabled == true ? "已启用" : "已冻结"),
                 bonusAmount = u.BonusAmount,
                 amount = u.Amount,
                 buyAmount = u.BuyAmount,
-                recommender = u.Recommender
+                recommender = u.Recommender,
+                headPic = (!string.IsNullOrEmpty(u.HeadPic) && u.HeadPic.Contains("https://")) ? u.HeadPic : parm + u.HeadPic
             }).ToList();
             result.totalCount = res.TotalCount;
             result.pageCount = res.PageCount;

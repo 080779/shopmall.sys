@@ -72,6 +72,7 @@
                         <th width="100">会员账号</th>
                         <th width="100">会员昵称</th>
                         <th width="120">会员等级</th>
+                        <th width="80">余额</th>
                         <th width="60">状态</th>
                         <th width="120">操作</th>
                     </tr>
@@ -83,6 +84,7 @@
                         <td v-html="user.mobile"></td>
                         <td v-html="user.nickName"></td>
                         <td v-html="user.levelName"></td>
+                        <td v-html="user.amount"></td>
                         <td v-html="user.isEnabled==true?'已启用':'停用'"></td>
                         <td>
                             <a v-on:click="resetpwd(user.id,user.mobile)" href="javascript:;" title="重置密码" class="btn btn-xs btn-success">重置密码</a>

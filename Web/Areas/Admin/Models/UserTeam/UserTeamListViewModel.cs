@@ -12,6 +12,7 @@ namespace IMS.Web.Areas.Admin.Models.UserTeam
         public UserDTO TeamLeader { get; set; }
         public UserDTO[] Members { get; set; }
         public long PageCount { get; set; }
+        public long TotalCount { get; set; }
         public SettingDTO[] TeamLevels { get; set; }
     }
 }

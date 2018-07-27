@@ -15,5 +15,6 @@ namespace IMS.Web.Areas.Admin.Models.Setting
         public SettingParm Phone2 { get; set; }
         public SettingParm Logo { get; set; }
         public SettingParm About { get; set; }
+        public SettingParm Deduct { get; set; }
     }
 }

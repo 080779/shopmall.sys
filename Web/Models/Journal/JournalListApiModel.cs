@@ -14,7 +14,7 @@ namespace IMS.Web.Models.Journal
     }
     public class Journal
     {
-        public DateTime createTime { get; set; }
+        public string createTime { get; set; }
         public string remark { get; set; }
         public decimal? inAmount { get; set; }
         public decimal? outAmount { get; set; }

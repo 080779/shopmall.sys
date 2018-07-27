@@ -56,6 +56,7 @@ namespace IMS.IService
         Task<long> CheckLoginAsync(string mobile, string password);
         Task<long> BalancePayAsync(long orderId);
         long WeChatPay(string code);
+        Task<CalcAmountResult> CalcCount();
         /// <summary>
         /// 根据id获得用户模型
         /// </summary>
@@ -104,5 +105,11 @@ namespace IMS.IService
         public UserDTO[] Members { get; set; }
         public long PageCount { get; set; }
         public long TotalCount { get; set; }
+    }
+    public class CalcAmountResult
+    {
+        public decimal TotalAmount { get; set; }
+        public decimal TotalBonusAmount { get; set; }
+        public decimal TotalBuyAmount { get; set; }
     }
 }

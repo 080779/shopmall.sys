@@ -74,6 +74,7 @@
                 <li>
                     <label class="label_name">消费总额：</label><span class="add_name"><label v-html="teamLeader.buyAmount"></label></span>&nbsp;
                     <label class="label_name">佣金总额：</label><span class="add_name"><label v-html="teamLeader.bonusAmount"></label></span>
+                    <label class="label_name">总人数：</label><span class="add_name"><label v-html="totalCount"></label></span>
                     <div class="prompt r_f"></div>
                 </li>
             </ul>
@@ -122,7 +123,6 @@
                 <li><a>共<i><font v-html="pages.all"></font></i>页</a></li>
             </ul>
         </div>
-
         <!--添加用户图层-->
         <div class="add_menber" id="add" style="display:none">
             <ul class="page-content">
@@ -143,6 +143,7 @@
         data: {
             teamLeader: "",
             members: [],
+            totalCount:"",
             teamLevels: [],
             settings: [],
             mobile: "",
@@ -187,6 +188,7 @@
                     this.teamLeader = result.data.data.teamLeader;
                     this.teamLevels = result.data.data.teamLevels;
                     this.pages.all = result.data.data.pageCount;
+                    this.totalCount = result.data.data.totalCount;
                 })
             },
             pageclick: function (index) {//页码点击事件
@@ -244,6 +246,7 @@
                 this.teamLeader = result.data.data.teamLeader;
                 this.teamLevels = result.data.data.teamLevels;
                 this.pages.all = result.data.data.pageCount;
+                this.totalCount = result.data.data.totalCount;
             })
         }
     });

@@ -51,6 +51,8 @@ namespace IMS.Service.Service
             dto.ReturnAmount = entity.ReturnAmount;
             dto.DiscountAmount = entity.DiscountAmount;
             dto.UpAmount = entity.UpAmount;
+            dto.UserDeliverCode = entity.UserDeliverCode;
+            dto.UserDeliverName = entity.UserDeliverName;
             return dto;
         }
 
@@ -111,11 +113,11 @@ namespace IMS.Service.Service
                         entity.PostFee = postFee.Value;
                         if(deliveryTypeId==1)
                         {
-                            entity.Deliver = "快递";
+                            entity.Deliver = "有快递单号";
                         }
                         if (deliveryTypeId == 2)
                         {
-                            entity.Deliver = "无需发货";
+                            entity.Deliver = "无需物流";
                         }
                         if (deliveryTypeId == 3)
                         {
@@ -415,6 +417,22 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<bool> Receipt(long id, long orderStateId)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                OrderEntity order = await dbc.GetAll<OrderEntity>().SingleOrDefaultAsync(o=>o.Id==id);
+                if(order==null)
+                {
+                    return false;
+                }
+                order.EndTime = DateTime.Now;
+                order.OrderStateId = orderStateId;
+                await dbc.SaveChangesAsync();
+                return true;
+            }
+        }
+
         public async Task<long> ApplyReturnAsync(long orderId)
         {
             using (MyDbContext dbc = new MyDbContext())
@@ -423,6 +441,10 @@ namespace IMS.Service.Service
                 if (order == null)
                 {
                     return -1;
+                }
+                if(order.EndTime!=null && DateTime.Now > order.EndTime.Value.AddDays(3))
+                {
+                    return -4;
                 }
                 var orderLists = dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == order.Id).ToList();
                 decimal totalAmount = 0;

@@ -26,13 +26,14 @@ namespace IMS.Web.Controllers
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             BankAccountDTO dto = await bankAccountService.GetModelByUserIdAsync(user.Id);
             BankAccountInfoApiModel apiModel = new BankAccountInfoApiModel();
-            if(dto!=null)
+            if(dto==null)
             {
-                apiModel.bankAccount = dto.BankAccount;
-                apiModel.bankName = dto.BankName;
-                apiModel.id = dto.Id;
-                apiModel.name = dto.Name;
+                return new ApiResult { status = 0, msg = "银行卡为空" };
             }
+            apiModel.bankAccount = dto.BankAccount;
+            apiModel.bankName = dto.BankName;
+            apiModel.id = dto.Id;
+            apiModel.name = dto.Name;
             return new ApiResult { status = 1, data=apiModel };
         }
         [HttpPost]

@@ -509,7 +509,7 @@ namespace IMS.Web.Controllers
                 return new ApiResult { status = 0, msg = "订单不存在" };
             }
             long orderStateId = await idNameService.GetIdByNameAsync("已完成");
-            bool flag = await orderService.UpdateAsync(model.OrderId, null, null, orderStateId);
+            bool flag = await orderService.Receipt(model.OrderId,orderStateId);
             if(!flag)
             {
                 return new ApiResult { status = 0, msg = "确认收货失败" };

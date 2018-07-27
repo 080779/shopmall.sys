@@ -29,7 +29,7 @@ namespace IMS.Web.Controllers
             result.totalInAmount = res.TotalInAmount;
             result.totalOutAmount = res.TotalOutAmount;
             result.pageCount = res.PageCount;
-            result.journals = res.Journals.Select(j => new Journal { createTime = j.CreateTime, inAmount = j.InAmount, outAmount = j.OutAmount, remark = j.Remark });
+            result.journals = res.Journals.Select(j => new Journal { createTime = j.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"), inAmount = j.InAmount, outAmount = j.OutAmount, remark = j.Remark });
             return new ApiResult { status = 1, data = result };
         }        
     }    

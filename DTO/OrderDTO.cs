@@ -23,6 +23,8 @@ namespace IMS.DTO
         public string Deliver { get; set; }
         public string DeliverName { get; set; }//物流名称
         public string DeliverCode { get; set; }//物流单号
+        public string UserDeliverName { get; set; }
+        public string UserDeliverCode { get; set; }
         public string ReceiverName { get; set; }
         public string ReceiverMobile { get; set; }
         public string ReceiverAddress { get; set; }

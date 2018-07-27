@@ -37,6 +37,22 @@
 
 <body>
     <div id="app">
+        <div class="integral_box">
+            <ul>
+                <li>
+                    平台总收入
+                    <p v-html="totalBuyAmount"></p>
+                </li>
+                <li>
+                    总支出（发的佣金）
+                    <p v-html="totalBonusAmount"><>
+                </li>
+                <li>
+                    全部用户的总余额
+                    <p v-html="totalAmount"></p>
+                </li>
+            </ul>
+        </div>
         <div class="search_style">
             <ul class="search_content clearfix">
                 <li>
@@ -99,6 +115,9 @@
         el: "#app",
         data: {
             journals: [],
+            totalAmount: "",
+            totalBuyAmount: "",
+            totalBonusAmount:"",
             pages: {
                 all: "", cur: 1, txtpage: ""
             },
@@ -132,6 +151,9 @@
                     if (result.data.status == 1) {
                         this.journals = result.data.data.journals;
                         this.pages.all = result.data.data.pageCount;
+                        this.totalAmount = result.data.data.totalAmount;
+                        this.totalBuyAmount = result.data.data.totalBuyAmount;
+                        this.totalBonusAmount = result.data.data.totalBonusAmount;
                     }
                     else if (result.data.status == 0) {
                         layer.alert(result.data.msg, { icon: 0, title: '提示框' });
@@ -194,6 +216,9 @@
                 if (result.data.status == 1) {
                     this.journals = result.data.data.journals;
                     this.pages.all = result.data.data.pageCount;
+                    this.totalAmount = result.data.data.totalAmount;
+                    this.totalBuyAmount = result.data.data.totalBuyAmount;
+                    this.totalBonusAmount = result.data.data.totalBonusAmount;
                 }
                 else if (result.data.status == 0) {
                     layer.alert(result.data.msg, { icon: 0, title: '提示框' });

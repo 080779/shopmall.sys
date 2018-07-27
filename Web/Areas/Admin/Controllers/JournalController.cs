@@ -1,6 +1,7 @@
 ﻿using IMS.Common;
 using IMS.IService;
 using IMS.Web.App_Start.Filter;
+using IMS.Web.Areas.Admin.Models.Journal;
 using IMS.Web.Areas.Admin.Models.TakeCash;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace IMS.Web.Areas.Admin.Controllers
     {
         public IJournalService journalService { get; set; }
         public IIdNameService idNameService { get; set; }
+        public IUserService userService { get; set; }
         private int pageSize = 10;
         //[Permission("积分管理_积分管理")]
         public ActionResult List()
@@ -28,7 +30,14 @@ namespace IMS.Web.Areas.Admin.Controllers
         {
             long journalTypeId = await idNameService.GetIdByNameAsync("佣金收入");
             JournalSearchResult result = await journalService.GetModelListAsync(null,journalTypeId, keyword, startTime, endTime, pageIndex, pageSize);
-            return Json(new AjaxResult { Status = 1, Data = result });
+            CalcAmountResult res = await userService.CalcCount();
+            ListViewModel model = new ListViewModel();
+            model.Journals = result.Journals;
+            model.PageCount = result.PageCount;
+            model.TotalAmount = res.TotalAmount;
+            model.TotalBonusAmount = res.TotalBonusAmount;
+            model.TotalBuyAmount = res.TotalBuyAmount;
+            return Json(new AjaxResult { Status = 1, Data = model });
         }        
     }
 }
