@@ -56,7 +56,7 @@ namespace IMS.Web.Controllers
             }
             else
             {
-                var result = res.Select(s => new { id = Convert.ToInt32(s.Parm), name = s.Name }).ToList().RemoveAll(r=>r.id==3);
+                var result = res.Where(r=>r.Parm!="3").Select(s => new { id = Convert.ToInt32(s.Parm), name = s.Name });
                 return new ApiResult { status = 1, data = result };
             }            
         }
