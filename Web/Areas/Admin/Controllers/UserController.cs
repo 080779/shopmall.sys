@@ -29,7 +29,9 @@ namespace IMS.Web.Areas.Admin.Controllers
         {
             //long levelId = await idNameService.GetIdByNameAsync("会员等级");
             var result = await userService.GetModelListAsync(levelId, keyword, startTime, endTime, pageIndex, pageSize);
+            var set1 = await settingService.GetModelByNameAsync("第三级显示");
             UserListViewModel model = new UserListViewModel();
+            model.ThreePlay = new SettingModel { Id = set1.Id, Name = set1.Name, Parm = set1.Parm };
             model.PageCount = result.PageCount;
             model.Users = result.Users;
             model.Levels = await idNameService.GetByTypeNameAsync("会员等级");

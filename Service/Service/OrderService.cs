@@ -236,6 +236,21 @@ namespace IMS.Service.Service
             }
         }
 
+        public async Task<bool> FrontMarkDel(long id)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                OrderEntity entity = await dbc.GetAll<OrderEntity>().SingleOrDefaultAsync(g => g.Id == id);
+                if (entity == null)
+                {
+                    return false;
+                }
+                entity.IsRated = true;
+                await dbc.SaveChangesAsync();
+                return true;
+            }
+        }
+
         public async Task<bool> DeleteAsync(long id)
         {
             using (MyDbContext dbc = new MyDbContext())
@@ -411,7 +426,7 @@ namespace IMS.Service.Service
             }           
         }
 
-        public async Task<bool> UpdateDeliverStateAsync(long id, string deliverName, string deliverCode)
+        public async Task<bool> UpdateDeliverStateAsync(long id,string deliver, string deliverName, string deliverCode)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -420,13 +435,17 @@ namespace IMS.Service.Service
                 {
                     return false;
                 }
-                if(entity.OrderState.Name== "已发货")
+                if(deliver== "无需物流")
                 {
-                    return false;
+                    entity.OrderStateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "已完成")).Id;
                 }
+                else
+                {
+                    entity.OrderStateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "已发货")).Id;
+                }
+                entity.Deliver = deliver;
                 entity.DeliverName = deliverName;
-                entity.DeliverCode = deliverCode;
-                entity.OrderStateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "已发货")).Id;
+                entity.DeliverCode = deliverCode;               
                 entity.ConsignTime = DateTime.Now;
                 await dbc.SaveChangesAsync();
                 return true;

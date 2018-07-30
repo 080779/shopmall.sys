@@ -50,7 +50,7 @@
                     <input class="inline laydate-icon" id="start" style=" margin-left:10px;" v-on:focus='getstart' />至
                     <input class="inline laydate-icon" id="end" style=" margin-left:10px;" v-on:focus='getend' />
                 </li>
-                <li><label class="l_f">订单信息</label><input v-model="searchs.keyword" type="text" class="text_add" placeholder="订单信息" style=" width:150px" /></li>
+                <li><label class="l_f">订单信息</label><input v-model="searchs.keyword" type="text" class="text_add" placeholder="订单信息" style="width:150px" /></li>
                 <li style="width:90px;"><button type="button" v-on:click="search" class="btn_search"><i class="icon-search"></i>查询</button></li>
             </ul>
         </div>
@@ -82,7 +82,7 @@
                         <td v-html="order.orderStateName"></td>
                         <td>
                             <button title="标记发货" href="javascript:;" v-on:click="detail(order.id)" class="btn btn-xs btn-warning">查看详情</button>
-                            <button title="标记发货" href="javascript:;" v-bind:disabled="(order.orderStateName=='已发货' || order.deliver=='无需物流' || order.deliver=='同城自取')" v-on:click="confirm(order.id)" class="btn btn-xs btn-warning">标记发货</button>
+                            <button title="标记发货" href="javascript:;" v-bind:disabled="(order.orderStateName=='已发货' || order.deliver=='无需物流' || order.deliver=='同城自取')" v-on:click="confirm(order.id,order.deliver)" class="btn btn-xs btn-warning">标记发货</button>
                         </td>
                     </tr>
                 </tbody>
@@ -117,12 +117,19 @@
                 </li>
                 <li>
                     <label class="label_name">买家账号：</label><span class="add_name"><label v-html="order.buyerMobile"></label></span><div class="prompt r_f"></div>
-                    <label class="label_name">物流方式：</label><span class="add_name"><label v-html="order.deliver"></label></span><div class="prompt r_f"></div>
+                    <label class="label_name">物流方式：</label>
+                    <span class="add_name">
+                        <select v-model="order.deliver">
+                            <option value="">请选择</option>
+                            <option value="有快递单号">有快递单号</option>
+                            <option value="无需物流">无需物流</option>
+                            <option value="同城自取">同城自取</option>
+                        </select>
+                    </span><div class="prompt r_f"></div>
                 </li>
-                <li><label class="label_name">标记发货</label></li>
                 <li>
-                    <span class="add_name"><input placeholder="快递名称" type="text" v-model="order.deliverName" class="text_add" /></span><div class="prompt r_f"></div>
-                    <span class="add_name"><input placeholder="请输入快递单号" type="text" v-model="order.deliverCode" class="text_add" /></span><div class="prompt r_f"></div>
+                    <label class="label_name">标记发货</label><span class="add_name"><input placeholder="快递名称" type="text" v-bind:disabled="order.deliver!='有快递单号'" v-model="order.deliverName" class="text_add" /></span><div class="prompt r_f"></div>
+                    <span class="add_name"><input placeholder="请输入快递单号" type="text"v-bind:disabled="order.deliver!='有快递单号'" v-model="order.deliverCode" class="text_add" /></span><div class="prompt r_f"></div>
                 </li>
             </ul>
         </div>
@@ -160,6 +167,8 @@
             order: "",
             orderStates: "",
             orderStateId: "",
+            delivers:{
+            },
             pages: {
                 all: "", cur: 1, txtpage: ""
             },
@@ -213,7 +222,7 @@
             search: function () {
                 this.getpage();
             },
-            confirm: function (id) {
+            confirm: function (id,deliver) {
                 var that = this;
                 that.$http.post('/admin/deliver/getmodel', { id: id }, { emulateJSON: true }).then(function (result) {
                     if (result.data.status == 1) {
@@ -238,7 +247,7 @@
                     content: $('#confirm'),
                     btn: ['确认', '取消'],
                     yes: function (index, layero) {
-                        that.$http.post('/admin/deliver/edit', { id: id, deliverName: that.order.deliverName, deliverCode: that.order.deliverCode }, { emulateJSON: true }).then(function (result) {
+                        that.$http.post('/admin/deliver/edit', { id: id, deliver: that.order.deliver, deliverName: that.order.deliverName, deliverCode: that.order.deliverCode }, { emulateJSON: true }).then(function (result) {
                             if (result.data.status == 1) {
                                 layer.alert(result.data.msg, { icon: 6, title: '提示框' });
                                 layer.close(index);

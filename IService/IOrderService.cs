@@ -13,8 +13,9 @@ namespace IMS.IService
         Task<long> AddAsync(long? deliveryTypeId, decimal? postFee, long buyerId, long addressId, long payTypeId, long orderStateId, params OrderApplyDTO[] orderApplies);
         Task<bool> AddUserDeliverAsync(long orderId,string deliverCode,string deliverName);
         Task<bool> UpdateAsync(long id, long? addressId, long? payTypeId, long? orderStateId);
-        Task<bool> UpdateDeliverStateAsync(long id, string userDeliveryName, string userDeliveryCode);
+        Task<bool> UpdateDeliverStateAsync(long id, string deliver, string userDeliveryName, string userDeliveryCode);
         Task<bool> Receipt(long id,long orderStateId);
+        Task<bool> FrontMarkDel(long id);
         Task<bool> DeleteAsync(long id);
         Task<OrderDTO> GetModelAsync(long id);
         Task<OrderDTO[]> GetAllAsync();

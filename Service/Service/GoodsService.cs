@@ -90,6 +90,43 @@ namespace IMS.Service.Service
                 return ToDTO(entity);
             }
         }
+        
+        public async Task<GoodsSearchResult> FrontModelListAsync(long? goodsAreaId, long? goodsTypeId, long? goodsSecondTypeId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                GoodsSearchResult result = new GoodsSearchResult();
+                var entities = dbc.GetAll<GoodsEntity>().Where(g=>g.IsPutaway==true);
+                if (goodsAreaId != null)
+                {
+                    entities = entities.Where(a => a.GoodsAreaId == goodsAreaId);
+                }
+                if (goodsTypeId != null)
+                {
+                    entities = entities.Where(a => a.GoodsTypeId == goodsTypeId);
+                }
+                if (goodsSecondTypeId != null)
+                {
+                    entities = entities.Where(a => a.GoodsSecondTypeId == goodsSecondTypeId);
+                }
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    entities = entities.Where(g => g.Code.Contains(keyword) || g.Name.Contains(keyword) || g.Description.Contains(keyword));
+                }
+                if (startTime != null)
+                {
+                    entities = entities.Where(a => a.CreateTime >= startTime);
+                }
+                if (endTime != null)
+                {
+                    entities = entities.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
+                }
+                result.PageCount = (int)Math.Ceiling((await entities.LongCountAsync()) * 1.0f / pageSize);
+                var goodsTypesResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                result.Goods = goodsTypesResult.Select(a => ToDTO(a)).ToArray();
+                return result;
+            }
+        }
 
         public async Task<GoodsSearchResult> GetModelListAsync(long? goodsAreaId,long? goodsTypeId,long? goodsSecondTypeId,string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize)
         {
@@ -133,7 +170,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 GoodsSearchResult result = new GoodsSearchResult();
-                var entities = dbc.GetAll<GoodsEntity>();
+                var entities = dbc.GetAll<GoodsEntity>().Where(g=>g.IsPutaway==true);
                 if (!string.IsNullOrEmpty(keyword))
                 {
                     entities = entities.Where(g => g.Name.Contains(keyword) || g.Description.Contains(keyword) || g.GoodsSecondType.Name.Contains(keyword) || g.GoodsType.Name.Contains(keyword));

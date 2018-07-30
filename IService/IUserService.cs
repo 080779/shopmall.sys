@@ -109,7 +109,7 @@ namespace IMS.IService
     public class CalcAmountResult
     {
         public decimal TotalAmount { get; set; }
-        public decimal TotalBonusAmount { get; set; }
+        public decimal TotalTakeCash { get; set; }
         public decimal TotalBuyAmount { get; set; }
     }
 }

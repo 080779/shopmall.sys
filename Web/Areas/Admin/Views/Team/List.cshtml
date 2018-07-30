@@ -98,13 +98,13 @@
                     <tr>
                         <td v-html="user.id"></td>
                         <td v-html="user.createTime"></td>
-                        <td v-html="user.mobile"></td>
+                        <td><a style="cursor:pointer;"  v-html="user.mobile" v-on:click="getleader(user.mobile)"></a></td>
                         <td v-html="user.nickName"></td>
                         <td v-html="user.levelName"></td>
                         <td v-html="user.isEnabled==true?'已启用':'停用'"></td>
                         <td v-html="user.buyAmount"></td>
                         <td v-html="user.bonusAmount"></td>
-                        <td><a style="cursor:pointer;" v-html="user.recommender" v-on:click="getrecommend(user.recommender)"></a></td>
+                        <td><a style="cursor:pointer;" v-html="user.recommender" v-on:click="getleader(user.recommender)"></a></td>
                     </tr>
                 </tbody>
             </table>
@@ -209,9 +209,10 @@
             search: function () {
                 this.getpage();
             },
-            getrecommend: function (mobile) {
+            getleader: function (mobile) {
                 this.mobile = mobile;
                 this.getpage();
+                this.mobile = "";
             },
         },
         computed: {

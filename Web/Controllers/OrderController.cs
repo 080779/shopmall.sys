@@ -42,7 +42,7 @@ namespace IMS.Web.Controllers
             OrderSearchResult result = await orderService.GetModelListAsync(user.Id, model.OrderStateId, null, null, null, null, model.PageIndex, model.PageSize);
             OrderListApiModel res = new OrderListApiModel();
             res.PageCount = result.PageCount;
-            res.Orders = result.Orders.Select(o => new Order
+            res.Orders = result.Orders.Where(o=>o.IsRated==false).Select(o => new Order
             {
                 amount = o.Amount,
                 code = o.Code,
@@ -550,12 +550,23 @@ namespace IMS.Web.Controllers
             return new ApiResult { status = 1, data = new { deliverCode = deliverCode, deliverName = deliverName } };
         }
 
-        [HttpGet]
-        public ApiResult TestWechat(string code)
+        [HttpPost]
+        public async Task<ApiResult> Del(OrderDelModel model)
         {
-            long id = userService.WeChatPay(code);
-            return new ApiResult { status = 1, msg = id.ToString() };
+            bool flag = await orderService.FrontMarkDel(model.Id);
+            if(!flag)
+            {
+                return new ApiResult { status = 0, msg = "订单删除失败" };
+            }
+            return new ApiResult { status = 1, msg = "订单删除成功" };
         }
+
+        //[HttpGet]
+        //public ApiResult TestWechat(string code)
+        //{
+        //    long id = userService.WeChatPay(code);
+        //    return new ApiResult { status = 1, msg = id.ToString() };
+        //}
 
         public class GetWechat
         {

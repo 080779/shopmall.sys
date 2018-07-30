@@ -698,8 +698,9 @@ namespace IMS.Service.Service
             {
                 CalcAmountResult res = new CalcAmountResult();
                 var users = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false);
+                var takeCash = dbc.GetAll<TakeCashEntity>().Where(t=>t.State.Name=="已结款");
                 res.TotalAmount = await users.SumAsync(u => u.Amount);
-                res.TotalBonusAmount = await users.SumAsync(u => u.BonusAmount);
+                res.TotalTakeCash = await takeCash.SumAsync(u => u.Amount);
                 res.TotalBuyAmount = await users.SumAsync(u => u.BuyAmount);
                 return res;
             }

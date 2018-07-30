@@ -41,5 +41,24 @@ namespace IMS.Web.Controllers
             }
             return new ApiResult { status = 1, msg = "申请退货成功" };
         }
+
+        [HttpPost]
+        public async Task<ApiResult> AddDeliver(ReturnAddDeliverrModel model)
+        {
+            if (string.IsNullOrEmpty(model.DeliverName))
+            {
+                return new ApiResult { status = 0, msg = "快递名称不能为空" };
+            }
+            if (string.IsNullOrEmpty(model.DeliverCode))
+            {
+                return new ApiResult { status = 0, msg = "快递单号不能为空" };
+            }
+            bool flag = await orderService.AddUserDeliverAsync(model.OrderId, model.DeliverCode, model.DeliverName);
+            if(!flag)
+            {
+                return new ApiResult { status = 0, msg = "添加快递单号失败" };
+            }
+            return new ApiResult { status = 1, msg = "添加快递单号成功" };
+        }
     }    
 }

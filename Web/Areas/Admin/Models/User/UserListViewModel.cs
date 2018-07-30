@@ -16,6 +16,7 @@ namespace IMS.Web.Areas.Admin.Models.User
         public IdNameDTO[] SettingTypes { get; set; }
         public List<SettingModel> UserUps { get; set; } 
         public List<SettingModel> Discounts { get; set; }
+        public SettingModel ThreePlay { get; set; }
     }
     public class SettingModel
     {

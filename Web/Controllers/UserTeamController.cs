@@ -48,8 +48,17 @@ namespace IMS.Web.Controllers
         public async Task<ApiResult> Levels()
         {
             var res= await settingService.GetModelListAsync("代理等级");
-            var result = res.Select(s => new { id = Convert.ToInt32(s.Parm), name = s.Name });
-            return new ApiResult { status = 1, data = result };
+            string parm = await settingService.GetParmByNameAsync("第三级显示");
+            if(parm=="1")
+            {
+                var result = res.Select(s => new { id = Convert.ToInt32(s.Parm), name = s.Name });
+                return new ApiResult { status = 1, data = result };
+            }
+            else
+            {
+                var result = res.Select(s => new { id = Convert.ToInt32(s.Parm), name = s.Name }).ToList().RemoveAll(r=>r.id==3);
+                return new ApiResult { status = 1, data = result };
+            }            
         }
     }    
 }

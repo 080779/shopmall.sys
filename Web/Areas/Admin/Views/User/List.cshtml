@@ -46,8 +46,8 @@
             <ul class="search_content clearfix">
                 <li>
                     <label class="l_f">选择日期</label>
-                    <input class="inline laydate-icon" id="start" style=" margin-left:10px;" v-on:focus='getstart' />至
-                    <input class="inline laydate-icon" id="end" style=" margin-left:10px;" v-on:focus='getend' />
+                    <input class="inline laydate-icon" id="start" style="margin-left:10px;" v-on:focus='getstart' />至
+                    <input class="inline laydate-icon" id="end" style="margin-left:10px;" v-on:focus='getend' />
                 </li>
                 <li>
                     <label class="l_f">会员等级</label>
@@ -58,7 +58,7 @@
                 </li>
                 <li>
                     <label class="l_f">会员信息</label>
-                    <input name="" v-model="searchs.keyword" type="text" class="text_add" placeholder="会员信息" style=" width:150px" />
+                    <input name="" v-model="searchs.keyword" type="text" class="text_add" placeholder="会员信息" style="width:150px" />
                 </li>
                 <li style="width:90px;"><button type="button" v-on:click="search" class="btn_search"><i class="icon-search"></i>查询</button></li>
             </ul>
@@ -130,7 +130,11 @@
                     </tr>
                     <tr v-for="discount in discounts">
                         <td v-html="discount.name"></td>
-                        <td><input type="text" v-model="discount.parm" maxlength="3"/>折</td>
+                        <td><input type="text" v-model="discount.parm" maxlength="3" />折</td>
+                    </tr>
+                    <tr>
+                        <td>第三级显示</td>
+                        <td><input type="radio" name="threeplay" id="threeplay1" v-model="threeplay.parm" value="1" /><label for="threeplay1">显示</label><input type="radio" name="threeplay" id="threeplay0" v-model="threeplay.parm" value="0" /><label for="threeplay0">隐藏</label></td>
                     </tr>
                 </tbody>
             </table>
@@ -157,6 +161,9 @@
             levelId: "",
             userUps: [],
             discounts: [],
+            threeplay: {
+                id: "", name: "", parm: ""
+            },
             pages: {
                 all: "", cur: 1, txtpage: ""
             },
@@ -197,6 +204,7 @@
                     this.pages.all = result.data.data.pageCount;
                     this.userUps = result.data.data.userUps;
                     this.discounts = result.data.data.discounts;
+                    this.threeplay = result.data.data.threePlay;
                 })
             },
             pageclick: function (index) {//页码点击事件
@@ -267,7 +275,7 @@
             },
             upset: function () {
                 var that = this;
-                var parms = new Array();                
+                var parms = new Array();
                 layer.open({
                     type: 1,
                     title: '升级设置',
@@ -283,6 +291,7 @@
                         $.each(that.userUps, function (key, val) {
                             parms.push(val);
                         });
+                        parms.push(that.threeplay);
                         that.$http.post('/admin/user/upset', { settings: parms }, { emulateJSON: true }).then(function (result) {
                             if (result.data.status == 1) {
                                 layer.alert(result.data.msg, { icon: 6, title: '提示框' });
@@ -424,6 +433,7 @@
                 this.levels = result.data.data.levels;
                 this.userUps = result.data.data.userUps;
                 this.discounts = result.data.data.discounts;
+                this.threeplay = result.data.data.threePlay;
             })
         }
     });

@@ -25,7 +25,7 @@ namespace IMS.Web.Controllers
         public async Task<ApiResult> List(GoodsListModel model)
         {
             string parm = await settingService.GetParmByNameAsync("网站域名");
-            GoodsSearchResult result = await goodsService.GetModelListAsync(model.AreaId, model.TypeId, model.SecondTypeId, null, null, null, model.PageIndex, model.PageSize);
+            GoodsSearchResult result = await goodsService.FrontModelListAsync(model.AreaId, model.TypeId, model.SecondTypeId, null, null, null, model.PageIndex, model.PageSize);
             List<SearchResultModel> lists;
             lists = result.Goods.Select(g => new SearchResultModel { id = g.Id,inventory=g.Inventory, name = g.Name, realityPrice = g.RealityPrice, saleNum = g.SaleNum, imgUrl=parm+goodsImgService.GetFirstImg(g.Id)}).ToList();
             GoodsSearchApiModel apiModel = new GoodsSearchApiModel();
@@ -38,7 +38,7 @@ namespace IMS.Web.Controllers
         {
             string parm = await settingService.GetParmByNameAsync("网站域名");
             long areaId= await goodsAreaService.GetIdByTitleAsync("热销区商品");
-            GoodsSearchResult result = await goodsService.GetModelListAsync(areaId, null,null,null, null, null, model.PageIndex, model.PageSize);
+            GoodsSearchResult result = await goodsService.FrontModelListAsync(areaId, null,null,null, null, null, model.PageIndex, model.PageSize);
             //goodsImgService
             List<SearchResultModel> lists;
             lists = result.Goods.Select(g => new SearchResultModel { id = g.Id, inventory = g.Inventory, name = g.Name, price=g.Price, realityPrice = g.RealityPrice, saleNum = g.SaleNum,imgUrl= parm + goodsImgService.GetFirstImg(g.Id) }).ToList();

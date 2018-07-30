@@ -12,7 +12,7 @@ namespace IMS.Web.Areas.Admin.Models.Journal
         public JournalDTO[] Journals { get; set; }
         public long PageCount { get; set; }
         public decimal TotalAmount { get; set; }
-        public decimal TotalBonusAmount { get; set; }
+        public decimal TotalTakeCash { get; set; }
         public decimal TotalBuyAmount { get; set; }
     }
 }

@@ -415,6 +415,7 @@
     <Compile Include="Models\Journal\JournalListModel.cs" />
     <Compile Include="Models\Notice\NoticeDetailModel.cs" />
     <Compile Include="Models\Notice\NoticeListApiModel.cs" />
+    <Compile Include="Models\Order\OrderDelModel.cs" />
     <Compile Include="Models\Order\OrderPayModel.cs" />
     <Compile Include="Models\Order\OrderDeliveryTypetModel.cs" />
     <Compile Include="Models\Order\OrderDeliveryCodeModel.cs" />
@@ -433,6 +434,7 @@
     <Compile Include="Models\Order\OrderPlaceModel.cs" />
     <Compile Include="Models\Order\OrderAddModel.cs" />
     <Compile Include="Models\PayType\PayTypeListApiModel.cs" />
+    <Compile Include="Models\Return\ReturnAddDeliverrModel.cs" />
     <Compile Include="Models\Return\ReturnApplyModel.cs" />
     <Compile Include="Models\Return\ReturnSelectModel.cs" />
     <Compile Include="Models\Slide\SlideListApiModel.cs" />
@@ -531,6 +533,9 @@
       <Project>{cfc4137d-9e7e-4581-a63f-9ce932833277}</Project>
       <Name>IMS.Service</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

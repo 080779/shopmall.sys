@@ -49,7 +49,7 @@ namespace IMS.Service.Entity
         public string UserDeliverName { get; set; }
         public string UserDeliverCode { get; set; }
         public string BuyerMessage { get; set; }//买家留言
-        public bool IsRated { get; set; } = false;//是否评价
+        public bool IsRated { get; set; } = false;//是否评价(现用于前端删除标志)
         /// <summary>
         /// 申请退货时间
         /// </summary>

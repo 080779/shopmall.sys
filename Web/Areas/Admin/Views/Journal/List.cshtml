@@ -44,8 +44,9 @@
                     <p v-html="totalBuyAmount"></p>
                 </li>
                 <li>
-                    总支出（发的佣金）
-                    <p v-html="totalBonusAmount"><>
+                    总支出（提现总金额）
+                    <p v-html="totalTakeCash"><>
+                    </p>
                 </li>
                 <li>
                     全部用户的总余额
@@ -57,12 +58,12 @@
             <ul class="search_content clearfix">
                 <li>
                     <label class="l_f">订单日期</label>
-                    <input class="inline laydate-icon" id="start" style=" margin-left:10px;" v-on:focus='getstart' />至
-                    <input class="inline laydate-icon" id="end" style=" margin-left:10px;" v-on:focus='getend' />
+                    <input class="inline laydate-icon" id="start" style=" margin-left:10px;"=margin-left:10px;" v-on:focus='getstart' />至
+                    <input class="inline laydate-icon" id="end" style=" margin-left:10px;"=margin-left:10px;" v-on:focus='getend' />
                 </li>
                 <li>
                     <label class="l_f">记录信息</label>
-                    <input name="" v-model="searchs.keyword" type="text" class="text_add" placeholder="记录信息" style=" width:150px" />
+                    <input name="" v-model="searchs.keyword" type="text" class="text_add" placeholder="记录信息" style=" width:150px"=width:150px" />
                 </li>
                 <li style="width:90px;"><button type="button" v-on:click="search" class="btn_search"><i class="icon-search"></i>查询</button></li>
             </ul>
@@ -115,9 +116,9 @@
         el: "#app",
         data: {
             journals: [],
-            totalAmount: "",
-            totalBuyAmount: "",
-            totalBonusAmount:"",
+            totalAmount: "0",
+            totalBuyAmount: "0",
+            totalTakeCash:"0",
             pages: {
                 all: "", cur: 1, txtpage: ""
             },
@@ -147,13 +148,13 @@
                 });
             },
             getpage: function () {
-                this.$http.post('/admin/journal/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {                    
+                this.$http.post('/admin/journal/list', { keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
                     if (result.data.status == 1) {
                         this.journals = result.data.data.journals;
                         this.pages.all = result.data.data.pageCount;
                         this.totalAmount = result.data.data.totalAmount;
                         this.totalBuyAmount = result.data.data.totalBuyAmount;
-                        this.totalBonusAmount = result.data.data.totalBonusAmount;
+                        this.totalTakeCash= result.data.data.totalTakeCash;
                     }
                     else if (result.data.status == 0) {
                         layer.alert(result.data.msg, { icon: 0, title: '提示框' });
@@ -218,7 +219,7 @@
                     this.pages.all = result.data.data.pageCount;
                     this.totalAmount = result.data.data.totalAmount;
                     this.totalBuyAmount = result.data.data.totalBuyAmount;
-                    this.totalBonusAmount = result.data.data.totalBonusAmount;
+                    this.totalTakeCash= result.data.data.totalTakeCash;
                 }
                 else if (result.data.status == 0) {
                     layer.alert(result.data.msg, { icon: 0, title: '提示框' });

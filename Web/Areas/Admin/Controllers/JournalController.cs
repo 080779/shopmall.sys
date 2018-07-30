@@ -35,7 +35,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             model.Journals = result.Journals;
             model.PageCount = result.PageCount;
             model.TotalAmount = res.TotalAmount;
-            model.TotalBonusAmount = res.TotalBonusAmount;
+            model.TotalTakeCash = res.TotalTakeCash;
             model.TotalBuyAmount = res.TotalBuyAmount;
             return Json(new AjaxResult { Status = 1, Data = model });
         }        

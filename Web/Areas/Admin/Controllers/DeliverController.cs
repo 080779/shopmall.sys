@@ -47,9 +47,13 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         [Permission("发货管理_标记发货")]
         [AdminLog("发货管理", "标记发货")]
-        public async Task<ActionResult> Edit(long id,string deliverName,string deliverCode)
+        public async Task<ActionResult> Edit(long id,string deliver,string deliverName,string deliverCode)
         {
-            bool flag = await orderService.UpdateDeliverStateAsync(id, deliverName, deliverCode);
+            if(string.IsNullOrEmpty(deliver))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "请选择物流方式" });
+            }
+            bool flag = await orderService.UpdateDeliverStateAsync(id,deliver, deliverName, deliverCode);
             if(!flag)
             {
                 return Json(new AjaxResult { Status = 0, Msg = "标记发货失败" });
