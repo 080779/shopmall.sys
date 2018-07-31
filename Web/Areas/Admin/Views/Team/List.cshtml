@@ -262,9 +262,9 @@
             },
             getpage: function () {
                 this.$http.post('/admin/team/list', { levelId: this.levelId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
-                    this.members = result.data.data.members;
+                    this.users = result.data.data.users;
                     this.levels = result.data.data.levels;
-                    this.pages1.all = result.data.data.pageCount;
+                    this.pages.all = result.data.data.pageCount;
                     this.teamLevels = result.data.data.teamLevels;
                 })
             },
