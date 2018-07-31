@@ -22,6 +22,7 @@ namespace IMS.Web.Areas.Admin.Models.Order
         public Decimal Amount { get; set; }
         public string PayTypeName { get; set; }
         public DateTime CreateTime { get; set; }
+        public string Deliver { get; set; }
     }
     public class BuyerInfo
     {

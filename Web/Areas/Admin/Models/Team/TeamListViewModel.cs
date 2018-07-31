@@ -5,9 +5,9 @@ using System.Linq;
 using System.Web;
 using static IMS.Common.Pagination;
 
-namespace IMS.Web.Areas.Admin.Models.UserTeam
+namespace IMS.Web.Areas.Admin.Models.Team
 {
-    public class UserTeamListViewModel
+    public class TeamListViewModel
     {
         public UserDTO TeamLeader { get; set; }
         public UserDTO[] Members { get; set; }

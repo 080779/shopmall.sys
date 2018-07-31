@@ -25,6 +25,7 @@ namespace IMS.IService
         Task<long> ApplyReturnAsync(long orderId);
         Task<long> ReturnAsync(long orderId);
         Task<long> ReturnAuditAsync(long orderId, long adminId);
+        Task AutoConfirm();
     }
     public class OrderSearchResult
     {

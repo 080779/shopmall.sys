@@ -43,7 +43,7 @@ namespace IMS.Service.Entity
         public DateTime? CloseTime { get; set; }//交易结束时间
         //public virtual DeliveryEntity Delivery { get; set; }
         public decimal PostFee { get; set; } = 10;//邮费
-        public string Deliver { get; set; } = "快递";
+        public string Deliver { get; set; } = "有快递单号";
         public string DeliverName { get; set; }
         public string DeliverCode { get; set; }
         public string UserDeliverName { get; set; }

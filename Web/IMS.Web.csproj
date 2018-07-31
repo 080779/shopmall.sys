@@ -263,6 +263,7 @@
     <Content Include="assets\src\laydate.js" />
     <Content Include="assets\src\theme\default\font\iconfont.svg" />
     <Content Include="assets\src\theme\default\laydate.css" />
+    <Content Include="css\details.css" />
     <Content Include="css\easyui_style.css" />
     <Content Include="css\login.css" />
     <Content Include="css\my_pagination.css" />
@@ -365,7 +366,8 @@
     <Compile Include="Areas\Admin\Models\Return\ReturnListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Setting\SettingListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\TakeCash\TakeCashListViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\UserTeam\UserTeamListViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Team\TeamListViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Team\TeamUserListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\User\UserBonusSetModel.cs" />
     <Compile Include="Areas\Admin\Models\User\UserListViewModel.cs" />
     <Compile Include="Controllers\GoodsAreaController.cs" />

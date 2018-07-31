@@ -39,44 +39,22 @@
         <div class="search_style">
             <ul class="search_content clearfix">
                 <li>
-                    <label class="l_f">代理等级</label>
-                    <select v-model="teamLevel">
+                    <label class="l_f">选择日期</label>
+                    <input class="inline laydate-icon" id="start" style="margin-left:10px;" v-on:focus='getstart' />至
+                    <input class="inline laydate-icon" id="end" style="margin-left:10px;" v-on:focus='getend' />
+                </li>
+                <li>
+                    <label class="l_f">会员等级</label>
+                    <select v-model="levelId">
                         <option value="">请选择</option>
-                        <option v-for="teamLevel in teamLevels" v-bind:value="teamLevel.parm" v-html="teamLevel.name"></option>
+                        <option v-for="level in levels" v-bind:value="level.id" v-html="level.name"></option>
                     </select>
                 </li>
                 <li>
-                    <label class="l_f">选择日期</label>
-                    <input class="inline laydate-icon" id="start" style=" margin-left:10px;" v-on:focus='getstart' />至
-                    <input class="inline laydate-icon" id="end" style=" margin-left:10px;" v-on:focus='getend' />
-                </li>
-                <li>
                     <label class="l_f">会员信息</label>
-                    <input name="" v-model="searchs.keyword" type="text" class="text_add" placeholder="会员信息" style=" width:150px" />
-                </li>
-                <li>
-                    <label class="l_f">团长账号</label>
-                    <input name="" v-model="mobile" type="text" class="text_add" placeholder="团长账号" style=" width:150px" />
+                    <input name="" v-model="searchs.keyword" type="text" class="text_add" placeholder="会员信息" style="width:150px" />
                 </li>
                 <li style="width:90px;"><button type="button" v-on:click="search" class="btn_search"><i class="icon-search"></i>查询</button></li>
-            </ul>
-        </div>
-        <div class="search_style">
-            <ul class="page-content">
-                <li><label class="label_name">会员名称 团长</label><div class="prompt r_f"></div></li>
-                <li>
-                    <label class="label_name">会员昵称：</label><span class="add_name"><label v-html="teamLeader.nickName"></label></span>&nbsp;
-                    <label class="label_name">会员账号：</label><span class="add_name"><label v-html="teamLeader.mobile"></label></span>&nbsp;
-                    <label class="label_name">注册时间：</label><span class="add_name"><label v-html="teamLeader.createTime"></label></span>&nbsp;
-                    <label class="label_name">上级推荐会员：</label><span class="add_name"><label v-html="teamLeader.recommender=='superhero'?'系统':teamLeader.recommender"></label></span>
-                    <div class="prompt r_f"></div>
-                </li>
-                <li>
-                    <label class="label_name">消费总额：</label><span class="add_name"><label v-html="teamLeader.buyAmount"></label></span>&nbsp;
-                    <label class="label_name">佣金总额：</label><span class="add_name"><label v-html="teamLeader.bonusAmount"></label></span>
-                    <label class="label_name">总人数：</label><span class="add_name"><label v-html="totalCount"></label></span>
-                    <div class="prompt r_f"></div>
-                </li>
             </ul>
         </div>
         <div class="table_menu_list">
@@ -88,23 +66,19 @@
                         <th width="100">会员账号</th>
                         <th width="100">会员昵称</th>
                         <th width="120">会员等级</th>
+                        <th width="80">余额</th>
                         <th width="60">状态</th>
-                        <th width="120">消费总额</th>
-                        <th width="120">佣金总额</th>
-                        <th width="100">上级推荐会员</th>
                     </tr>
                 </thead>
-                <tbody v-for="user in members">
+                <tbody v-for="user in users">
                     <tr>
                         <td v-html="user.id"></td>
                         <td v-html="user.createTime"></td>
-                        <td><a style="cursor:pointer;"  v-html="user.mobile" v-on:click="getleader(user.mobile)"></a></td>
+                        <td><a v-on:click="getteam(user.mobile)" v-html="user.mobile"></a></td>
                         <td v-html="user.nickName"></td>
                         <td v-html="user.levelName"></td>
+                        <td v-html="user.amount"></td>
                         <td v-html="user.isEnabled==true?'已启用':'停用'"></td>
-                        <td v-html="user.buyAmount"></td>
-                        <td v-html="user.bonusAmount"></td>
-                        <td><a style="cursor:pointer;" v-html="user.recommender" v-on:click="getleader(user.recommender)"></a></td>
                     </tr>
                 </tbody>
             </table>
@@ -124,13 +98,94 @@
             </ul>
         </div>
         <!--添加用户图层-->
-        <div class="add_menber" id="add" style="display:none">
-            <ul class="page-content">
-                <li><label class="label_name">会员账号：</label><span class="add_name"><input value="" placeholder="会员账号" v-model="adds.mobile" type="text" class="text_add" /></span><div class="prompt r_f"></div></li>
-                <li><label class="label_name">推荐人账号：</label><span class="add_name"><input placeholder="推荐人账号" type="text" v-model="adds.recommendmobile" class="text_add" /></span><div class="prompt r_f"></div></li>
-                <li><label class="label_name">登录密码：</label><span class="add_name"><input placeholder="登录密码" type="password" v-model="adds.password" class="text_add" /></span><div class="prompt r_f"></div></li>
-                <li><label class="label_name">确认密码：</label><span class="add_name"><input placeholder="确认密码" type="password" v-model="adds.password1" class="text_add" /></span><div class="prompt r_f"></div></li>
-            </ul>
+        <div class="add_menber" id="getTeam" style="display:none">
+            <div class="search_style">
+                <ul class="search_content clearfix">
+                    <li>
+                        <label class="l_f">代理等级</label>
+                        <select v-model="teamLevel">
+                            <option value="">请选择</option>
+                            <option v-for="teamLevel in teamLevels" v-bind:value="teamLevel.parm" v-html="teamLevel.name"></option>
+                        </select>
+                    </li>
+                    <li>
+                        <label class="l_f">选择日期</label>
+                        <input class="inline laydate-icon" id="start1" style="margin-left:10px;" v-on:focus='getstart1' />至
+                        <input class="inline laydate-icon" id="end1" style="margin-left:10px;" v-on:focus='getend1' />
+                    </li>
+                    <li>
+                        <label class="l_f">会员信息</label>
+                        <input name="" v-model="searchs1.keyword" type="text" class="text_add" placeholder="会员信息" style="width:150px" />
+                    </li>
+                    <li>
+                        <label class="l_f">团长账号</label>
+                        <input name="" v-model="mobile" type="text" class="text_add" placeholder="团长账号" style="width:150px" />
+                    </li>
+                    <li style="width:90px;"><button type="button" v-on:click="search1" class="btn_search"><i class="icon-search"></i>查询</button></li>
+                </ul>
+            </div>
+            <div class="search_style">
+                <ul class="page-content">
+                    <li><label class="label_name">会员名称 团长</label><div class="prompt r_f"></div></li>
+                    <li>
+                        <label class="label_name">会员昵称：</label><span class="add_name"><label v-html="teamLeader.nickName"></label></span>&nbsp;
+                        <label class="label_name">会员账号：</label><span class="add_name"><label v-html="teamLeader.mobile"></label></span>&nbsp;
+                        <label class="label_name">注册时间：</label><span class="add_name"><label v-html="teamLeader.createTime"></label></span>&nbsp;
+                        <label class="label_name">上级推荐会员：</label><span class="add_name"><label v-html="teamLeader.recommender=='superhero'?'系统':teamLeader.recommender"></label></span>
+                        <div class="prompt r_f"></div>
+                    </li>
+                    <li>
+                        <label class="label_name">消费总额：</label><span class="add_name"><label v-html="teamLeader.buyAmount"></label></span>&nbsp;
+                        <label class="label_name">佣金总额：</label><span class="add_name"><label v-html="teamLeader.bonusAmount"></label></span>
+                        <label class="label_name">总人数：</label><span class="add_name"><label v-html="totalCount"></label></span>
+                        <div class="prompt r_f"></div>
+                    </li>
+                </ul>
+            </div>
+            <div class="table_menu_list">
+                <table class="table table-striped table-bordered table-hover" id="sample-table">
+                    <thead>
+                        <tr>
+                            <th width="60">编号</th>
+                            <th width="100">注册时间</th>
+                            <th width="100">会员账号</th>
+                            <th width="100">会员昵称</th>
+                            <th width="120">会员等级</th>
+                            <th width="60">状态</th>
+                            <th width="120">消费总额</th>
+                            <th width="120">佣金总额</th>
+                            <th width="100">上级推荐会员</th>
+                        </tr>
+                    </thead>
+                    <tbody v-for="user in members">
+                        <tr>
+                            <td v-html="user.id"></td>
+                            <td v-html="user.createTime"></td>
+                            <td><a style="cursor:pointer;" v-html="user.mobile" v-on:click="getteam1(user.mobile)"></a></td>
+                            <td v-html="user.nickName"></td>
+                            <td v-html="user.levelName"></td>
+                            <td v-html="user.isEnabled==true?'已启用':'停用'"></td>
+                            <td v-html="user.buyAmount"></td>
+                            <td v-html="user.bonusAmount"></td>
+                            <td><a style="cursor:pointer;" v-html="user.recommender" v-on:click="getteam1(user.recommender)"></a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="page-bar">
+                <ul>
+                    <li style="float:left"><a v-on:click="pages1.cur=1,getpage1()">首页</a></li>
+                    <li style="float:left" v-if="pages1.cur>1"><a v-on:click="pages1.cur--,getpage1()">上一页</a></li>
+                    <li style="float:left" v-if="pages1.cur==1"><a class="banclick">上一页</a></li>
+                    <li style="float:left" v-for="index in indexs1" v-bind:class="{'active':pages1.cur==index}"><a v-on:click="pageclick1(index)" v-html="index"></a></li>
+                    <li style="float:left" v-if="pages1.cur!=pages1.all"><a v-on:click="pages1.cur++,getpage1()">下一页</a></li>
+                    <li style="float:left" v-if="pages1.cur==pages1.all"><a class="banclick">下一页</a></li>
+                    <li style="float:left"><a><input type='text' id='txtpage' style='width: 30px;height: 18px;' v-model="pages1.txtpage" onkeyup="value=value.replace(/[^\d]/g,'')" /></a></li>
+                    <li style="float:left"><a id='go1' v-on:click="go1">跳转</a></li>
+                    <li style="float:left"><a v-on:click="pages1.cur=pages1.all,getpage1()">尾页</a></li>
+                    <li style="float:left"><a>共<i><font v-html="pages1.all"></font></i>页</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </body>
@@ -141,6 +196,9 @@
     var vue = new Vue({
         el: "#app",
         data: {
+            users: [],
+            levels:"",
+            levelId:"",
             teamLeader: "",
             members: [],
             totalCount:"",
@@ -151,14 +209,14 @@
             pages: {
                 all: "", cur: 1, txtpage: ""
             },
+            pages1: {
+                all: "", cur: 1, txtpage: ""
+            },
             searchs: {
                 startTime: "", endTime: "", keyword: ""
             },
-            adds: {
-                mobile: "", recommendmobile: "", password: "", password1: ""
-            },
-            resetpwds: {
-                mobile: "", password: "", password1: ""
+            searchs1: {
+                startTime: "", endTime: "", keyword: ""
             }
         },
         methods: {
@@ -182,11 +240,38 @@
                     }
                 });
             },
+            getstart1: function () {
+                var that = this;
+                that.searchs.startTime = "";
+                laydate({
+                    elem: '#start1',
+                    choose: function (date) {
+                        that.searchs1.startTime = date;
+                    }
+                });
+            },
+            getend1: function () {
+                var that = this;
+                that.searchs.endTime = "";
+                laydate({
+                    elem: '#end1',
+                    choose: function (date) {
+                        that.searchs1.endTime = date;
+                    }
+                });
+            },
             getpage: function () {
-                this.$http.post('/admin/team/list', { mobile: this.mobile, teamLevel: this.teamLevel, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
+                this.$http.post('/admin/team/list', { levelId: this.levelId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
+                    this.members = result.data.data.members;
+                    this.levels = result.data.data.levels;
+                    this.pages1.all = result.data.data.pageCount;
+                    this.teamLevels = result.data.data.teamLevels;
+                })
+            },
+            getpage1: function () {
+                this.$http.post('/admin/team/teamlist', { mobile: this.mobile, teamLevel: this.teamLevel, keyword: this.searchs1.keyword, startTime: this.searchs1.startTime, endTime: this.searchs1.endTime, pageIndex: this.pages1.cur }, { emulateJSON: true }).then(function (result) {
                     this.members = result.data.data.members;
                     this.teamLeader = result.data.data.teamLeader;
-                    this.teamLevels = result.data.data.teamLevels;
                     this.pages.all = result.data.data.pageCount;
                     this.totalCount = result.data.data.totalCount;
                 })
@@ -197,6 +282,12 @@
                 }
                 this.getpage();
             },
+            pageclick1: function (index) {//页码点击事件
+                if (index != this.cur) {
+                    this.pages1.cur = index
+                }
+                this.getpage1();
+            },
             go: function () {
                 if (this.pages.txtpage == "") {
                     return;
@@ -206,14 +297,50 @@
                 }
                 this.getpage();
             },
+            go1: function () {
+                if (this.pages1.txtpage == "") {
+                    return;
+                }
+                else {
+                    this.pages1.cur = this.pages1.txtpage;
+                }
+                this.getpage1();
+            },
             search: function () {
                 this.getpage();
             },
-            getleader: function (mobile) {
-                this.mobile = mobile;
-                this.getpage();
+            search1: function () {
+                this.getpage1();
                 this.mobile = "";
             },
+            getteam: function (mobile) {
+                this.mobile = mobile;
+                this.$http.post('/admin/team/teamlist', { mobile: this.mobile, teamLevel: this.teamLevel, keyword: this.searchs1.keyword, startTime: this.searchs1.startTime, endTime: this.searchs1.endTime, pageIndex: this.pages1.cur }, { emulateJSON: true }).then(function (result) {
+                    this.members = result.data.data.members;
+                    this.teamLeader = result.data.data.teamLeader;
+                    this.pages1.all = result.data.data.pageCount;
+                    this.totalCount = result.data.data.totalCount;
+                })
+                this.mobile = "";
+                layer.open({
+                    type: 1,
+                    title: '查看团队',
+                    maxmin: true,
+                    shadeClose: false, //点击遮罩关闭层
+                    area: ['1300px', '620px'],
+                    content: $('#getTeam')
+                });
+            },
+            getteam1: function (mobile) {
+                this.mobile = mobile;
+                this.$http.post('/admin/team/teamlist', { mobile: this.mobile, teamLevel: this.teamLevel, keyword: this.searchs1.keyword, startTime: this.searchs1.startTime, endTime: this.searchs1.endTime, pageIndex: this.pages1.cur }, { emulateJSON: true }).then(function (result) {
+                    this.members = result.data.data.members;
+                    this.teamLeader = result.data.data.teamLeader;
+                    this.pages1.all = result.data.data.pageCount;
+                    this.totalCount = result.data.data.totalCount;
+                })
+                this.mobile = "";
+            }
         },
         computed: {
             indexs: function () {
@@ -239,15 +366,38 @@
                     left++
                 }
                 return ar
+            },
+            indexs1: function () {
+                var left = 1;
+                var right = this.pages1.all;
+                var ar = [];
+                if (this.pages1.all >= 5) {
+                    if (this.pages1.cur > 3 && this.pages1.cur < this.pages1.all - 2) {
+                        left = this.pages1.cur - 2
+                        right = this.pages1.cur + 2
+                    } else {
+                        if (this.pages1.cur <= 3) {
+                            left = 1
+                            right = 5
+                        } else {
+                            right = this.pages1.all
+                            left = this.pages1.all - 4
+                        }
+                    }
+                }
+                while (left <= right) {
+                    ar.push(left)
+                    left++
+                }
+                return ar
             }
         },
         mounted: function () {
-            this.$http.post('/admin/team/list', { mobile: this.mobile, teamLevel: this.teamLevel, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
-                this.members = result.data.data.members;
-                this.teamLeader = result.data.data.teamLeader;
-                this.teamLevels = result.data.data.teamLevels;
+            this.$http.post('/admin/team/list', { levelId: this.levelId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
+                this.users = result.data.data.users;
+                this.levels = result.data.data.levels;
                 this.pages.all = result.data.data.pageCount;
-                this.totalCount = result.data.data.totalCount;
+                this.teamLevels = result.data.data.teamLevels;
             })
         }
     });
@@ -257,6 +407,14 @@
     });
     laydate({
         elem: '#end',
+        event: 'focus'
+    });
+    laydate({
+        elem: '#start1',
+        event: 'focus'
+    });
+    laydate({
+        elem: '#end1',
         event: 'focus'
     });
 </script>

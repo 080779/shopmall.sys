@@ -115,17 +115,6 @@ namespace IMS.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ApiResult> ReturnApply(OrderReturnApplyModel model)
-        {
-            long id = await orderService.ApplyReturnAsync(model.OrderId);
-            if (id <= 0)
-            {
-                return new ApiResult { status = 0, msg = "退货申请失败" };
-            }
-            return new ApiResult { status = 1, msg = "退货申请成功" };
-        }
-
-        [HttpPost]
         public async Task<ApiResult> Detail(OrderDetailModel model)
         {
             string parm = await settingService.GetParmByNameAsync("网站域名");

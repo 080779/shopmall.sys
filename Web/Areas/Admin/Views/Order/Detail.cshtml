@@ -8,6 +8,7 @@
     <link href="~/assets/css/codemirror.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/assets/css/ace.min.css" />
     <link rel="stylesheet" href="~/assets/css/font-awesome.min.css" />
+    <link href="~/css/details.css" rel="stylesheet" />
     <link href="~/css/page.css" rel="stylesheet" />
     <script src="~/assets/js/jquery.min.js"></script>
     <!--[if IE]>
@@ -41,38 +42,24 @@
         <div class="form-group col-sm-11">
             <div>订单详情 </div>
             <div>
-                <div class="col-sm-2">基本信息</div>
-                <div class="form-group col-sm-9">
-                    <label class="col-sm-2">订单号：</label>
-                    <label class="col-sm-3" v-html="basicInfo.code"></label>
-                    <label class="col-sm-2">订单时间：</label>
-                    <label class="col-sm-2" v-html="basicInfo.createTime"></label>
-                    <label class="col-sm-2">订单状态：</label>
-                    <label class="col-sm-2" v-html="basicInfo.orderStateName"></label>
-                </div>
-                <div class="form-group col-sm-9">
-                    <label class="col-sm-2">订单金额：</label>
-                    <label class="col-sm-3" v-html="basicInfo.amount"></label>
-                    <label class="col-sm-2">支付方式：</label>
-                    <label class="col-sm-2" v-html="basicInfo.payTypeName"></label>
-                </div>
-            </div>
-            <div>
-                <div class="col-sm-2">买家信息</div>
-                <div class="form-group col-sm-9">
-                    <label class="col-sm-2">买家账号：</label>
-                    <label class="col-sm-3" v-html="buyerInfo.buyerMobile"></label>
-                    <label class="col-sm-2">收货人姓名：</label>
-                    <label class="col-sm-2" v-html="buyerInfo.name"></label>
-                    <label class="col-sm-2">收货人电话：</label>
-                    <label class="col-sm-2" v-html="buyerInfo.mobile"></label>
-                </div>
-                <div class="form-group col-sm-9">
-                    <label class="col-sm-2">快递类型：</label>
-                    <label class="col-sm-3" v-html=""></label>
-                    <label class="col-sm-2">收获人地址：</label>
-                    <label class="col-sm-2" v-html="buyerInfo.address"></label>
-                </div>
+                <ul id="details-ul">
+                    <li class="mt20">基本信息</li>
+                    <li class="details-title  clearfix mt10">
+                        <div class="fl w20f p5 tc  border1 borderRight-none">订单号：<br /><font v-html="basicInfo.code"></font></div>
+                        <div class="fl w20f p5 tc  border1 borderRight-none">订单时间：<br /><font v-html="basicInfo.createTime"></font></div>
+                        <div class="fl w20f p5 tc  border1 borderRight-none">订单状态：<br /><font v-html="basicInfo.orderStateName"></font></div>
+                        <div class="fl w20f p5 tc  border1 borderRight-none">订单金额：<br /><font v-html="basicInfo.amount"></font></div>
+                        <div class="fl w20f p5 tc  border1">支付方式：<br /><font v-html="basicInfo.payTpyeName"></font></div>
+                    </li>
+                    <li class="mt20">买家信息</li>
+                    <li class="details-title  clearfix mt10">
+                        <div class="fl w20f p5 tc  border1 borderRight-none">买家账号：<br /><font v-html="buyerInfo.buyerMobile"></font></div>
+                        <div class="fl w20f p5 tc  border1 borderRight-none">收货人姓名：<br /><font v-html="buyerInfo.name"></font></div>
+                        <div class="fl w20f p5 tc  border1 borderRight-none">收货人电话：<br /><font v-html="buyerInfo.mobile"></font></div>
+                        <div class="fl w20f p5 tc  border1 borderRight-none">快递类型：<br /><font v-html="basicInfo.deliver"></font></div>
+                        <div class="fl w20f p5 tc  border1">收货人地址：<br /><font v-html="buyerInfo.address"></font></div>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

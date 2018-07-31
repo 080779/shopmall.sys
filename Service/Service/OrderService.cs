@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -601,6 +602,22 @@ namespace IMS.Service.Service
                 order.AuditTime = DateTime.Now;
                 await dbc.SaveChangesAsync();
                 return order.Id;
+            }
+        }
+
+        public async Task AutoConfirm()
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                long stateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "已完成")).Id;
+                Expression<Func<OrderEntity, bool>> timewhere = r => r.ConsignTime == null ? false : r.ConsignTime.Value.AddDays(7) < DateTime.Now;
+                var orders = dbc.GetAll<OrderEntity>().Where(r=>r.OrderState.Name=="已发货").Where(timewhere.Compile()).ToList();
+                foreach(OrderEntity order in orders)
+                {
+                    order.EndTime = DateTime.Now;
+                    order.OrderStateId = stateId;
+                }
+                await dbc.SaveChangesAsync();
             }
         }
     }
