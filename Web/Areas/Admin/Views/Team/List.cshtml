@@ -74,7 +74,7 @@
                     <tr>
                         <td v-html="user.id"></td>
                         <td v-html="user.createTime"></td>
-                        <td><a v-on:click="getteam(user.mobile)" v-html="user.mobile"></a></td>
+                        <td><a style="cursor:pointer;" v-on:click="getteam(user.mobile)" v-html="user.mobile"></a></td>
                         <td v-html="user.nickName"></td>
                         <td v-html="user.levelName"></td>
                         <td v-html="user.amount"></td>
@@ -327,7 +327,7 @@
                     title: '查看团队',
                     maxmin: true,
                     shadeClose: false, //点击遮罩关闭层
-                    area: ['1300px', '620px'],
+                    area: ['1290px', '600px'],
                     content: $('#getTeam')
                 });
             },
