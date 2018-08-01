@@ -41,7 +41,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 GoodsEntity entity = new GoodsEntity();
-                entity.Code = goods.Code;
+                entity.Code = CommonHelper.GetRandom2();
                 entity.Description = goods.Description;
                 entity.GoodsAreaId = goods.GoodsAreaId;
                 entity.GoodsSecondTypeId = goods.GoodsSecondTypeId.Value;
@@ -52,7 +52,7 @@ namespace IMS.Service.Service
                 entity.Name = goods.Name;
                 entity.Price = goods.Price;
                 entity.RealityPrice = goods.RealityPrice;
-                entity.Standard = goods.Standard;
+                entity.Standard = "件";
                 dbc.Goods.Add(entity);
                 await dbc.SaveChangesAsync();
                 BonusRatioEntity bonusRatio = new BonusRatioEntity();
@@ -209,7 +209,6 @@ namespace IMS.Service.Service
                 entity.Name = goods.Name;
                 entity.Price = goods.Price;
                 entity.RealityPrice = goods.RealityPrice;
-                entity.Standard = goods.Standard;
                 await dbc.SaveChangesAsync();
                 return true;
             }

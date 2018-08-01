@@ -29,8 +29,6 @@ namespace IMS.IService
         public decimal Price { get; set; }//原价
         public decimal RealityPrice { get; set; }//现价
         public long Inventory { get; set; }//库存
-        public string Code { get; set; }
-        public string Standard { get; set; }//规格
         public long GoodsAreaId { get; set; }
         public long GoodsTypeId { get; set; }
         public long? GoodsSecondTypeId { get; set; }
