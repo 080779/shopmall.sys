@@ -622,5 +622,37 @@ namespace IMS.Service.Service
                 await dbc.SaveChangesAsync();
             }
         }
+
+        public async Task<long> ValidOrder(long id)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                OrderEntity order = await dbc.GetAll<OrderEntity>().SingleOrDefaultAsync(o => o.Id == id);
+                if (order == null)
+                {
+                    return -1;
+                }
+                UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == order.BuyerId);
+                if (user == null)
+                {
+                    return -2;
+                }
+                var orderlists = dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == order.Id).ToList();
+                foreach (var orderlist in orderlists)
+                {
+                    GoodsEntity goods = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g => g.Id == orderlist.GoodsId);
+                    if (goods == null)
+                    {
+                        continue;
+                    }
+
+                    if (goods.Inventory < orderlist.Number)
+                    {
+                        return -3;
+                    }
+                }
+                return 1;
+            }
+        }
     }
 }

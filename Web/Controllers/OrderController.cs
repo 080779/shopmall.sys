@@ -435,6 +435,19 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "订单不存在" };
             }
+            long id = await orderService.ValidOrder(order.Id);
+            if(id==-1)
+            {
+                return new ApiResult { status = 0, msg = "订单不存在" };
+            }
+            if (id == -2)
+            {
+                return new ApiResult { status = 0, msg = "会员不存在" };
+            }
+            if (id == -3)
+            {
+                return new ApiResult { status = 0, msg = "商品库存不足" };
+            }
 
             WeChatPay weChatPay = new WeChatPay();
             weChatPay.body = "订单支付";
