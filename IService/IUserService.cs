@@ -13,7 +13,7 @@ namespace IMS.IService
         /// <param name="password">密码</param>
         /// <param name="levelTypeId">等级id</param>
         /// <returns></returns>
-        Task<long> AddAsync(string mobile, string password, long levelTypeId, string recommendMobile, string nickName, string avatarUrl);
+        Task<long> AddAsync(string mobile, string password,string tradePassword, long levelTypeId, string recommendMobile, string nickName, string avatarUrl);
         Task<bool> AddAmountAsync(string mobile,decimal amount);
         /// <summary>
         /// 修改头像，昵称
@@ -49,14 +49,16 @@ namespace IMS.IService
         /// <param name="id">用户id</param>
         /// <param name="password">密码</param>
         /// <returns></returns>
-        Task<long> ResetPasswordAsync(long id, string password, string newPassword);
+        Task<long> ResetPasswordAsync(long id, string password, string newPassword, string newTradePassword);
         Task<long> ResetPasswordAsync(long id, string password);
         Task<long> ResetPasswordAsync(string mobile, string password);
         Task<long> UserCheck(string mobile);
         Task<long> CheckLoginAsync(string mobile, string password);
+        Task<long> CheckTradePasswordAsync(long id,string tradePassword);
         Task<long> BalancePayAsync(long orderId);
         long WeChatPay(string code);
         Task<CalcAmountResult> CalcCount();
+        Task<decimal> GetTeamBuyAmountAsync(long id);
         /// <summary>
         /// 根据id获得用户模型
         /// </summary>

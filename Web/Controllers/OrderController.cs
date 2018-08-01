@@ -296,34 +296,31 @@ namespace IMS.Web.Controllers
         public async Task<ApiResult> ReApplys(OrderReApplysModel model)
         {
             long orderStateId = 0;
-            long payTypeId = await idNameService.GetIdByNameAsync("余额");
             var order = await orderService.GetModelAsync(model.OrderId);
             if(order==null)
             {
                 return new ApiResult { status = 0, msg = "订单不存在" };
             }
-            if (payTypeId == order.PayTypeId)
+            long payResId = await userService.BalancePayAsync(model.OrderId);
+            if (payResId == -1)
             {
-                long payResId = await userService.BalancePayAsync(model.OrderId);
-                if (payResId == -1)
-                {
-                    return new ApiResult { status = 0, msg = "订单不存在" };
-                }
-                if (payResId == -2)
-                {
-                    return new ApiResult { status = 0, msg = "用户不存在" };
-                }
-                if (payResId == -3)
-                {
-                    return new ApiResult { status = 0, msg = "商品库存不足" };
-                }
-                if (payResId == -4)
-                {
-                    return new ApiResult { status = 0, msg = "用户账户余额不足" };
-                }
-                orderStateId = await idNameService.GetIdByNameAsync("待发货");
-                await orderService.UpdateAsync(model.OrderId, null, null, orderStateId);
+                return new ApiResult { status = 0, msg = "订单不存在" };
             }
+            if (payResId == -2)
+            {
+                return new ApiResult { status = 0, msg = "用户不存在" };
+            }
+            if (payResId == -3)
+            {
+                return new ApiResult { status = 0, msg = "商品库存不足" };
+            }
+            if (payResId == -4)
+            {
+                return new ApiResult { status = 0, msg = "用户账户余额不足" };
+            }
+            orderStateId = await idNameService.GetIdByNameAsync("待发货");
+            await orderService.UpdateAsync(model.OrderId, null, null, orderStateId);
+
             return new ApiResult { status = 1, msg = "支付成功" };
         }
         [HttpPost]
@@ -438,12 +435,6 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "订单不存在" };
             }
-            long payTypeId1 = await idNameService.GetIdByNameAsync("微信");
-
-            if (payTypeId1 != order.PayTypeId)
-            {
-                return new ApiResult { status = 0, msg = "请选择微信支付" };
-            }
 
             WeChatPay weChatPay = new WeChatPay();
             weChatPay.body = "订单支付";
@@ -548,6 +539,26 @@ namespace IMS.Web.Controllers
                 return new ApiResult { status = 0, msg = "订单删除失败" };
             }
             return new ApiResult { status = 1, msg = "订单删除成功" };
+        }
+
+        [HttpPost]
+        public async Task<ApiResult> Valid(OrderValidModel model)
+        {
+            if(string.IsNullOrEmpty(model.TradePassword))
+            {
+                return new ApiResult { status = 0, msg = "交易密码不能为空" };
+            }
+            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
+            long id = await userService.CheckTradePasswordAsync(user.Id, model.TradePassword);
+            if (id==-1)
+            {
+                return new ApiResult { status = 0, msg = "会员不存在" };
+            }
+            if (id == -2)
+            {
+                return new ApiResult { status = 0, msg = "交易密码错误" };
+            }
+            return new ApiResult { status = 1, msg = "交易密码验证成功" };
         }
 
         //[HttpGet]

@@ -33,7 +33,7 @@ namespace IMS.Web.Controllers
             UserCenterInfoApiModel model = new UserCenterInfoApiModel();
             model.amount = result.Amount;
             model.bonusAmount = result.BonusAmount;
-            model.buyAmount = result.BuyAmount;
+            model.buyAmount = result.BuyAmount + (await userService.GetTeamBuyAmountAsync(user.Id));
             model.createTime = result.CreateTime.ToString("yyyy-MM-dd HH:mm:ss");
             if(!string.IsNullOrEmpty(result.HeadPic))
             {
@@ -174,7 +174,7 @@ namespace IMS.Web.Controllers
                 return new ApiResult { status = 0, msg = "新密码不能为空" };
             }
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
-            long id = await userService.ResetPasswordAsync(user.Id, model.Password, model.NewPassword);
+            long id = await userService.ResetPasswordAsync(user.Id, model.Password,model.NewTradePassword, model.NewPassword);
             if (id == -1)
             {
                 return new ApiResult { status = 0, msg = "用户不存在" };

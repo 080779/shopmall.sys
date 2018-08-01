@@ -417,6 +417,7 @@
     <Compile Include="Models\Journal\JournalListModel.cs" />
     <Compile Include="Models\Notice\NoticeDetailModel.cs" />
     <Compile Include="Models\Notice\NoticeListApiModel.cs" />
+    <Compile Include="Models\Order\OrderValidModel.cs" />
     <Compile Include="Models\Order\OrderDelModel.cs" />
     <Compile Include="Models\Order\OrderPayModel.cs" />
     <Compile Include="Models\Order\OrderDeliveryTypetModel.cs" />

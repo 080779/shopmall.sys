@@ -9,5 +9,6 @@ namespace IMS.Web.Models.UserCenter
     {
         public string Password { get; set; }
         public string NewPassword { get; set; }
+        public string NewTradePassword { get; set; }
     }
 }

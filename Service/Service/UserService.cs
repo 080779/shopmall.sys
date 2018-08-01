@@ -41,7 +41,7 @@ namespace IMS.Service.Service
             return dto;
         }
 
-        public async Task<long> AddAsync(string mobile, string password, long levelTypeId, string recommendMobile,string nickName,string avatarUrl)
+        public async Task<long> AddAsync(string mobile, string password, string tradePassword, long levelTypeId, string recommendMobile,string nickName,string avatarUrl)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -59,6 +59,7 @@ namespace IMS.Service.Service
                         user.Mobile = mobile;
                         user.Salt = CommonHelper.GetCaptcha(4);
                         user.Password = CommonHelper.GetMD5(password + user.Salt);
+                        user.TradePassword = CommonHelper.GetMD5(tradePassword + user.Salt);
                         user.NickName = string.IsNullOrEmpty(nickName)?"无昵称":nickName;
                         user.HeadPic = string.IsNullOrEmpty(avatarUrl)? "/images/headpic.png" : avatarUrl;
                         dbc.Users.Add(user);
@@ -216,7 +217,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<long> ResetPasswordAsync(long id, string password, string newPassword)
+        public async Task<long> ResetPasswordAsync(long id, string password, string newPassword,string newTradePassword)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -230,6 +231,7 @@ namespace IMS.Service.Service
                     return -2;
                 }
                 entity.Password = CommonHelper.GetMD5(newPassword + entity.Salt);
+                entity.TradePassword = CommonHelper.GetMD5(newTradePassword + entity.Salt);
                 await dbc.SaveChangesAsync();
                 return entity.Id;
             }
@@ -296,6 +298,23 @@ namespace IMS.Service.Service
                     return -3;
                 }
                 return entity.Id;
+            }
+        }
+
+        public async Task<long> CheckTradePasswordAsync(long id, string tradePassword)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == id);
+                if(user==null)
+                {
+                    return -1;
+                }
+                if (user.TradePassword != CommonHelper.GetMD5(tradePassword + user.Salt))
+                {
+                    return -2;
+                }
+                return 1;
             }
         }
 
@@ -455,6 +474,7 @@ namespace IMS.Service.Service
                 user.BuyAmount = user.BuyAmount + order.Amount;
 
                 order.PayTime = DateTime.Now;
+                order.PayTypeId= (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "微信")).Id;
                 order.OrderStateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "待发货")).Id;
                 if (order.Deliver== "无需物流")
                 {
@@ -652,6 +672,7 @@ namespace IMS.Service.Service
                 user.BuyAmount = user.BuyAmount + order.Amount;
 
                 order.PayTime = DateTime.Now;
+                order.PayTypeId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "余额").Id;
                 order.OrderStateId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "待发货").Id;
                 if (order.Deliver == "无需物流")
                 {
@@ -703,6 +724,30 @@ namespace IMS.Service.Service
                 res.TotalTakeCash = await takeCash.SumAsync(u => u.Amount);
                 res.TotalBuyAmount = await users.SumAsync(u => u.BuyAmount);
                 return res;
+            }
+        }
+
+        public async Task<decimal> GetTeamBuyAmountAsync(long id)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserTeamSearchResult result = new UserTeamSearchResult();
+                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.UserId == id);
+                var recommends = dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false);
+
+                if (recommend.RecommendMobile == "superhero" && recommend.RecommendGenera == 1)
+                {
+                    recommends = recommends.Where(a => a.RecommendId == id ||
+                 (a.RecommendPath.Contains(id.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 2) ||
+                 (a.RecommendPath.Contains(id.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 3));
+                }
+                else
+                {
+                    recommends = recommends.Where(a => a.RecommendId == id ||
+                 (a.RecommendPath.Contains("-" + id.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 2) ||
+                 (a.RecommendPath.Contains("-" + id.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 3));
+                }
+                return recommends.Sum(r => r.User.BuyAmount);
             }
         }
 

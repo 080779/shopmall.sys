@@ -34,27 +34,54 @@ namespace Test
             //var token = encoder.Encode(payload, secret);
             //Console.WriteLine(token);
 
-            var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJVc2VySWQiOjEyMywiVXNlck5hbWUiOiJhZG1pbiJ9.Qjw1epD5P6p4Yy2yju3-fkq28PddznqRj3ESfALQy_U";
-            var secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
-            try
+            //var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJVc2VySWQiOjEyMywiVXNlck5hbWUiOiJhZG1pbiJ9.Qjw1epD5P6p4Yy2yju3-fkq28PddznqRj3ESfALQy_U";
+            //var secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+            //try
+            //{
+            //    IJsonSerializer serializer = new JsonNetSerializer();
+            //    IDateTimeProvider provider = new UtcDateTimeProvider();
+            //    IJwtValidator validator = new JwtValidator(serializer, provider);
+            //    IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+            //    IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            //    var json = decoder.Decode(token, secret, verify: true);
+            //    Console.WriteLine(json);
+            //}
+            //catch (TokenExpiredException)
+            //{
+            //    Console.WriteLine("Token has expired");
+            //}
+            //catch (SignatureVerificationException)
+            //{
+            //    Console.WriteLine("Token has invalid signature");
+            //}
+            long amount = 8800;
+            int number = 6;
+            long[] amounts = new long[number];
+            Random rand = new Random();
+            int i1 = rand.Next(0, number);
+            long avg = amount / number;
+            long yue = amount % number;
+            if (yue != 0)
             {
-                IJsonSerializer serializer = new JsonNetSerializer();
-                IDateTimeProvider provider = new UtcDateTimeProvider();
-                IJwtValidator validator = new JwtValidator(serializer, provider);
-                IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
-                IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder);
-                var json = decoder.Decode(token, secret, verify: true);
-                Console.WriteLine(json);
+                amounts[i1] = yue;
             }
-            catch (TokenExpiredException)
+            for (int i = 0; i < number; i++)
             {
-                Console.WriteLine("Token has expired");
+                amounts[i] = amounts[i] + avg;
             }
-            catch (SignatureVerificationException)
+            
+            for (int i = 0; i < amount*3; i++)
             {
-                Console.WriteLine("Token has invalid signature");
+                int r1 = rand.Next(0, (int)(avg / 4));
+                int ii1 = rand.Next(0, number);
+                int ii2 = rand.Next(0, number);
+                amounts[ii1] = amounts[ii1] - r1;
+                amounts[ii2] = amounts[ii2] + r1;
             }
-
+            foreach(var a in amounts)
+            {
+                Console.WriteLine(a+",");
+            }
             Console.ReadKey();
         }
     }

@@ -52,6 +52,10 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "密码不能为空" };
             }
+            if (string.IsNullOrEmpty(model.TradePassword))
+            {
+                return new ApiResult { status = 0, msg = "交易密码不能为空" };
+            }
             if (string.IsNullOrEmpty(model.RecommendMobile))
             {
                 return new ApiResult { status = 0, msg = "推荐人手机号不能为空" };
@@ -74,7 +78,7 @@ namespace IMS.Web.Controllers
                 return new ApiResult { status = 0, msg = "手机验证码错误" };
             }
             long levelId= await idNameService.GetIdByNameAsync("普通会员");
-            long id= await userService.AddAsync(model.Mobile, model.Password, levelId,model.RecommendMobile,model.NickName,model.AvatarUrl);
+            long id= await userService.AddAsync(model.Mobile, model.Password,model.TradePassword, levelId,model.RecommendMobile,model.NickName,model.AvatarUrl);
             if(id<=0)
             {
                 return new ApiResult { status = 0, msg = "注册失败" };

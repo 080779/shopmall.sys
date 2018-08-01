@@ -41,7 +41,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         [Permission("会员管理_新增会员")]
         [AdminLog("会员管理", "添加用户")]
-        public async Task<ActionResult> Add(string mobile,string recommendMobile,string password)
+        public async Task<ActionResult> Add(string mobile,string recommendMobile,string password,string tradePassword)
         {
             if(string.IsNullOrEmpty(mobile))
             {
@@ -59,8 +59,12 @@ namespace IMS.Web.Areas.Admin.Controllers
             {
                 return Json(new AjaxResult { Status = 0, Msg = "登录密码不能为空" });
             }
+            if (string.IsNullOrEmpty(tradePassword))
+            {
+                return Json(new AjaxResult { Status = 0, Msg = "交易密码不能为空" });
+            }
             long levelId= await idNameService.GetIdByNameAsync("普通会员");
-            long id= await userService.AddAsync(mobile,password,levelId,recommendMobile,null,null);
+            long id= await userService.AddAsync(mobile,password,tradePassword,levelId,recommendMobile,null,null);
             if(id<=0)
             {
                 if (id == -1)
