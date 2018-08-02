@@ -48,8 +48,8 @@
             <ul class="search_content clearfix">
                 <li>
                     <label class="l_f">选择日期</label>
-                    <input class="inline laydate-icon" id="start" style=" margin-left:10px;" v-on:focus='getstart' />至
-                    <input class="inline laydate-icon" id="end" style=" margin-left:10px;" v-on:focus='getend' />
+                    <input class="inline laydate-icon" id="start" style="margin-left:10px;" v-on:focus='getstart' />至
+                    <input class="inline laydate-icon" id="end" style="margin-left:10px;" v-on:focus='getend' />
                 </li>
                 <li>
                     <label class="l_f">订单搜索：</label>
@@ -59,7 +59,7 @@
                     </select>
                 </li>
                 <li>
-                    <input name="" v-model="searchs.keyword" type="text" class="text_add" placeholder="请输入订单信息" style=" width:150px" />
+                    <input name="" v-model="searchs.keyword" type="text" class="text_add" placeholder="请输入订单信息" style="width:150px" />
                 </li>
                 <li style="width:90px;"><button type="button" v-on:click="search" class="btn_search"><i class="icon-search"></i>查询</button></li>
             </ul>
@@ -193,20 +193,21 @@
         },
         computed: {
             indexs: function () {
+                var count = 0;
                 var left = 1;
                 var right = this.pages.all;
                 var ar = [];
                 if (this.pages.all >= 5) {
                     if (this.pages.cur > 3 && this.pages.cur < this.pages.all - 2) {
-                        left = this.pages.cur - 2
-                        right = this.pages.cur + 2
+                        left = Number(this.pages.cur) - 2;
+                        right = Number(this.pages.cur) + 2;
                     } else {
                         if (this.pages.cur <= 3) {
                             left = 1
                             right = 5
                         } else {
                             right = this.pages.all
-                            left = this.pages.all - 4
+                            left = Number(this.pages.all) - 4
                         }
                     }
                 }

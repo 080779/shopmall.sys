@@ -56,6 +56,15 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "交易密码不能为空" };
             }
+            long tradePwd;
+            if (!long.TryParse(model.TradePassword, out tradePwd))
+            {
+                return new ApiResult { status = 0, msg = "交易密码必须是六位数字" };
+            }
+            if (model.TradePassword.Length != 6)
+            {
+                return new ApiResult { status = 0, msg = "交易密码必须是六位数字" };
+            }
             if (string.IsNullOrEmpty(model.RecommendMobile))
             {
                 return new ApiResult { status = 0, msg = "推荐人手机号不能为空" };

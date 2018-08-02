@@ -1,4 +1,5 @@
 ﻿using IMS.Common;
+using IMS.DTO;
 using IMS.IService;
 using IMS.Web.App_Start.Filter;
 using IMS.Web.Areas.Admin.Models.Return;
@@ -19,6 +20,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         public IOrderService orderService { get; set; }
         public IIdNameService idNameService { get; set; }
         public IAdminService adminService { get; set; }
+        public IOrderListService orderListService { get; set; }
         private int pageSize = 10;
         //[Permission("日志管理_查看日志")]
         public ActionResult List()
@@ -36,6 +38,24 @@ namespace IMS.Web.Areas.Admin.Controllers
             model.Orders = result.Orders;
             model.PageCount = result.PageCount;
             model.AuditStatus = await idNameService.GetByTypeNameAsync("退货审核状态");
+            return Json(new AjaxResult { Status = 1, Data = model });
+        }
+
+        public ActionResult Detail(long id)
+        {
+            return View(id);
+        }
+
+        [HttpPost]
+        [AdminLog("订单管理", "查看订单管理明细")]
+        public async Task<ActionResult> GetDetail(long id)
+        {
+            OrderDTO dto = await orderService.GetModelAsync(id);
+            OrderListSearchResult result = await orderListService.GetModelListAsync(dto.Id, null, null, null, 1, 100);
+            ReturnDetailViewModel model = new ReturnDetailViewModel();
+            model.Order = dto;
+            model.OrderList = result.OrderLists;
+            model.GoodsAmount = result.OrderLists.Sum(o => o.TotalFee);
             return Json(new AjaxResult { Status = 1, Data = model });
         }
 

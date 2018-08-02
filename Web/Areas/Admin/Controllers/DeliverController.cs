@@ -19,6 +19,7 @@ namespace IMS.Web.Areas.Admin.Controllers
     {
         public IOrderService orderService { get; set; }
         public IIdNameService idNameService { get; set; }
+        public IOrderListService orderListService { get; set; }
         private int pageSize = 10;
         //[Permission("日志管理_查看日志")]
         public ActionResult List()
@@ -39,6 +40,22 @@ namespace IMS.Web.Areas.Admin.Controllers
             lists.Add(await idNameService.GetByNameAsync("已发货"));
             res.OrderStates = lists;
             return Json(new AjaxResult { Status = 1, Data = res });
+        }
+        public ActionResult Detail(long id)
+        {
+            return View(id);
+        }
+
+        [HttpPost]
+        [AdminLog("订单管理", "查看订单管理明细")]
+        public async Task<ActionResult> GetDetail(long id)
+        {
+            OrderDTO dto = await orderService.GetModelAsync(id);
+            OrderListSearchResult result = await orderListService.GetModelListAsync(dto.Id, null, null, null, 1, 100);
+            DeliverDetailViewModel model = new DeliverDetailViewModel();
+            model.Order = dto;
+            model.OrderList = result.OrderLists;
+            return Json(new AjaxResult { Status = 1, Data = model });
         }
         public async Task<ActionResult> GetModel(long id)
         {

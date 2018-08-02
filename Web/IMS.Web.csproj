@@ -355,6 +355,7 @@
     <Compile Include="Areas\Admin\Controllers\UserController.cs" />
     <Compile Include="Areas\Admin\Models\Admin\GetListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Admin\ListViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Deliver\DeliverDetailViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Deliver\DeliverListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Goods\GoodsAddModel.cs" />
     <Compile Include="Areas\Admin\Models\Goods\GoodsListViewModel.cs" />
@@ -363,6 +364,7 @@
     <Compile Include="Areas\Admin\Models\Order\OrderDetailViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Order\OrderExportExcelModel.cs" />
     <Compile Include="Areas\Admin\Models\Order\OrderListViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Return\ReturnDetailViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Return\ReturnListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Setting\SettingListViewModel.cs" />
     <Compile Include="Areas\Admin\Models\TakeCash\TakeCashListViewModel.cs" />
@@ -506,6 +508,8 @@
     <Content Include="assets\src\theme\default\font\iconfont.eot" />
     <Content Include="assets\src\theme\default\font\iconfont.ttf" />
     <Content Include="assets\src\theme\default\font\iconfont.woff" />
+    <Content Include="Areas\Admin\Views\Deliver\Detail.cshtml" />
+    <Content Include="Areas\Admin\Views\Return\Detail.cshtml" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">

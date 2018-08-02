@@ -105,7 +105,7 @@
                 <li><a v-on:click="pages.cur=1,getpage()">首页</a></li>
                 <li v-if="pages.cur>1"><a v-on:click="pages.cur--,getpage()">上一页</a></li>
                 <li v-if="pages.cur==1"><a class="banclick">上一页</a></li>
-                <li v-for="index in indexsvalue" v-bind:class="{'active':pages.cur==index}"><a v-on:click="pageclick(index)" v-html="index"></a></li>
+                <li v-for="index in indexs" v-bind:class="{'active':pages.cur==index}"><a v-on:click="pageclick(index)" v-html="index"></a></li>
                 <li v-if="pages.cur!=pages.all"><a v-on:click="pages.cur++,getpage()">下一页</a></li>
                 <li v-if="pages.cur==pages.all"><a class="banclick">下一页</a></li>
                 <li><a><input type='text' id='txtpage' style='width: 30px;height: 18px;' v-model="pages.txtpage" onkeyup="value=value.replace(/[^\d]/g,'')" /></a></li>
@@ -608,27 +608,28 @@
             }
         },
         computed: {
-            indexsvalue: function () {
-                var leftvalue = 1;
-                var rightval = this.pages.all;
+            indexs: function () {
+                var count = 0;
+                var left = 1;
+                var right = this.pages.all;
                 var ar = [];
                 if (this.pages.all >= 5) {
                     if (this.pages.cur > 3 && this.pages.cur < this.pages.all - 2) {
-                        leftvalue = this.pages.cur - 2
-                        rightval = this.pages.cur + 2
+                        left = Number(this.pages.cur) - 2;
+                        right = Number(this.pages.cur) + 2;
                     } else {
                         if (this.pages.cur <= 3) {
-                            leftvalue = 1
-                            rightval = 5
+                            left = 1
+                            right = 5
                         } else {
-                            rightval = this.pages.all
-                            leftvalue = this.pages.all - 4
+                            right = this.pages.all
+                            left = Number(this.pages.all) - 4
                         }
                     }
                 }
-                while (leftvalue <= rightval) {
-                    ar.push(leftvalue)
-                    leftvalue++
+                while (left <= right) {
+                    ar.push(left)
+                    left++
                 }
                 return ar
             }

@@ -46,7 +46,7 @@
                         <option v-for="auditState in auditStatus" v-bind:value="auditState.id" v-html="auditState.name"></option>
                     </select>
                 </li>
-                <li><label class="l_f">订单信息</label><input v-model="searchs.keyword" type="text" class="text_add" placeholder="订单信息" style=" width:150px" /></li>
+                <li><label class="l_f">订单信息</label><input v-model="searchs.keyword" type="text" class="text_add" placeholder="订单信息" style="width:150px" /></li>
                 <li style="width:90px;"><button type="button" v-on:click="search" class="btn_search"><i class="icon-search"></i>查询</button></li>
             </ul>
         </div>
@@ -89,7 +89,7 @@
                         <td>
                             <button title="审核" href="javascript:;" v-bind:disabled="order.auditStatusName=='已审核'" v-on:click="audit(order.id)" class="btn btn-xs btn-warning">审核</button>
                             <button title="退货完成" href="javascript:;" v-bind:disabled="order.orderStateName=='退货完成'" v-on:click="confirm(order.id,order.auditStatusName)" class="btn btn-xs btn-warning">退货完成</button>
-                            <button title="查看快递单" href="javascript:;" v-on:click="getCode(order.userDeliverName,order.userDeliverCode)" class="btn btn-xs btn-warning">查看快递单</button>
+                            <a title="查看退货详情" class="btn btn-xs btn-info" v-bind:href="'/admin/return/detail?id='+order.id">查看退货详情</a>
                         </td>
                     </tr>
                 </tbody>
@@ -108,15 +108,7 @@
                 <li><a v-on:click="pages.cur=pages.all,getpage()">尾页</a></li>
                 <li><a>共<i><font v-html="pages.all"></font></i>页</a></li>
             </ul>
-        </div>
-
-        <!--查看用户快递单号图层-->
-        <div class="add_menber" id="getcode" style="display:none">
-            <ul class="page-content">
-                <li><label class="label_name">快递名称：</label><span class="add_name"><label v-html="deliverName"></label></span><div class="prompt r_f"></div></li>
-                <li><label class="label_name">快递单号：</label><span class="add_name"><label v-html="deliverCode"></label></span><div class="prompt r_f"></div></li>                
-            </ul>
-        </div>       
+        </div>   
     </div>
 </body>
 </html>
@@ -125,11 +117,8 @@
         el: "#app",
         data: {
             orders: [],
-            order: "",
             auditStatus: "",
             auditStatusId: "",
-            deliverName: "",
-            deliverCode: "",
             pages: {
                 all: "", cur: 1, txtpage: ""
             },
@@ -183,18 +172,6 @@
                     });
                 });
             },
-            getCode: function (name, code) {
-                this.deliverName = name;
-                this.deliverCode = code;
-                layer.open({
-                    type: 1,
-                    title: '添加用户',
-                    maxmin: true,
-                    shadeClose: false, //点击遮罩关闭层
-                    area: ['400px', ''],
-                    content: $('#getcode')
-                });
-            },
             confirm: function (id, auditStatusName) {
                 var that = this;
                 if (auditStatusName != "已审核")
@@ -223,20 +200,21 @@
         },
         computed: {
             indexs: function () {
+                var count = 0;
                 var left = 1;
                 var right = this.pages.all;
                 var ar = [];
                 if (this.pages.all >= 5) {
                     if (this.pages.cur > 3 && this.pages.cur < this.pages.all - 2) {
-                        left = this.pages.cur - 2
-                        right = this.pages.cur + 2
+                        left = Number(this.pages.cur) - 2;
+                        right = Number(this.pages.cur) + 2;
                     } else {
                         if (this.pages.cur <= 3) {
                             left = 1
                             right = 5
                         } else {
                             right = this.pages.all
-                            left = this.pages.all - 4
+                            left = Number(this.pages.all) - 4
                         }
                     }
                 }

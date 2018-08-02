@@ -361,7 +361,7 @@ namespace IMS.Service.Service
                     entities = entities.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
                 }
                 result.PageCount = (int)Math.Ceiling((await entities.LongCountAsync()) * 1.0f / pageSize);
-                var goodsTypesResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                var goodsTypesResult = await entities.OrderByDescending(a => a.ApplyTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 result.Orders = goodsTypesResult.Select(a => ToDTO(a)).ToArray();
                 return result;
             }

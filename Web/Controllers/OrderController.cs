@@ -561,6 +561,15 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "交易密码不能为空" };
             }
+            long tradePwd;
+            if(!long.TryParse(model.TradePassword,out tradePwd))
+            {
+                return new ApiResult { status = 0, msg = "交易密码必须是六位数字" };
+            }
+            if(model.TradePassword.Length!=6)
+            {
+                return new ApiResult { status = 0, msg = "交易密码必须是六位数字" };
+            }
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             long id = await userService.CheckTradePasswordAsync(user.Id, model.TradePassword);
             if (id==-1)

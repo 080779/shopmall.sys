@@ -47,8 +47,8 @@
                 </li>
                 <li>
                     <label class="l_f">订单时间</label>
-                    <input class="inline laydate-icon" id="start" style=" margin-left:10px;" v-on:focus='getstart' />至
-                    <input class="inline laydate-icon" id="end" style=" margin-left:10px;" v-on:focus='getend' />
+                    <input class="inline laydate-icon" id="start" style="margin-left:10px;" v-on:focus='getstart' />至
+                    <input class="inline laydate-icon" id="end" style="margin-left:10px;" v-on:focus='getend' />
                 </li>
                 <li><label class="l_f">订单信息</label><input v-model="searchs.keyword" type="text" class="text_add" placeholder="订单信息" style="width:150px" /></li>
                 <li style="width:90px;"><button type="button" v-on:click="search" class="btn_search"><i class="icon-search"></i>查询</button></li>
@@ -80,9 +80,9 @@
                         <td v-html="order.receiverMobile"></td>
                         <td v-html="order.deliver"></td>
                         <td v-html="order.orderStateName"></td>
-                        <td>
-                            <button title="标记发货" href="javascript:;" v-on:click="detail(order.id)" class="btn btn-xs btn-warning">查看详情</button>
+                        <td>                            
                             <button title="标记发货" href="javascript:;" v-bind:disabled="(order.orderStateName=='已发货' || order.deliver=='无需物流' || order.deliver=='同城自取')" v-on:click="confirm(order.id,order.deliver)" class="btn btn-xs btn-warning">标记发货</button>
+                            <a class="btn btn-xs btn-info" v-bind:href="'/admin/deliver/detail?id='+order.id">查看详情</a>
                         </td>
                     </tr>
                 </tbody>
@@ -106,17 +106,19 @@
         <!--标记发货图层-->
         <div class="add_menber" id="confirm" style="display:none">
             <ul class="page-content">
-                <li><label class="label_name">订单信息</label></li>
                 <li>
-                    <label class="label_name">订单时间：</label><span class="add_name"><label v-html="order.createTime"></label></span><div class="prompt r_f"></div>
-                    <label class="label_name">订单号：</label><span class="add_name"><label v-html="order.code"></label></span><div class="prompt r_f"></div>
+                    <label class="label_name">买家账号：</label><span class="add_name"><label v-html="order.buyerMobile"></label></span><div class="prompt r_f"></div>
                 </li>
                 <li>
-                    <label class="label_name">收货人姓名：</label><span class="add_name"><label v-html="order.receiverName"></label></span><div class="prompt r_f"></div>
+                    <label class="label_name">收货人姓名：</label><span class="add_name"><label v-html="order.receiverName"></label></span><div class="prompt r_f"></div>                    
+                </li>
+                <li>
                     <label class="label_name">收货人手机号：</label><span class="add_name"><label v-html="order.receiverMobile"></label></span><div class="prompt r_f"></div>
                 </li>
                 <li>
-                    <label class="label_name">买家账号：</label><span class="add_name"><label v-html="order.buyerMobile"></label></span><div class="prompt r_f"></div>
+                    <label class="label_name">收货人地址：</label><span class="add_name"><label v-html="order.receiverAddress"></label></span><div class="prompt r_f"></div>
+                </li>
+                <li>                    
                     <label class="label_name">物流方式：</label>
                     <span class="add_name">
                         <select v-model="order.deliver">
@@ -126,34 +128,8 @@
                             <option value="同城自取">同城自取</option>
                         </select>
                     </span><div class="prompt r_f"></div>
-                </li>
-                <li>
-                    <label class="label_name">标记发货</label><span class="add_name"><input placeholder="快递名称" type="text" v-bind:disabled="order.deliver!='有快递单号'" v-model="order.deliverName" class="text_add" /></span><div class="prompt r_f"></div>
-                    <span class="add_name"><input placeholder="请输入快递单号" type="text"v-bind:disabled="order.deliver!='有快递单号'" v-model="order.deliverCode" class="text_add" /></span><div class="prompt r_f"></div>
-                </li>
-            </ul>
-        </div>
-
-        <!--查看详情图层-->
-        <div class="add_menber" id="detail" style="display:none">
-            <ul class="page-content">
-                <li><label class="label_name">订单信息</label></li>
-                <li>
-                    <label class="label_name">订单时间：</label><span class="add_name"><label v-html="order.createTime"></label></span><div class="prompt r_f"></div>
-                    <label class="label_name">订单号：</label><span class="add_name"><label v-html="order.code"></label></span><div class="prompt r_f"></div>
-                </li>
-                <li>
-                    <label class="label_name">收货人姓名：</label><span class="add_name"><label v-html="order.receiverName"></label></span><div class="prompt r_f"></div>
-                    <label class="label_name">收货人手机号：</label><span class="add_name"><label v-html="order.receiverMobile"></label></span><div class="prompt r_f"></div>
-                    <label class="label_name">收货地址：</label><span class="add_name"><label v-html="order.receiverAddress"></label></span><div class="prompt r_f"></div>
-                </li>
-                <li>
-                    <label class="label_name">买家账号：</label><span class="add_name"><label v-html="order.buyerMobile"></label></span><div class="prompt r_f"></div>
-                    <label class="label_name">物流方式：</label><span class="add_name"><label v-html="order.deliver"></label></span><div class="prompt r_f"></div>
-                </li>
-                <li>
-                    <label class="label_name">快递名称：</label><span class="add_name"><label v-html="order.deliverName"></label></span><div class="prompt r_f"></div>
-                    <label class="label_name">快递单号：</label><span class="add_name"><label v-html="order.deliverCode"></label></span><div class="prompt r_f"></div>
+                    <label class="label_name"></label><span class="add_name"><input placeholder="快递名称" type="text" v-bind:disabled="order.deliver!='有快递单号'" v-model="order.deliverName" class="text_add" /></span><div class="prompt r_f"></div>
+                    <span class="add_name"><input style="width:100px" placeholder="请输入快递单号" type="text" v-bind:disabled="order.deliver!='有快递单号'" v-model="order.deliverCode" class="text_add" /></span><div class="prompt r_f"></div>
                 </li>
             </ul>
         </div>
@@ -266,49 +242,25 @@
                         });
                     }
                 });
-            },
-            detail: function (id) {
-                var that = this;
-                that.$http.post('/admin/deliver/getmodel', { id: id }, { emulateJSON: true }).then(function (result) {
-                    if (result.data.status == 1) {
-                        this.order = result.data.data;
-                    }
-                    else if (result.data.status == 0) {
-                        layer.alert(result.data.msg, { icon: 0, title: '提示框' });
-                    }
-                    else if (result.data.status == 302) {
-                        window.location.href = result.data.data;
-                    }
-                    else if (result.data.status == 401) {
-                        layer.alert(result.data.msg, { icon: 6, title: '提示框' });
-                    }
-                });
-                layer.open({
-                    type: 1,
-                    title: '收发货详情',
-                    maxmin: true,
-                    shadeClose: false, //点击遮罩关闭层
-                    area: ['800px', '400px'],
-                    content: $('#detail')
-                });
             }
         },
         computed: {
             indexs: function () {
+                var count = 0;
                 var left = 1;
                 var right = this.pages.all;
                 var ar = [];
                 if (this.pages.all >= 5) {
                     if (this.pages.cur > 3 && this.pages.cur < this.pages.all - 2) {
-                        left = this.pages.cur - 2
-                        right = this.pages.cur + 2
+                        left = Number(this.pages.cur) - 2;
+                        right = Number(this.pages.cur) + 2;
                     } else {
                         if (this.pages.cur <= 3) {
                             left = 1
                             right = 5
                         } else {
                             right = this.pages.all
-                            left = this.pages.all - 4
+                            left = Number(this.pages.all) - 4
                         }
                     }
                 }

@@ -167,11 +167,24 @@ namespace IMS.Web.Controllers
         {
             if (string.IsNullOrEmpty(model.Password))
             {
-                return new ApiResult { status = 0, msg = "原密码不能为空" };
+                return new ApiResult { status = 0, msg = "原登录密码不能为空" };
             }
             if (string.IsNullOrEmpty(model.Password))
             {
-                return new ApiResult { status = 0, msg = "新密码不能为空" };
+                return new ApiResult { status = 0, msg = "新登录密码不能为空" };
+            }
+            if (string.IsNullOrEmpty(model.NewTradePassword))
+            {
+                return new ApiResult { status = 0, msg = "新交易密码不能为空" };
+            }
+            long tradePwd;
+            if (!long.TryParse(model.NewTradePassword, out tradePwd))
+            {
+                return new ApiResult { status = 0, msg = "新交易密码必须是六位数字" };
+            }
+            if (model.NewTradePassword.Length != 6)
+            {
+                return new ApiResult { status = 0, msg = "新交易密码必须是六位数字" };
             }
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             long id = await userService.ResetPasswordAsync(user.Id, model.Password,model.NewTradePassword, model.NewPassword);

@@ -46,9 +46,9 @@ namespace IMS.Web.Areas.Admin.Controllers
             OrderDTO dto= await orderService.GetModelAsync(id);
             OrderListSearchResult result = await orderListService.GetModelListAsync(dto.Id, null, null, null, 1, 100);
             OrderDetailViewModel model = new OrderDetailViewModel();
-            model.BasicInfo = new BasicInfo { Amount=dto.Amount,Code=dto.Code,CreateTime=dto.CreateTime,OrderStateName=dto.OrderStateName,PayTypeName=dto.PayTypeName,Deliver=dto.Deliver };
-            model.BuyerInfo = new BuyerInfo { Address = dto.ReceiverAddress, BuyerMobile = dto.BuyerMobile, Mobile = dto.ReceiverMobile, Name = dto.ReceiverName };
-            model.OrderGoodsInfos = result.OrderLists.Select(g=>new OrderGoodsInfo { Code=g.GoodsCode,Id=g.GoodsId,Name=g.GoodsName,Number=g.Number,RealityPrice=g.Price,Thumb=g.ImgUrl }).ToList();
+            model.Order = dto;
+            model.OrderList = result.OrderLists;
+            model.GoodsAmount = result.OrderLists.Sum(o => o.TotalFee);
             return Json(new AjaxResult { Status = 1, Data = model });
         }
         [AdminLog("订单管理", "导出订单管理列表")]

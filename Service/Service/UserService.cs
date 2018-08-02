@@ -731,8 +731,11 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                UserTeamSearchResult result = new UserTeamSearchResult();
                 RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.UserId == id);
+                if(recommend==null)
+                {
+                    return 0;
+                }
                 var recommends = dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false);
 
                 if (recommend.RecommendMobile == "superhero" && recommend.RecommendGenera == 1)
@@ -746,6 +749,10 @@ namespace IMS.Service.Service
                     recommends = recommends.Where(a => a.RecommendId == id ||
                  (a.RecommendPath.Contains("-" + id.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 2) ||
                  (a.RecommendPath.Contains("-" + id.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 3));
+                }
+                if(recommends.LongCount()<=0)
+                {
+                    return 0;
                 }
                 return recommends.Sum(r => r.User.BuyAmount);
             }

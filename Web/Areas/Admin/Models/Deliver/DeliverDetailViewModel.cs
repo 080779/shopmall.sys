@@ -5,12 +5,11 @@ using System.Linq;
 using System.Web;
 using static IMS.Common.Pagination;
 
-namespace IMS.Web.Areas.Admin.Models.Order
+namespace IMS.Web.Areas.Admin.Models.Deliver
 {
-    public class OrderDetailViewModel
+    public class DeliverDetailViewModel
     {
         public OrderDTO Order { get; set; }
         public OrderListDTO[] OrderList { get; set; }
-        public decimal GoodsAmount { get; set; }
-    }    
+    }
 }
