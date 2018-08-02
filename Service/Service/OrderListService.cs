@@ -30,7 +30,7 @@ namespace IMS.Service.Service
             dto.GoodsCode = entity.Goods.Code;
             dto.IsReturn = entity.IsReturn;
             dto.Inventory = entity.Goods.Inventory;
-            dto.Discount = entity.Order.UpAmount.Value;
+            dto.Discount = entity.Order.UpAmount==null?1: entity.Order.UpAmount.Value;
             return dto;
         }
         public async Task<long> AddAsync(long orderId, long goodsId, long number)

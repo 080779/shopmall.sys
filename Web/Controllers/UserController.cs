@@ -320,5 +320,51 @@ namespace IMS.Web.Controllers
             }
             return new ApiResult { status = 1, msg = "成功"};
         }
+
+        [HttpPost]
+        public async Task<ApiResult> ResetTradePwd(UserResetTradePwdModel model)
+        {
+            if (string.IsNullOrEmpty(model.Mobile))
+            {
+                return new ApiResult { status = 0, msg = "手机号不能为空" };
+            }
+            if (!Regex.IsMatch(model.Mobile, @"^1\d{10}$"))
+            {
+                return new ApiResult { status = 0, msg = "注册手机号格式不正确" };
+            }
+            long id = await userService.UserCheck(model.Mobile);
+            if (id <= 0)
+            {
+                return new ApiResult { status = 0, msg = "手机号不存在" };
+            }
+            User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
+            if(id!=user.Id)
+            {
+                return new ApiResult { status = 0, msg = "手机号不是当前会员账号" };
+            }
+            if (string.IsNullOrEmpty(model.Password))
+            {
+                return new ApiResult { status = 0, msg = "新交易密码不能为空" };
+            }
+            if (string.IsNullOrEmpty(model.Code))
+            {
+                return new ApiResult { status = 0, msg = "短信验证码不能为空" };
+            }
+            object obj = CacheHelper.GetCache("App_User_SendMsg" + model.Mobile);
+            if (obj == null)
+            {
+                return new ApiResult { status = 0, msg = "手机号不一致" };
+            }
+            if (obj.ToString() != model.Code)
+            {
+                return new ApiResult { status = 0, msg = "手机验证码错误" };
+            }
+            long res = await userService.ResetTradePasswordAsync(model.Mobile, model.Password);
+            if (res == -1)
+            {
+                return new ApiResult { status = 0, msg = "会员不存在" };
+            }
+            return new ApiResult { status = 1, msg = "新交易密码修改成功" };
+        }
     }    
 }

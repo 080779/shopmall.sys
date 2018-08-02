@@ -453,6 +453,7 @@
     <Compile Include="Models\UserCenter\UserCenterResetPwdModel.cs" />
     <Compile Include="Models\UserTeam\UserTeamListApiModel.cs" />
     <Compile Include="Models\UserTeam\UserTeamListModel.cs" />
+    <Compile Include="Models\User\UserResetTradePwdModel.cs" />
     <Compile Include="Models\User\UserLoginModel1.cs" />
     <Compile Include="Models\User\UserForgetPwdModel.cs" />
     <Compile Include="Models\User\WeChatErrorResultModel.cs" />

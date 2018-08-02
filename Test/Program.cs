@@ -54,34 +54,40 @@ namespace Test
             //{
             //    Console.WriteLine("Token has invalid signature");
             //}
-            long amount = 8800;
-            int number = 6;
-            long[] amounts = new long[number];
-            Random rand = new Random();
-            int i1 = rand.Next(0, number);
-            long avg = amount / number;
-            long yue = amount % number;
-            if (yue != 0)
-            {
-                amounts[i1] = yue;
-            }
-            for (int i = 0; i < number; i++)
-            {
-                amounts[i] = amounts[i] + avg;
-            }
-            
-            for (int i = 0; i < amount*3; i++)
-            {
-                int r1 = rand.Next(0, (int)(avg / 4));
-                int ii1 = rand.Next(0, number);
-                int ii2 = rand.Next(0, number);
-                amounts[ii1] = amounts[ii1] - r1;
-                amounts[ii2] = amounts[ii2] + r1;
-            }
-            foreach(var a in amounts)
-            {
-                Console.WriteLine(a+",");
-            }
+
+
+            //long amount = 8800;
+            //int number = 6;
+            //long[] amounts = new long[number];
+            //Random rand = new Random();
+            //int i1 = rand.Next(0, number);
+            //long avg = amount / number;
+            //long yue = amount % number;
+            //if (yue != 0)
+            //{
+            //    amounts[i1] = yue;
+            //}
+            //for (int i = 0; i < number; i++)
+            //{
+            //    amounts[i] = amounts[i] + avg;
+            //}
+
+            //for (int i = 0; i < amount*3; i++)
+            //{
+            //    int r1 = rand.Next(0, (int)(avg / 4));
+            //    int ii1 = rand.Next(0, number);
+            //    int ii2 = rand.Next(0, number);
+            //    amounts[ii1] = amounts[ii1] - r1;
+            //    amounts[ii2] = amounts[ii2] + r1;
+            //}
+            //foreach(var a in amounts)
+            //{
+            //    Console.WriteLine(a+",");
+            //}
+
+            decimal a = (decimal)46.28841;
+            string result = a.ToString("#0.00");
+            Console.WriteLine(result);
             Console.ReadKey();
         }
     }

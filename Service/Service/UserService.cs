@@ -217,7 +217,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task<long> ResetPasswordAsync(long id, string password, string newPassword,string newTradePassword)
+        public async Task<long> ResetPasswordAsync(long id, string password, string newPassword)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -231,7 +231,6 @@ namespace IMS.Service.Service
                     return -2;
                 }
                 entity.Password = CommonHelper.GetMD5(newPassword + entity.Salt);
-                entity.TradePassword = CommonHelper.GetMD5(newTradePassword + entity.Salt);
                 await dbc.SaveChangesAsync();
                 return entity.Id;
             }
@@ -266,6 +265,22 @@ namespace IMS.Service.Service
                 return entity.Id;
             }
         }
+
+        public async Task<long> ResetTradePasswordAsync(string mobile, string password)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserEntity entity = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Mobile == mobile);
+                if (entity == null)
+                {
+                    return -1;
+                }
+                entity.TradePassword = CommonHelper.GetMD5(password + entity.Salt);
+                await dbc.SaveChangesAsync();
+                return entity.Id;
+            }
+        }
+    
 
         public async Task<long> UserCheck(string mobile)
         {
@@ -474,7 +489,7 @@ namespace IMS.Service.Service
                 user.BuyAmount = user.BuyAmount + order.Amount;
 
                 order.PayTime = DateTime.Now;
-                order.PayTypeId= (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "微信")).Id;
+                order.PayTypeId= (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "余额")).Id;
                 order.OrderStateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "待发货")).Id;
                 if (order.Deliver== "无需物流")
                 {
@@ -672,7 +687,7 @@ namespace IMS.Service.Service
                 user.BuyAmount = user.BuyAmount + order.Amount;
 
                 order.PayTime = DateTime.Now;
-                order.PayTypeId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "余额").Id;
+                order.PayTypeId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "微信").Id;
                 order.OrderStateId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "待发货").Id;
                 if (order.Deliver == "无需物流")
                 {

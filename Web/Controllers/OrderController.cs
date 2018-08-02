@@ -97,7 +97,7 @@ namespace IMS.Web.Controllers
                 tealityPrice = o.RealityPrice,
                 totalFee = o.TotalFee,
                 inventory = o.Inventory,
-                discountFee=o.TotalFee*o.Discount
+                discountFee=decimal.Round(o.TotalFee * o.Discount, 2)
             });
             return new ApiResult { status = 1, data = result };
         }
@@ -295,7 +295,6 @@ namespace IMS.Web.Controllers
         [HttpPost]
         public async Task<ApiResult> ReApplys(OrderReApplysModel model)
         {
-            long orderStateId = 0;
             var order = await orderService.GetModelAsync(model.OrderId);
             if(order==null)
             {
@@ -318,8 +317,6 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "用户账户余额不足" };
             }
-            orderStateId = await idNameService.GetIdByNameAsync("待发货");
-            await orderService.UpdateAsync(model.OrderId, null, null, orderStateId);
 
             return new ApiResult { status = 1, msg = "支付成功" };
         }
