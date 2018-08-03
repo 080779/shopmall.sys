@@ -97,7 +97,7 @@ namespace IMS.Web.Controllers
                 tealityPrice = o.RealityPrice,
                 totalFee = o.TotalFee,
                 inventory = o.Inventory,
-                discountFee=decimal.Round(o.TotalFee * o.Discount, 2)
+                discountFee = Math.Truncate(o.DiscountFee * 100) / 100
             });
             return new ApiResult { status = 1, data = result };
         }
@@ -262,7 +262,7 @@ namespace IMS.Web.Controllers
             long id = await orderService.AddAsync(model.DeliveryTypeId,0, user.Id, model.AddressId, model.PayTypeId, orderStateId, dtos.OrderApplies);
             if (id <= 0)
             {
-                return new ApiResult { status = 0, msg = "生成订单失败" };
+                return new ApiResult { status = 0, msg = "生成订单失败"};
             }
             await goodsCarService.DeleteListAsync(user.Id);
             await orderApplyService.DeleteListAsync(user.Id);
@@ -274,22 +274,22 @@ namespace IMS.Web.Controllers
                 long payResId = await userService.BalancePayAsync(id);
                 if (payResId == -1)
                 {
-                    return new ApiResult { status = 0, msg = "订单不存在" };
+                    return new ApiResult { status = 0, msg = "订单不存在"};
                 }
                 if (payResId == -2)
                 {
-                    return new ApiResult { status = 0, msg = "用户不存在" };
+                    return new ApiResult { status = 0, msg = "用户不存在", data = id };
                 }
                 if (payResId == -3)
                 {
-                    return new ApiResult { status = 0, msg = "商品库存不足" };
+                    return new ApiResult { status = 0, msg = "商品库存不足", data = id };
                 }
                 if (payResId == -4)
                 {
-                    return new ApiResult { status = 0, msg = "用户账户余额不足" };
+                    return new ApiResult { status = 0, msg = "用户账户余额不足", data = id };
                 }
             }            
-            return new ApiResult { status = 1, msg = "支付成功" };
+            return new ApiResult { status = 1, msg = "支付成功",data=id };
         }
 
         [HttpPost]
@@ -307,18 +307,18 @@ namespace IMS.Web.Controllers
             }
             if (payResId == -2)
             {
-                return new ApiResult { status = 0, msg = "用户不存在" };
+                return new ApiResult { status = 0, msg = "用户不存在", data = order.Id };
             }
             if (payResId == -3)
             {
-                return new ApiResult { status = 0, msg = "商品库存不足" };
+                return new ApiResult { status = 0, msg = "商品库存不足", data = order.Id };
             }
             if (payResId == -4)
             {
-                return new ApiResult { status = 0, msg = "用户账户余额不足" };
+                return new ApiResult { status = 0, msg = "用户账户余额不足", data = order.Id };
             }
 
-            return new ApiResult { status = 1, msg = "支付成功" };
+            return new ApiResult { status = 1, msg = "支付成功", data = order.Id };
         }
         [HttpPost]
         public async Task<ApiResult> State()
@@ -417,6 +417,7 @@ namespace IMS.Web.Controllers
             getWeChat1.signType = getWeChat.signType;
             getWeChat1.timeStamp = getWeChat.timeStamp;
             getWeChat1.paySign = paySign;
+            getWeChat1.orderId = id;
 
             return new ApiResult { status = 1, data = getWeChat1 };
         }
@@ -439,11 +440,11 @@ namespace IMS.Web.Controllers
             }
             if (id == -2)
             {
-                return new ApiResult { status = 0, msg = "会员不存在" };
+                return new ApiResult { status = 0, msg = "会员不存在", data = order.Id };
             }
             if (id == -3)
             {
-                return new ApiResult { status = 0, msg = "商品库存不足" };
+                return new ApiResult { status = 0, msg = "商品库存不足", data = order.Id };
             }
 
             WeChatPay weChatPay = new WeChatPay();
@@ -486,6 +487,7 @@ namespace IMS.Web.Controllers
             getWeChat1.signType = getWeChat.signType;
             getWeChat1.timeStamp = getWeChat.timeStamp;
             getWeChat1.paySign = paySign;
+            getWeChat1.orderId = order.Id;
 
             return new ApiResult { status = 1, data = getWeChat1 };
         }
@@ -604,6 +606,7 @@ namespace IMS.Web.Controllers
             public string package { get; set; }
             public string signType { get; set; }
             public string paySign { get; set; }
+            public long orderId { get; set; }
         }
     }
 }

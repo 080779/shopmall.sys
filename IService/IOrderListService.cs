@@ -18,6 +18,7 @@ namespace IMS.IService
         Task<bool> DeleteAsync(long id);
         OrderListDTO[] GetModelList(long? orderId);
         Task<OrderListSearchResult> GetModelListAsync(long? orderId,string keyword, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
+        Task<bool> SetDiscountAmountAsync();//添加字段，填充值
     }
     public class OrderListSearchResult
     {

@@ -773,6 +773,37 @@ namespace IMS.Service.Service
             }
         }
 
+        public decimal GetTeamBuyAmount(long id)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                RecommendEntity recommend = dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false).SingleOrDefault(r => r.UserId == id);
+                if (recommend == null)
+                {
+                    return 0;
+                }
+                var recommends = dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false);
+
+                if (recommend.RecommendMobile == "superhero" && recommend.RecommendGenera == 1)
+                {
+                    recommends = recommends.Where(a => a.RecommendId == id ||
+                 (a.RecommendPath.Contains(id.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 2) ||
+                 (a.RecommendPath.Contains(id.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 3));
+                }
+                else
+                {
+                    recommends = recommends.Where(a => a.RecommendId == id ||
+                 (a.RecommendPath.Contains("-" + id.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 2) ||
+                 (a.RecommendPath.Contains("-" + id.ToString() + "-") && a.RecommendGenera == recommend.RecommendGenera + 3));
+                }
+                if (recommends.LongCount() <= 0)
+                {
+                    return 0;
+                }
+                return recommends.Sum(r => r.User.BuyAmount);
+            }
+        }
+
         public async Task<UserDTO> GetModelAsync(long id)
         {
             using (MyDbContext dbc = new MyDbContext())

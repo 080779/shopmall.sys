@@ -15,6 +15,7 @@ namespace IMS.Web.Controllers
     {
         public INoticeService noticeService { get; set; }
         public IOrderService orderService { get; set; }
+        public IOrderListService orderListService { get; set; }
         [HttpPost]
         public async Task<ApiResult> List()
         {
@@ -22,6 +23,7 @@ namespace IMS.Web.Controllers
             List<NoticeListApiModel> model;
             model = result.Notices.Where(n=>n.IsEnabled==true).Select(n => new NoticeListApiModel { id = n.Id, content = n.Content, code = n.Code }).ToList();
             await orderService.AutoConfirm();
+            //await orderListService.SetDiscountAmountAsync();
             return new ApiResult { status = 1, data = model };
         }
         public async Task<ApiResult> Detail(NoticeDetailModel model)

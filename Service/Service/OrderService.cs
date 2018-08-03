@@ -124,6 +124,69 @@ namespace IMS.Service.Service
                         {
                             entity.Deliver = "同城自取";
                         }
+
+                        UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == buyerId);
+                        if (user == null)
+                        {
+                            scope.Rollback();
+                            return -2;
+                        }
+                        //decimal up1 = 0;
+                        //decimal up2 = 0;
+                        //decimal up3 = 0;
+                        //SettingEntity upSetting1 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员→黄金会员");
+                        //SettingEntity upSetting2 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "普普通会员→→铂金会员");
+                        //SettingEntity upSetting3 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "黄金会员→铂金会员");
+                        //if (upSetting1 != null)
+                        //{
+                        //    decimal.TryParse(upSetting1.Parm, out up1);
+                        //}
+                        //if (upSetting2 != null)
+                        //{
+                        //    decimal.TryParse(upSetting2.Parm, out up2);
+                        //}
+                        //if (upSetting3 != null)
+                        //{
+                        //    decimal.TryParse(upSetting3.Parm, out up3);
+                        //}
+                        
+                        decimal discount1 = 1;
+                        decimal discount2 = 1;
+                        decimal discount3 = 1;
+
+                        SettingEntity discountSetting1 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员优惠");
+                        SettingEntity discountSetting2 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "黄金会员优惠");
+                        SettingEntity discountSetting3 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "铂金会员优惠");
+
+                        if (discountSetting1 != null)
+                        {
+                            decimal.TryParse(discountSetting1.Parm, out discount1);
+                        }
+                        if (discountSetting2 != null)
+                        {
+                            decimal.TryParse(discountSetting2.Parm, out discount2);
+                        }
+                        if (discountSetting3 != null)
+                        {
+                            decimal.TryParse(discountSetting3.Parm, out discount3);
+                        }
+
+                        if (user.Level.Name == "普通会员")
+                        {
+                            //entity.DiscountAmount = entity.Amount * ((discount1 * 10) / 100);
+                            entity.UpAmount = ((discount1 * 10) / 100);
+                        }
+                        else if (user.Level.Name == "黄金会员")
+                        {
+                            //entity.DiscountAmount = entity.Amount * ((discount2 * 10) / 100);
+                            entity.UpAmount = ((discount2 * 10) / 100);
+                        }
+                        else if (user.Level.Name == "铂金会员")
+                        {
+                            //entity.DiscountAmount = entity.Amount * ((discount3 * 10) / 100);
+                            entity.UpAmount = ((discount3 * 10) / 100);
+                        }
+
                         dbc.Orders.Add(entity);
                         await dbc.SaveChangesAsync();
 
@@ -143,70 +206,10 @@ namespace IMS.Service.Service
                             listEntity.ImgUrl = orderApply.ImgUrl;
                             listEntity.TotalFee = listEntity.Price * listEntity.Number;
                             entity.Amount = entity.Amount + listEntity.TotalFee;
+                            listEntity.DiscountFee = listEntity.TotalFee * entity.UpAmount.Value;
                             dbc.OrderLists.Add(listEntity);
                         }
-                        UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == buyerId);
-                        if(user==null)
-                        {
-                            scope.Rollback();
-                            return -2;
-                        }
-                        decimal up1 = 0;
-                        decimal up2 = 0;
-                        decimal up3 = 0;
-                        SettingEntity upSetting1 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员→黄金会员");
-                        SettingEntity upSetting2 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "普普通会员→→铂金会员");
-                        SettingEntity upSetting3 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "黄金会员→铂金会员");
-                        if (upSetting1!=null)
-                        {
-                            decimal.TryParse(upSetting1.Parm, out up1);
-                        }
-                        if (upSetting2 != null)
-                        {
-                            decimal.TryParse(upSetting2.Parm, out up2);
-                        }
-                        if (upSetting3 != null)
-                        {
-                            decimal.TryParse(upSetting3.Parm, out up3);
-                        }
-
-
-                        decimal discount1 = 1;
-                        decimal discount2 = 1;
-                        decimal discount3 = 1;
-
-                        SettingEntity discountSetting1 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员优惠");
-                        SettingEntity discountSetting2 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "黄金会员优惠");
-                        SettingEntity discountSetting3 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "铂金会员优惠");
-
-                        if (discountSetting1 != null)
-                        {
-                            decimal.TryParse(discountSetting1.Parm, out discount1);
-                        }
-                        if (discountSetting2 != null)
-                        {
-                            decimal.TryParse(discountSetting2.Parm, out discount2);
-                        }
-                        if (discountSetting3 != null)
-                        {
-                            decimal.TryParse(discountSetting3.Parm,out discount3);
-                        }
-
-                        if (user.Level.Name=="普通会员")
-                        {
-                            entity.DiscountAmount = entity.Amount * ((discount1 * 10) / 100);
-                            entity.UpAmount = ((discount1 * 10) / 100);
-                        }
-                        else if(user.Level.Name=="黄金会员")
-                        {
-                            entity.DiscountAmount = entity.Amount * ((discount2 * 10) / 100);
-                            entity.UpAmount = ((discount2 * 10) / 100);
-                        }
-                        else if (user.Level.Name == "铂金会员")
-                        {
-                            entity.DiscountAmount = entity.Amount * ((discount3 * 10) / 100);
-                            entity.UpAmount = ((discount3 * 10) / 100);
-                        }
+                        entity.DiscountAmount = entity.Amount * entity.UpAmount;
                         entity.Amount = entity.DiscountAmount.Value + entity.PostFee;
                         await dbc.SaveChangesAsync();
                         scope.Commit();

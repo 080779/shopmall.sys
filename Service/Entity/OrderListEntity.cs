@@ -20,6 +20,7 @@ namespace IMS.Service.Entity
         public long Number { get; set; }
         public decimal Price { get; set; }
         public decimal TotalFee { get; set; }
+        public decimal DiscountFee { get; set; } = 0;
         public string ImgUrl { get; set; }
         public bool IsReturn { get; set; } = false;
     }

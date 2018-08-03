@@ -60,6 +60,7 @@ namespace IMS.IService
         long WeChatPay(string code);
         Task<CalcAmountResult> CalcCount();
         Task<decimal> GetTeamBuyAmountAsync(long id);
+        decimal GetTeamBuyAmount(long id);
         /// <summary>
         /// 根据id获得用户模型
         /// </summary>

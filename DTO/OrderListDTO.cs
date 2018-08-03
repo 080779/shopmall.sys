@@ -21,5 +21,6 @@ namespace IMS.DTO
         public bool IsReturn { get; set; }
         public long Inventory { get; set; }
         public decimal Discount { get; set; }
+        public decimal DiscountFee { get; set; }
     }
 }

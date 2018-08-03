@@ -20,7 +20,7 @@ namespace IMS.Service.Entity
         public virtual AddressEntity Address { get; set; }
         public decimal Amount { get; set; } = 0;
         public decimal? DiscountAmount { get; set; } = 0;
-        public decimal? UpAmount { get; set; } = 0;//优惠比例
+        public decimal? UpAmount { get; set; } = 1;//优惠比例
         public long PayTypeId { get; set; }
         public virtual IdNameEntity PayType { get; set; }//支付方式
         public long OrderStateId { get; set; }

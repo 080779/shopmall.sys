@@ -31,6 +31,7 @@ namespace IMS.Service.Service
             dto.IsReturn = entity.IsReturn;
             dto.Inventory = entity.Goods.Inventory;
             dto.Discount = entity.Order.UpAmount==null?1: entity.Order.UpAmount.Value;
+            dto.DiscountFee = dto.TotalFee * dto.Discount;
             return dto;
         }
         public async Task<long> AddAsync(long orderId, long goodsId, long number)
@@ -151,6 +152,22 @@ namespace IMS.Service.Service
                 var orderListResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 result.OrderLists = orderListResult.Select(a => ToDTO(a)).ToArray();
                 return result;
+            }
+        }
+
+        public async Task<bool> SetDiscountAmountAsync()
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                var lists = await dbc.GetAll<OrderListEntity>().ToListAsync(); ;
+                foreach(var list in lists)
+                {
+                    OrderEntity order = await dbc.GetAll<OrderEntity>().SingleOrDefaultAsync(o=>o.Id==list.OrderId);
+                    decimal a = order == null ? 1 : order.UpAmount.Value;
+                    list.DiscountFee = list.TotalFee * a;
+                }
+                await dbc.SaveChangesAsync();
+                return true;
             }
         }
 

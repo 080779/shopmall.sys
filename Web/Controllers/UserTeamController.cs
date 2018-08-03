@@ -36,7 +36,7 @@ namespace IMS.Web.Controllers
                 status = (u.IsEnabled == true ? "已启用" : "已冻结"),
                 bonusAmount = u.BonusAmount,
                 amount = u.Amount,
-                buyAmount = u.BuyAmount,
+                buyAmount = u.BuyAmount + (userService.GetTeamBuyAmount(u.Id)),
                 recommender = u.Recommender,
                 headPic = (!string.IsNullOrEmpty(u.HeadPic) && u.HeadPic.Contains("https://")) ? u.HeadPic : parm + u.HeadPic
             }).ToList();
