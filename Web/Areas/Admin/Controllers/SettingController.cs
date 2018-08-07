@@ -36,7 +36,11 @@ namespace IMS.Web.Areas.Admin.Controllers
             var about = await settingService.GetModelByNameAsync("关于我们");
             model.About = new SettingParm { Id = about.Id, Parm = about.Parm };
             var deduct= await settingService.GetModelByNameAsync("退货扣除比例");
-            model.Deduct = new SettingParm { Id = deduct.Id, Parm = deduct.Parm };
+            model.Deduct = new SettingParm { Id = deduct.Id, Parm = deduct.Parm };  
+            var auto = await settingService.GetModelByNameAsync("自动确认收货时间");
+            model.Auto = new SettingParm { Id = auto.Id, Parm = auto.Parm };
+            var unReturn = await settingService.GetModelByNameAsync("不能退货时间");
+            model.UnReturn = new SettingParm { Id = unReturn.Id, Parm = unReturn.Parm };
             return Json(new AjaxResult { Status = 1, Data = model });
         }
         [HttpPost]

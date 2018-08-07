@@ -12,6 +12,7 @@ namespace IMS.Web.Models.UserCenter
         public string nickName { get; set; }
         public string headPic { get; set; }
         public decimal amount { get; set; }
+        public decimal frozenAmount { get; set; }
         public decimal buyAmount { get; set; }
         public decimal bonusAmount { get; set; }
         public long levelId { get; set; }

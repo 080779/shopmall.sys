@@ -29,6 +29,8 @@ namespace IMS.Service.Service
             dto.Mobile = entity.User.Mobile;
             dto.NickName = entity.User.NickName;
             dto.OrderCode = entity.OrderCode;
+            dto.IsEnabled = entity.IsEnabled;
+            dto.LevelId = entity.LevelId;
             return dto;
         }
 
@@ -37,7 +39,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 JournalSearchResult result = new JournalSearchResult();
-                var entities = dbc.GetAll<JournalEntity>();
+                var entities = dbc.GetAll<JournalEntity>().Where(j=>j.IsEnabled==true);
                 if (userId != null)
                 {
                     entities = entities.Where(a => a.UserId == userId);

@@ -18,5 +18,7 @@ namespace IMS.Service.Entity
         public virtual UserEntity User { get; set; }
         public long JournalTypeId { get; set; }
         public virtual IdNameEntity JournalType { get; set; }
+        public long LevelId { get; set; } = 0;
+        public bool IsEnabled { get; set; } = true;
     }
 }

@@ -16,5 +16,7 @@ namespace IMS.Web.Areas.Admin.Models.Setting
         public SettingParm Logo { get; set; }
         public SettingParm About { get; set; }
         public SettingParm Deduct { get; set; }
+        public SettingParm Auto { get; set; }
+        public SettingParm UnReturn { get; set; }
     }
 }

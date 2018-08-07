@@ -19,5 +19,7 @@ namespace IMS.DTO
         public string Mobile { get; set; }
         public string NickName { get; set; }
         public string OrderCode { get; set; }
+        public bool IsEnabled { get; set; }
+        public long LevelId { get; set; }
     }
 }

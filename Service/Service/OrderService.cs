@@ -452,6 +452,21 @@ namespace IMS.Service.Service
                 entity.DeliverName = deliverName;
                 entity.DeliverCode = deliverCode;               
                 entity.ConsignTime = DateTime.Now;
+                UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == entity.BuyerId);                
+                if(user==null)
+                {
+                    return false;
+                }
+                JournalEntity journal = await dbc.GetAll<JournalEntity>().SingleOrDefaultAsync(j => j.UserId == user.Id && j.OrderCode == entity.Code && j.JournalType.Name == "购物");
+                if(journal==null)
+                {
+                    return false;
+                }
+                if(journal.LevelId>user.LevelId)
+                {
+                    user.LevelId = journal.LevelId;
+                }
+
                 await dbc.SaveChangesAsync();
                 return true;
             }
@@ -470,6 +485,62 @@ namespace IMS.Service.Service
                 order.OrderStateId = orderStateId;
                 await dbc.SaveChangesAsync();
                 return true;
+            }
+        }
+
+        public async Task<long> ApplyReturnOrderAsync(long orderId)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                OrderEntity order = await dbc.GetAll<OrderEntity>().SingleOrDefaultAsync(o => o.Id == orderId);
+                if (order == null)
+                {
+                    return -1;
+                }
+                if(order.OrderState.Name!="待发货")
+                {
+                    return -2;
+                }
+                order.OrderStateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "退单审核")).Id;
+                await dbc.SaveChangesAsync();
+                return 1;
+            }
+        }
+
+        public async Task<long> ReturnOrderAsync(long orderId)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                OrderEntity order = await dbc.GetAll<OrderEntity>().SingleOrDefaultAsync(o => o.Id == orderId);
+                if (order == null)
+                {
+                    return -1;
+                }
+                UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == order.BuyerId);
+                if(user==null)
+                {
+                    return -2;
+                }
+
+                JournalEntity journal1 = await dbc.GetAll<JournalEntity>().SingleOrDefaultAsync(j => j.UserId == user.Id && j.OrderCode == order.Code && j.JournalType.Name== "购物");
+                if(journal1==null)
+                {
+                    return -3;
+                }
+                user.Amount = user.Amount + journal1.OutAmount.Value;
+                user.BuyAmount = user.BuyAmount - journal1.OutAmount.Value;
+
+                //添加流水记录
+                JournalEntity journal = new JournalEntity();
+                journal.OrderCode = order.Code;
+                journal.UserId = user.Id;
+                journal.InAmount = journal1.OutAmount.Value;
+                journal.Remark = "退单退款";
+                journal.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "退单退款")).Id;
+                journal.BalanceAmount = user.Amount;
+                dbc.Journals.Add(journal);
+                await dbc.SaveChangesAsync();
+                return 1;
             }
         }
 

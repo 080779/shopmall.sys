@@ -16,6 +16,7 @@ namespace IMS.Service.Entity
         public string NickName { get; set; }
         public string HeadPic { get; set; }
         public decimal Amount { get; set; } = 0;//账户金额
+        public decimal FrozenAmount { get; set; } = 0;
         public decimal BonusAmount { get; set; } = 0;//累计佣金
         /// <summary>
         /// 消费金额

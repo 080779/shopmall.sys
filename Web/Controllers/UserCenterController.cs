@@ -32,6 +32,7 @@ namespace IMS.Web.Controllers
             UserDTO result = await userService.GetModelAsync(user.Id);
             UserCenterInfoApiModel model = new UserCenterInfoApiModel();
             model.amount = result.Amount;
+            model.frozenAmount = result.FrozenAmount;
             model.bonusAmount = result.BonusAmount;
             model.buyAmount = result.BuyAmount + (await userService.GetTeamBuyAmountAsync(user.Id));
             model.createTime = result.CreateTime.ToString("yyyy-MM-dd HH:mm:ss");

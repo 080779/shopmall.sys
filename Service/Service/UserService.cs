@@ -38,6 +38,7 @@ namespace IMS.Service.Service
             dto.Recommender = entity.Recommend.RecommendMobile;
             dto.HeadPic = entity.HeadPic;
             dto.ShareCode = entity.ShareCode;
+            dto.FrozenAmount = entity.FrozenAmount;
             return dto;
         }
 
@@ -386,16 +387,17 @@ namespace IMS.Service.Service
                             one = bonusRatio.PlatinumOne / 100;
                         }
 
-                        oneer.Amount = oneer.Amount + orderlist.TotalFee * one;
-                        oneer.BonusAmount = oneer.BonusAmount + orderlist.TotalFee * one;
+                        oneer.FrozenAmount = oneer.FrozenAmount + orderlist.TotalFee * one;
+                        //oneer.BonusAmount = oneer.BonusAmount + orderlist.TotalFee * one;
 
                         JournalEntity journal1 = new JournalEntity();
                         journal1.UserId = oneer.Id;
-                        journal1.BalanceAmount = oneer.Amount;
+                        //journal1.BalanceAmount = oneer.Amount;
                         journal1.InAmount = orderlist.TotalFee * one;
                         journal1.Remark = "商品佣金收入";
                         journal1.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "佣金收入")).Id;
                         journal1.OrderCode = order.Code;
+                        journal1.IsEnabled = false;
                         dbc.Journals.Add(journal1);
 
                         UserEntity twoer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == oneer.Recommend.RecommendId);
@@ -414,16 +416,17 @@ namespace IMS.Service.Service
                                 two = bonusRatio.PlatinumTwo / 100;
                             }
 
-                            twoer.Amount = twoer.Amount + orderlist.TotalFee * two;
-                            twoer.BonusAmount = twoer.BonusAmount + orderlist.TotalFee * two;
+                            twoer.FrozenAmount = twoer.FrozenAmount + orderlist.TotalFee * two;
+                            //twoer.BonusAmount = twoer.BonusAmount + orderlist.TotalFee * two;
 
                             JournalEntity journal2 = new JournalEntity();
                             journal2.UserId = twoer.Id;
-                            journal2.BalanceAmount = twoer.Amount;
+                            //journal2.BalanceAmount = twoer.Amount;
                             journal2.InAmount = orderlist.TotalFee * two;
                             journal2.Remark = "商品佣金收入";
                             journal2.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "佣金收入")).Id;
                             journal2.OrderCode = order.Code;
+                            journal2.IsEnabled = false;
                             dbc.Journals.Add(journal2);
 
                             UserEntity threer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == twoer.Recommend.RecommendId);
@@ -442,20 +445,22 @@ namespace IMS.Service.Service
                                     three = bonusRatio.PlatinumThree / 100;
                                 }
 
-                                threer.Amount = threer.Amount + orderlist.TotalFee * three;
-                                threer.BonusAmount = threer.BonusAmount + orderlist.TotalFee * three;
+                                threer.FrozenAmount = threer.FrozenAmount + orderlist.TotalFee * three;
+                                //threer.BonusAmount = threer.BonusAmount + orderlist.TotalFee * three;
 
                                 JournalEntity journal3 = new JournalEntity();
                                 journal3.UserId = threer.Id;
-                                journal3.BalanceAmount = threer.Amount;
+                                //journal3.BalanceAmount = threer.Amount;
                                 journal3.InAmount = orderlist.TotalFee * three;
                                 journal3.Remark = "商品佣金收入";
                                 journal3.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "佣金收入")).Id;
                                 journal3.OrderCode = order.Code;
+                                journal3.IsEnabled = false;
                                 dbc.Journals.Add(journal3);
                             }
                         }
                     }
+                    //商品销量、库存
                     goods.Inventory = goods.Inventory - orderlist.Number;
                     goods.SaleNum = goods.SaleNum + orderlist.Number;
                 }
@@ -485,6 +490,7 @@ namespace IMS.Service.Service
                     return -4;
                 }
                 long levelId = user.LevelId;
+                long upLevelId = 0;
                 user.Amount = user.Amount - order.Amount;
                 user.BuyAmount = user.BuyAmount + order.Amount;
 
@@ -499,18 +505,18 @@ namespace IMS.Service.Service
                 {
                     if (order.Amount >= up1 && order.Amount < up2)
                     {
-                        user.LevelId = level2;
+                        upLevelId = level2;
                     }
                     else if (order.Amount >= up2)
                     {
-                        user.LevelId = level3;
+                        upLevelId = level3;
                     }                    
                 }
                 else if (levelId == level2)
                 {
                     if (order.Amount > up3)
                     {
-                        user.LevelId = level3;
+                        upLevelId = level3;
                     }
                 }
 
@@ -521,7 +527,8 @@ namespace IMS.Service.Service
                 journal.Remark = "购买商品";
                 journal.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "购物")).Id;
                 journal.OrderCode = order.Code;
-                dbc.Journals.Add(journal);                
+                journal.LevelId = upLevelId;
+                dbc.Journals.Add(journal);      
                 await dbc.SaveChangesAsync();
                 return 1;
             }
@@ -585,16 +592,17 @@ namespace IMS.Service.Service
                             one = bonusRatio.PlatinumOne / 100;
                         }
 
-                        oneer.Amount = oneer.Amount + orderlist.TotalFee * one;
-                        oneer.BonusAmount = oneer.BonusAmount + orderlist.TotalFee * one;
+                        oneer.FrozenAmount = oneer.FrozenAmount + orderlist.TotalFee * one;
+                        //oneer.BonusAmount = oneer.BonusAmount + orderlist.TotalFee * one;
 
                         JournalEntity journal1 = new JournalEntity();
                         journal1.UserId = oneer.Id;
-                        journal1.BalanceAmount = oneer.Amount;
+                        //journal1.BalanceAmount = oneer.Amount;
                         journal1.InAmount = orderlist.TotalFee * one;
                         journal1.Remark = "商品佣金收入";
                         journal1.JournalTypeId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "佣金收入").Id;
                         journal1.OrderCode = order.Code;
+                        journal1.IsEnabled = false;
                         dbc.Journals.Add(journal1);
 
                         UserEntity twoer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == oneer.Recommend.RecommendId);
@@ -614,15 +622,16 @@ namespace IMS.Service.Service
                             }
 
                             twoer.Amount = twoer.Amount + orderlist.TotalFee * two;
-                            twoer.BonusAmount = twoer.BonusAmount + orderlist.TotalFee * two;
+                            //twoer.BonusAmount = twoer.BonusAmount + orderlist.TotalFee * two;
 
                             JournalEntity journal2 = new JournalEntity();
                             journal2.UserId = twoer.Id;
-                            journal2.BalanceAmount = twoer.Amount;
+                            //journal2.BalanceAmount = twoer.Amount;
                             journal2.InAmount = orderlist.TotalFee * two;
                             journal2.Remark = "商品佣金收入";
                             journal2.JournalTypeId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "佣金收入").Id;
                             journal2.OrderCode = order.Code;
+                            journal2.IsEnabled = false;
                             dbc.Journals.Add(journal2);
 
                             UserEntity threer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == twoer.Recommend.RecommendId);
@@ -642,15 +651,16 @@ namespace IMS.Service.Service
                                 }
 
                                 threer.Amount = threer.Amount + orderlist.TotalFee * three;
-                                threer.BonusAmount = threer.BonusAmount + orderlist.TotalFee * three;
+                                //threer.BonusAmount = threer.BonusAmount + orderlist.TotalFee * three;
 
                                 JournalEntity journal3 = new JournalEntity();
                                 journal3.UserId = threer.Id;
-                                journal3.BalanceAmount = threer.Amount;
+                                //journal3.BalanceAmount = threer.Amount;
                                 journal3.InAmount = orderlist.TotalFee * three;
                                 journal3.Remark = "商品佣金收入";
                                 journal3.JournalTypeId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "佣金收入").Id;
                                 journal3.OrderCode = order.Code;
+                                journal3.IsEnabled = false;
                                 dbc.Journals.Add(journal3);
                             }
                         }
@@ -684,6 +694,7 @@ namespace IMS.Service.Service
                 //    return -4;
                 //}
                 long levelId = user.LevelId;
+                long upLevelId = 0;
                 user.BuyAmount = user.BuyAmount + order.Amount;
 
                 order.PayTime = DateTime.Now;
@@ -698,18 +709,18 @@ namespace IMS.Service.Service
                 {
                     if (order.Amount >= up1 && order.Amount < up2)
                     {
-                        user.LevelId = level2;
+                        upLevelId = level2;
                     }
                     else if (order.Amount >= up2)
                     {
-                        user.LevelId = level3;
+                        upLevelId = level3;
                     }
                 }
                 else if (levelId == level2)
                 {
                     if (order.Amount > up3)
                     {
-                        user.LevelId = level3;
+                        upLevelId = level3;
                     }
                 }
 
@@ -719,6 +730,7 @@ namespace IMS.Service.Service
                 journal.OutAmount = order.Amount;
                 journal.Remark = "微信支付购买商品";
                 journal.JournalTypeId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "购物").Id;
+                journal.LevelId = upLevelId;
                 journal.OrderCode = order.Code;
                 dbc.Journals.Add(journal);         
 

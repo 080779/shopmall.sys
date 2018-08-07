@@ -60,7 +60,7 @@ namespace IMS.Web.Areas.Admin.Controllers
                 return Json(new AjaxResult { Status = 0, Msg = "登录密码不能为空" });
             }
             long levelId= await idNameService.GetIdByNameAsync("普通会员");
-            long id= await userService.AddAsync(mobile,password, "", levelId,recommendMobile,null,null);
+            long id= await userService.AddAsync(mobile,password, "" , levelId,recommendMobile,null,null);
             if(id<=0)
             {
                 if (id == -1)
@@ -70,14 +70,14 @@ namespace IMS.Web.Areas.Admin.Controllers
                 if (id == -2)
                 {
                     return Json(new AjaxResult { Status = 0, Msg = "推荐人不存在" });
-                }
+                } 
                 return Json(new AjaxResult { Status = 0, Msg = "会员添加失败" });
             }            
             return Json(new AjaxResult { Status = 1, Msg = "会员添加成功" });
         }
         
         [AdminLog("会员管理", "用户升级管理")]
-        [Permission("会员管理_升级设置")]
+        [Permission("会员管理_升级设置")] 
         public async Task<ActionResult> UpSet(List<SettingModel> settings)
         {
             if (settings.Count() <= 0)

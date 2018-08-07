@@ -48,13 +48,21 @@
                 <div class="col-sm-9"><input type="text" v-model="deduct.parm" maxlength="3" class="col-xs-2 text_info" onKeyUp="value=value.replace(/[^\d]/g,'')" />%</div>
             </div>
             <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">自动确认收货时间： </label>
+                <div class="col-sm-9"><input type="text" v-model="auto.parm" maxlength="3" class="col-xs-2 text_info" onKeyUp="value=value.replace(/[^\d]/g,'')" />天</div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="form-field-1">不能退货时间： </label>
+                <div class="col-sm-9"><input type="text" v-model="unReturn.parm" maxlength="3" class="col-xs-2 text_info" onKeyUp="value=value.replace(/[^\d]/g,'')" />天</div>
+            </div>
+            <div class="form-group">
                 <label class="col-sm-3 control-label no-padding-right" for="form-field-1">客服电话： </label>
                 <div class="col-sm-9"><input type="text" v-model="phone1.parm" class="col-xs-2 text_info" /></div>
                 <div class="col-sm-9"><input type="text" v-model="phone2.parm" class="col-xs-2 text_info" /></div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label no-padding-right" for="form-field-1">系统LOGO： </label>
-                <div class="col-sm-9"><input type="file" id="file1"/></div>
+                <div class="col-sm-9"><input type="file" id="file1" /></div>
                 <div><img id="img1" style="margin-top: 10px; max-width: 100px; max-height: 400px;" /></div>
             </div>
             <div class="form-group">
@@ -91,6 +99,12 @@
             },
             deduct: {
                 id: "", parm: ""
+            },
+            auto: {
+                id: "", parm: ""
+            },
+            unReturn: {
+                id: "", parm: ""
             }
         },
         methods: {
@@ -102,6 +116,8 @@
                     this.logo = result.data.data.logo;
                     this.about = result.data.data.about;
                     this.deduct = result.data.data.deduct;
+                    this.auto = result.data.data.auto;
+                    this.unReturn = result.data.data.unReturn;
                     $("#img").attr("src", this.logo.parm);
                     editor.txt.html(this.about.parm);
                 })
@@ -116,6 +132,8 @@
                 arrays.push(this.logo);
                 arrays.push(this.about);
                 arrays.push(this.deduct);
+                arrays.push(this.auto);
+                arrays.push(this.unReturn);
                 this.$http.post('/admin/setting/edit', { parms: arrays }, { emulateJSON: true }).then(function (result) {
                     if (result.data.status == 1) {
                         layer.alert(result.data.msg, { icon: 6, title: '提示框' });
@@ -141,6 +159,8 @@
                 this.logo = result.data.data.logo;
                 this.about = result.data.data.about;
                 this.deduct = result.data.data.deduct;
+                this.auto = result.data.data.auto;
+                this.unReturn = result.data.data.unReturn;
                 $("#img").attr("src", this.logo.parm);
                 editor.txt.html(this.about.parm);
             })
