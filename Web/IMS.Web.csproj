@@ -335,6 +335,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\AdminController.cs" />
+    <Compile Include="Areas\Admin\Controllers\RefundController.cs" />
     <Compile Include="Areas\Admin\Controllers\SettingController.cs" />
     <Compile Include="Areas\Admin\Controllers\ReturnController.cs" />
     <Compile Include="Areas\Admin\Controllers\DeliverController.cs" />
@@ -378,6 +379,7 @@
     <Compile Include="Controllers\GoodsTypeController.cs" />
     <Compile Include="Controllers\GoodsController.cs" />
     <Compile Include="Controllers\PayTypeController.cs" />
+    <Compile Include="Controllers\RefundController.cs" />
     <Compile Include="Controllers\ReturnController.cs" />
     <Compile Include="Controllers\SlideController.cs" />
     <Compile Include="Controllers\NoticeController.cs" />
@@ -511,6 +513,8 @@
     <Content Include="assets\src\theme\default\font\iconfont.woff" />
     <Content Include="Areas\Admin\Views\Deliver\Detail.cshtml" />
     <Content Include="Areas\Admin\Views\Return\Detail.cshtml" />
+    <Content Include="Areas\Admin\Views\Refund\Detail.cshtml" />
+    <Content Include="Areas\Admin\Views\Refund\List.cshtml" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">

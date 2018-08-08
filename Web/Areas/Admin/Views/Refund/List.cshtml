@@ -32,7 +32,7 @@
     <script src="~/assets/layer/layer.js" type="text/javascript"></script>
     @*<script src="~/assets/laydate/laydate.js" type="text/javascript"></script>*@
     <script src="~/assets/src/laydate.js"></script>
-    <title>退货管理</title>
+    <title>退单管理</title>
 </head>
 
 <body>
@@ -56,14 +56,10 @@
                 <thead>
                     <tr>
                         <th width="60">编号</th>
-                        <th width="100">申请退货时间</th>
+                        <th width="100">申请退单时间</th>
                         <th width="120">订单号</th>
                         <th width="60">订单金额</th>
-                        <th width="60">优惠金额</th>
-                        <th width="60">退货金额</th>
-                        <th width="60">扣除金额</th>
                         <th width="100">会员账号</th>
-                        <th width="60">降级处理</th>
                         <th width="60">订单状态</th>
                         <th width="60">审核状态</th>
                         <th width="100">审核时间</th>
@@ -77,19 +73,15 @@
                         <td v-html="order.applyTime"></td>
                         <td v-html="order.code"></td>
                         <td v-html="order.amount"></td>
-                        <td v-html="order.discountAmount"></td>
-                        <td v-html="order.returnAmount"></td>
-                        <td v-html="order.deductAmount"></td>
                         <td v-html="order.buyerMobile"></td>
-                        <td v-html="order.downCycledName"></td>
                         <td v-html="order.orderStateName"></td>
                         <td v-html="order.auditStatusName"></td>
                         <td v-html="order.auditTime"></td>
                         <td v-html="order.auditMobile"></td>
                         <td>
                             <button title="审核" href="javascript:;" v-bind:disabled="order.auditStatusName=='已审核'" v-on:click="audit(order.id)" class="btn btn-xs btn-warning">审核</button>
-                            <button title="退货完成" href="javascript:;" v-bind:disabled="order.orderStateName=='退货完成'" v-on:click="confirm(order.id,order.auditStatusName)" class="btn btn-xs btn-warning">退货完成</button>
-                            <a title="查看退货详情" class="btn btn-xs btn-info" v-bind:href="'/admin/return/detail?id='+order.id">查看退货详情</a>
+                            <button title="退单完成" href="javascript:;" v-bind:disabled="order.orderStateName=='退单完成'" v-on:click="confirm(order.id,order.auditStatusName)" class="btn btn-xs btn-warning">退单完成</button>
+                            <a title="查看退货详情" class="btn btn-xs btn-info" v-bind:href="'/admin/refund/detail?id='+order.id">查看退单详情</a>
                         </td>
                     </tr>
                 </tbody>
@@ -128,7 +120,7 @@
         },
         methods: {
             getpage: function () {
-                this.$http.post('/admin/return/list', { auditStatusId: this.auditStatusId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
+                this.$http.post('/admin/refund/list', { auditStatusId: this.auditStatusId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
                     this.orders = result.data.data.orders;
                     this.auditStatus = result.data.data.auditStatus;
                     this.pages.all = result.data.data.pageCount;
@@ -155,7 +147,7 @@
             audit: function (id) {
                 var that = this;
                 layer.confirm("确认通过审核吗？", { icon: 0, title: '确认通过审核' }, function (index) {
-                    that.$http.post('/admin/return/audit', { id: id }, { emulateJSON: true }).then(function (result) {
+                    that.$http.post('/admin/refund/audit', { id: id }, { emulateJSON: true }).then(function (result) {
                         if (result.data.status == 1) {
                             layer.alert(result.data.msg, { icon: 6, title: '提示框' });
                             that.getpage();
@@ -179,8 +171,8 @@
                     layer.alert('未审核，请审核后再进行操作', { icon: 0, title: '提示框' });
                     return;
                 }
-                layer.confirm("确认退货完成吗？", { icon: 0, title: '确认退货完成' }, function (index) {
-                    that.$http.post('/admin/return/confirm', { id: id }, { emulateJSON: true }).then(function (result) {
+                layer.confirm("确认退单完成吗？", { icon: 0, title: '确认退单完成' }, function (index) {
+                    that.$http.post('/admin/refund/confirm', { id: id }, { emulateJSON: true }).then(function (result) {
                         if (result.data.status == 1) {
                             layer.alert(result.data.msg, { icon: 6, title: '提示框' });
                             that.getpage();
@@ -226,7 +218,7 @@
             }
         },
         mounted: function () {
-            this.$http.post('/admin/return/list', { auditStatusId: this.auditStatusId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
+            this.$http.post('/admin/refund/list', { auditStatusId: this.auditStatusId, keyword: this.searchs.keyword, startTime: this.searchs.startTime, endTime: this.searchs.endTime, pageIndex: this.pages.cur }, { emulateJSON: true }).then(function (result) {
                 this.orders = result.data.data.orders;
                 this.auditStatus = result.data.data.auditStatus;
                 this.pages.all = result.data.data.pageCount;

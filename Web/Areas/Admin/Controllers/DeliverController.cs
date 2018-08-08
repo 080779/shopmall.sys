@@ -70,9 +70,17 @@ namespace IMS.Web.Areas.Admin.Controllers
             {
                 return Json(new AjaxResult { Status = 0, Msg = "请选择物流方式" });
             }
-            bool flag = await orderService.UpdateDeliverStateAsync(id,deliver, deliverName, deliverCode);
-            if(!flag)
+            long flag = await orderService.UpdateDeliverStateAsync(id,deliver, deliverName, deliverCode);
+            if(flag<=0)
             {
+                if (flag == -1)
+                {
+                    return Json(new AjaxResult { Status = 0, Msg = "订单不存在" });
+                }
+                if(flag==-2)
+                {
+                    return Json(new AjaxResult { Status = 0, Msg = "订单退单中或退货中" });
+                }
                 return Json(new AjaxResult { Status = 0, Msg = "标记发货失败" });
             }
             return Json(new AjaxResult { Status = 1, Msg = "标记发货成功" });

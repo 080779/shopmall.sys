@@ -490,7 +490,7 @@ namespace IMS.Service.Service
                     return -4;
                 }
                 long levelId = user.LevelId;
-                long upLevelId = 0;
+                long upLevelId = 1;
                 user.Amount = user.Amount - order.Amount;
                 user.BuyAmount = user.BuyAmount + order.Amount;
 
@@ -694,7 +694,7 @@ namespace IMS.Service.Service
                 //    return -4;
                 //}
                 long levelId = user.LevelId;
-                long upLevelId = 0;
+                long upLevelId = 1;
                 user.BuyAmount = user.BuyAmount + order.Amount;
 
                 order.PayTime = DateTime.Now;
