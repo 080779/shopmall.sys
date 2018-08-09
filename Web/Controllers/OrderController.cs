@@ -20,7 +20,6 @@ using System.Xml.Linq;
 
 namespace IMS.Web.Controllers
 {
-    [AllowAnonymous]
     public class OrderController : ApiController
     {
         private static ILog log = LogManager.GetLogger(typeof(OrderController));

@@ -61,8 +61,10 @@ namespace IMS.Service.Service
                     entities = entities.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
                 }
                 result.PageCount = (int)Math.Ceiling((await entities.LongCountAsync()) * 1.0f / pageSize);
-                result.TotalInAmount = await entities.SumAsync(j => j.InAmount);
-                result.TotalOutAmount = await entities.SumAsync(j => j.OutAmount);
+                decimal? totalInAmount = await entities.SumAsync(j => j.InAmount);
+                decimal? totalOutAmount= await entities.SumAsync(j => j.OutAmount);
+                result.TotalInAmount = totalInAmount == null ? 0 : totalInAmount;
+                result.TotalOutAmount = totalOutAmount == null ? 0 : totalOutAmount;
                 var journalResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 result.Journals = journalResult.Select(a => ToDTO(a)).ToArray();
                 return result;

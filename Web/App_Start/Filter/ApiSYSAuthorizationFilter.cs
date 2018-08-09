@@ -20,8 +20,7 @@ namespace IMS.Web.App_Start.Filter
 {
     public class ApiSYSAuthorizationFilter : AuthorizationFilterAttribute
     {
-        public IUserTokenService userTokenService = new UserTokenService();
-        private string TokenSecret = System.Configuration.ConfigurationManager.AppSettings["TokenSecret"];
+        public IUserService userService = new UserService();
         public override void OnAuthorization(HttpActionContext actionContext)
         {
             if (actionContext.ActionDescriptor.GetCustomAttributes<System.Web.Http.AllowAnonymousAttribute>().Any() || actionContext.ActionDescriptor.ControllerDescriptor.GetCustomAttributes<System.Web.Http.AllowAnonymousAttribute>().Any())
@@ -38,25 +37,32 @@ namespace IMS.Web.App_Start.Filter
             IEnumerable<string> values;
             if(!actionContext.Request.Headers.TryGetValues("token",out values))
             {
-                actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("Token不能为空"));
+                //actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("Token不能为空"));
+                actionContext.Response = actionContext.Request.CreateResponse<ApiResult>(new ApiResult { status = 0, msg = "Token不能为空" });
                 return;
             }
             string token = values.First();
             if (string.IsNullOrEmpty(token))
             {
-                actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("Token不能为空"));
+                actionContext.Response = actionContext.Request.CreateResponse<ApiResult>(new ApiResult { status = 0, msg = "Token不能为空" });
                 return;
             }
             string res;
             if (!JwtHelper.JwtDecrypt(token, out res))
             {
-                actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError(res));
+                actionContext.Response = actionContext.Request.CreateResponse<ApiResult>(new ApiResult { status = 0, msg = "res" });
                 return;
             }
             User user = JsonConvert.DeserializeObject<User>(res);
             if(string.IsNullOrEmpty(user.Code))
             {
-                actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("OpenId为空"));
+                actionContext.Response = actionContext.Request.CreateResponse<ApiResult>(new ApiResult { status = 0, msg = "OpenId为空" });
+                return;
+            }
+            if(!userService.CheckUserId(user.Id))
+            {
+                //actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, new HttpError("会员不存在"));
+                actionContext.Response = actionContext.Request.CreateResponse<ApiResult>(new ApiResult { status = 0, msg = "会员不存在" });
                 return;
             }
             //object cache = CacheHelper.GetCache("App_User_CheckToken" + user.Id);

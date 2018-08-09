@@ -56,6 +56,7 @@ namespace IMS.IService
         Task<long> UserCheck(string mobile);
         Task<long> CheckLoginAsync(string mobile, string password);
         Task<long> CheckTradePasswordAsync(long id,string tradePassword);
+        bool CheckUserId(long id);
         Task<long> BalancePayAsync(long orderId);
         long WeChatPay(string code);
         Task<CalcAmountResult> CalcCount();

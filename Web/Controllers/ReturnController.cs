@@ -21,6 +21,7 @@ namespace IMS.Web.Controllers
     {        
         public IOrderListService orderListService { get; set; }
         public IOrderService orderService { get; set; }
+        public ISettingService settingService { get; set; }
         [HttpPost]
         public async Task<ApiResult> Select(ReturnSelectModel model)
         {
@@ -33,9 +34,14 @@ namespace IMS.Web.Controllers
             long res = await orderService.ApplyReturnAsync(model.OrderId);
             if(res<=0)
             {
+                if(res==-2)
+                {
+                    return new ApiResult { status = 0, msg = "不是已完成的订单，不能申请退货" };
+                }
                 if(res==-4)
                 {
-                    return new ApiResult { status = 0, msg = "申请退货失败,确认收货三天后不能退货" };
+                    string parm = await settingService.GetParmByNameAsync("不能退货时间");
+                    return new ApiResult { status = 0, msg = $"申请退货失败,确认收货{parm}天后不能退货" };
                 }
                 return new ApiResult { status = 0, msg = "申请退货失败" };
             }

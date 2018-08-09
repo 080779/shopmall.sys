@@ -13,7 +13,6 @@ using System.Web.Http;
 
 namespace IMS.Web.Controllers
 {
-    [AllowAnonymous]
     public class GoodsController : ApiController
     {
         public IGoodsService goodsService { get; set; }

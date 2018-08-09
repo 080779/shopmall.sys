@@ -15,7 +15,6 @@ using System.Web.Http;
 
 namespace IMS.Web.Controllers
 {
-    [AllowAnonymous]
     public class BankAccountController : ApiController
     {        
         public IBankAccountService bankAccountService { get; set; }

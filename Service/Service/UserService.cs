@@ -334,6 +334,19 @@ namespace IMS.Service.Service
             }
         }
 
+        public bool CheckUserId(long id)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                UserEntity user = dbc.GetAll<UserEntity>().SingleOrDefault(u=>u.Id==id);
+                if(user==null)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
         public async Task<long> BalancePayAsync(long orderId)
         {
             using (MyDbContext dbc = new MyDbContext())
@@ -544,7 +557,7 @@ namespace IMS.Service.Service
                     return -1;
                 }
 
-                if(order.OrderState.Name=="待发货" || order.OrderState.Name=="已完成")
+                if(order.OrderState.Name!= "待付款")
                 {
                     return -4;
                 }
@@ -732,7 +745,7 @@ namespace IMS.Service.Service
                 journal.JournalTypeId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "购物").Id;
                 journal.LevelId = upLevelId;
                 journal.OrderCode = order.Code;
-                dbc.Journals.Add(journal);         
+                dbc.Journals.Add(journal);
 
                 dbc.SaveChanges();
                 log.DebugFormat("微信支付后订单状态：{0}", order.OrderStateId);
@@ -746,10 +759,10 @@ namespace IMS.Service.Service
             {
                 CalcAmountResult res = new CalcAmountResult();
                 var users = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false);
-                var takeCash = dbc.GetAll<TakeCashEntity>().Where(t=>t.State.Name=="已结款");
-                res.TotalAmount = await users.SumAsync(u => u.Amount);
-                res.TotalTakeCash = await takeCash.SumAsync(u => u.Amount);
-                res.TotalBuyAmount = await users.SumAsync(u => u.BuyAmount);
+                var takeCash = dbc.GetAll<TakeCashEntity>().Where(t => t.State.Name == "已结款");
+                res.TotalAmount = users.Any() ? await users.SumAsync(u => u.Amount) : 0;
+                res.TotalTakeCash = takeCash.Any() ? await takeCash.SumAsync(u => u.Amount) : 0;
+                res.TotalBuyAmount = users.Any() ? await users.SumAsync(u => u.BuyAmount) : 0;
                 return res;
             }
         }

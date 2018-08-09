@@ -29,7 +29,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         //[Permission("日志管理_查看日志")]
-        //[AdminLog("退货管理", "查看退货管理列表")]
+        [AdminLog("退单管理", "查看退单管理列表")]
         public async Task<ActionResult> List(long? auditStatusId, string keyword,DateTime? startTime,DateTime? endTime,int pageIndex=1)
         {
             var result = await orderService.GetRefundModelListAsync(null, null, auditStatusId, keyword, startTime, endTime, pageIndex, pageSize);
@@ -46,7 +46,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        //[AdminLog("订单管理", "查看订单管理明细")]
+        [AdminLog("退单管理", "查看退单管理明细")]
         public async Task<ActionResult> GetDetail(long id)
         {
             OrderDTO dto = await orderService.GetModelAsync(id);
@@ -59,8 +59,8 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        //[Permission("退货管理_退货审核")]
-        //[AdminLog("退货管理", "退货管理审核")]
+        [Permission("退单管理_退单审核")]
+        [AdminLog("退单管理", "退单管理审核")]
         public async Task<ActionResult> Audit(long id)
         {
             long res = await orderService.RefundAuditAsync(id, Convert.ToInt64(Session["Platform_AdminUserId"]));
@@ -72,8 +72,8 @@ namespace IMS.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        //[Permission("退货管理_标记退货成功")]
-        //[AdminLog("退货管理", "退货管理确认退货")]
+        [Permission("退单管理_标记退单成功")]
+        [AdminLog("退单管理", "退单管理确认退单")]
         public async Task<ActionResult> Confirm(long id)
         {
             long res = await orderService.ReturnOrderAsync(id);

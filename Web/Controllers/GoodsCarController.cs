@@ -65,7 +65,7 @@ namespace IMS.Web.Controllers
                 }
                 return new ApiResult { status = 0, msg = "添加商品到购物车失败" };
             }
-            return new ApiResult { status = 1, msg = "添加商品到购物车成功" };
+            return new ApiResult { status = 1, msg = "添加商品到购物车成功",data=id };
         }
         [HttpPost]
         public async Task<ApiResult> Edit(GoodsCarEditModel model)

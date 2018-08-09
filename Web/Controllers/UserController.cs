@@ -163,22 +163,22 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "会员不存在" };
             }
-            if (string.IsNullOrEmpty(userDTO.ShareCode))
-            {
-                string getTokenUrl = string.Format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}", appid, secret);
-                string res = await HttpClientHelper.GetResponseByGetAsync(httpClient, getTokenUrl);
-                if (res.Contains(@"errcode\"))
-                {
-                    return new ApiResult { status = 1, data = res };
-                }
-                GetAccessToken getAccessToken = JsonConvert.DeserializeObject<GetAccessToken>(res);
-                Parm parm = new Parm();
-                parm.scene = userDTO.Mobile;
-                string getCodeUrl = string.Format("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={0}", getAccessToken.access_token);
-                var result1 = await HttpClientHelper.GetResponseStringByPostJsonAsync(httpClient, parm, getCodeUrl);
-                string path = ImageHelper.SaveByte(result1);
-                await userService.UpdateShareCodeAsync(userId, path);
-            }
+            //if (string.IsNullOrEmpty(userDTO.ShareCode))
+            //{
+            //    string getTokenUrl = string.Format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}", appid, secret);
+            //    string res = await HttpClientHelper.GetResponseByGetAsync(httpClient, getTokenUrl);
+            //    if (res.Contains(@"errcode\"))
+            //    {
+            //        return new ApiResult { status = 1, data = res };
+            //    }
+            //    GetAccessToken getAccessToken = JsonConvert.DeserializeObject<GetAccessToken>(res);
+            //    Parm parm = new Parm();
+            //    parm.scene = userDTO.Mobile;
+            //    string getCodeUrl = string.Format("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={0}", getAccessToken.access_token);
+            //    var result1 = await HttpClientHelper.GetResponseStringByPostJsonAsync(httpClient, parm, getCodeUrl);
+            //    string path = ImageHelper.SaveByte(result1);
+            //    await userService.UpdateShareCodeAsync(userId, path);
+            //}
             return new ApiResult { status = 1, msg = "登录成功", data = new { token = token } };
         }
         [HttpPost]

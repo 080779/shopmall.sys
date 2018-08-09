@@ -17,6 +17,7 @@ namespace IMS.IService
         Task<AdminSearchResult> GetModelListHasPerAsync(string isAdmin, string mobile, DateTime? startTime, DateTime? endTime, int pageIndex, int pageSize);
         bool HasPermission(long id, string description);
         Task<long> CheckLogin(string mobile, string password);
+        Task<bool> DelAll();
     }
     public class AdminSearchResult
     {

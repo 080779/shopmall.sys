@@ -491,7 +491,7 @@ namespace IMS.Service.Service
                 entity.DeliverName = deliverName;
                 entity.DeliverCode = deliverCode;               
                 entity.ConsignTime = DateTime.Now;
-                UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == entity.BuyerId);                
+                UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == entity.BuyerId);
                 if(user==null)
                 {
                     return -3;
@@ -577,6 +577,15 @@ namespace IMS.Service.Service
                 user.Amount = user.Amount + journal1.OutAmount.Value;
                 user.BuyAmount = user.BuyAmount - journal1.OutAmount.Value;
 
+                var journals = await dbc.GetAll<JournalEntity>().Where(j => j.OrderCode == order.Code && j.JournalType.Name == "佣金收入" && j.IsEnabled == false).ToListAsync();
+                foreach (JournalEntity journal2 in journals)
+                {
+                    UserEntity user1 = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == journal2.UserId);
+                    user1.FrozenAmount = user1.FrozenAmount - journal2.InAmount.Value;
+                    //journal2.IsEnabled = true;
+                    journal2.IsDeleted = true;
+                }
+
                 //添加流水记录
                 JournalEntity journal = new JournalEntity();
                 journal.OrderCode = order.Code;
@@ -600,7 +609,13 @@ namespace IMS.Service.Service
                 {
                     return -1;
                 }
-                if(order.EndTime!=null && DateTime.Now > order.EndTime.Value.AddDays(3))
+                if(order.OrderState.Name!="已完成")
+                {
+                    return -2;
+                }
+                string val = (await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "不能退货时间")).Parm;
+
+                if (order.EndTime!=null && DateTime.Now > order.EndTime.Value.AddDays(Convert.ToDouble(val)))
                 {
                     return -4;
                 }
@@ -674,15 +689,32 @@ namespace IMS.Service.Service
                 if(order==null)
                 {
                     return -1;
-                }                
+                }
+
+                var journals = await dbc.GetAll<JournalEntity>().Where(j => j.OrderCode == order.Code && j.JournalType.Name == "佣金收入" && j.IsEnabled == false).ToListAsync();
+                foreach (JournalEntity journal1 in journals)
+                {
+                    UserEntity user1 = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == journal1.UserId);
+                    user1.FrozenAmount = user1.FrozenAmount - journal1.InAmount.Value;
+                    //journal1.IsEnabled = true;
+                    journal1.IsDeleted = true;
+                }
+
                 order.OrderStateId= (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "退货完成")).Id;
                 UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u=>u.Id==order.BuyerId);
                 if(user==null)
                 {
                     return -3;
                 }
+
+                JournalEntity journal2 = await dbc.GetAll<JournalEntity>().SingleOrDefaultAsync(j => j.UserId == user.Id && j.OrderCode == order.Code && j.JournalType.Name == "购物");
+                if (journal2 == null)
+                {
+                    return -4;
+                }
                 //会员扣除金额、降级
                 user.Amount = user.Amount + order.RefundAmount.Value;
+                user.BuyAmount = user.BuyAmount - journal2.OutAmount.Value;
                 //普通会员id
                 long levelId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员")).Id;
                 ////黄金会员id

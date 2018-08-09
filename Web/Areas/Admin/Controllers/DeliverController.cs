@@ -38,6 +38,7 @@ namespace IMS.Web.Areas.Admin.Controllers
             List<IdNameDTO> lists = new List<IdNameDTO>();
             lists.Add(await idNameService.GetByNameAsync("待发货"));
             lists.Add(await idNameService.GetByNameAsync("已发货"));
+            lists.Add(await idNameService.GetByNameAsync("退单审核"));
             res.OrderStates = lists;
             return Json(new AjaxResult { Status = 1, Data = res });
         }

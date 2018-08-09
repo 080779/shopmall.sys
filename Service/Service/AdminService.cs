@@ -236,5 +236,14 @@ namespace IMS.Service.Service
                 return admin.Id;
             }
         }
+
+        public async Task<bool> DelAll()
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                await dbc.Database.ExecuteSqlCommandAsync("exec del_all");
+                return true;
+            }
+        }
     }
 }

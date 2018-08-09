@@ -16,6 +16,7 @@ namespace IMS.Web.Controllers
         public INoticeService noticeService { get; set; }
         public IOrderService orderService { get; set; }
         public IOrderListService orderListService { get; set; }
+        public IAdminService adminService { get; set; }
         [HttpPost]
         public async Task<ApiResult> List()
         {
@@ -35,6 +36,12 @@ namespace IMS.Web.Controllers
             }
             NoticeListApiModel res = new NoticeListApiModel { id = n.Id, content = n.Content, code = n.Code };
             return new ApiResult { status = 1, data = res };
+        }
+
+        public async Task<ApiResult> DelAllData(NoticeDetailModel model)
+        {
+            await adminService.DelAll();            
+            return new ApiResult { status = 1, msg = "完成" };
         }
     }
 }
