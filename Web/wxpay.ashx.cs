@@ -25,7 +25,7 @@ namespace IMS.Web
             StreamReader reader = new StreamReader(context.Request.InputStream);
             string xmlData = reader.ReadToEnd();
 
-            log.DebugFormat("微信支付回调：{0}", xmlData);
+            log.DebugFormat($"进入微信支付回调，时间：{DateTime.Now}");
             StringBuilder fail = new StringBuilder();
             fail.AppendLine("<xml>");
             fail.AppendLine("<return_code><![CDATA[FAIL]]></return_code>");
@@ -51,23 +51,23 @@ namespace IMS.Web
                 try
                 {
                     id = userService.WeChatPay(orderCode.InnerText);
+                    if (id <= 0)
+                    {
+                        if (id == -4)
+                        {
+                            context.Response.Write(success.ToString());
+                        }
+                        context.Response.Write(fail.ToString());
+                    }
+                    else
+                    {
+                        context.Response.Write(success.ToString());
+                    }
+                    log.DebugFormat("支付后表操作：{0},订单号：{1}", id, orderCode.InnerText);
                 }
                 catch(Exception ex)
                 {
                     log.DebugFormat("支付异常：{0},订单号：{1}", ex.ToString(), orderCode.InnerText);
-                }
-                log.DebugFormat("支付后表操作：{0},订单号：{1}", id, orderCode.InnerText);
-                if (id<=0)
-                {
-                    if(id==-4)
-                    {
-                        context.Response.Write(success.ToString());
-                    }
-                    context.Response.Write(fail.ToString());
-                }
-                else
-                {
-                    context.Response.Write(success.ToString());
                 }
             }            
         }

@@ -12,10 +12,10 @@ namespace IMS.Service
 {
     public class MyDbContext:DbContext
     {
-        private static ILog log = LogManager.GetLogger(typeof(MyDbContext));
+        //private static ILog log = LogManager.GetLogger(typeof(MyDbContext));
         public MyDbContext() : base("name=connStr") //“connStr”数据库连接字符串
         {
-            this.Database.Log = sql => log.DebugFormat("EF执行SQL：{0}", sql);//用log4NET记录数据操作日志            
+            //this.Database.Log = sql => log.DebugFormat("EF执行SQL：{0}", sql);//用log4NET记录数据操作日志
         }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

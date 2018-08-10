@@ -387,7 +387,7 @@ namespace IMS.Web.Controllers
             HttpClient httpClient = new HttpClient();
             string xml = HttpClientHelper.ObjSerializeXml(weChatPay, sign);
 
-            CacheHelper.SetCache("App_Order_Pay" + weChatPay.out_trade_no, sign, DateTime.UtcNow.AddMinutes(2), TimeSpan.Zero);
+            //CacheHelper.SetCache("App_Order_Pay" + weChatPay.out_trade_no, sign, DateTime.UtcNow.AddMinutes(2), TimeSpan.Zero);
 
             string res = await HttpClientHelper.GetResponseByPostXMLAsync(httpClient, xml, "https://api.mch.weixin.qq.com/pay/unifiedorder");
             if (!res.Contains("SUCCESS"))
@@ -398,7 +398,7 @@ namespace IMS.Web.Controllers
             xmlDoc.LoadXml(res);
             XmlNode Child = xmlDoc.SelectSingleNode("xml/prepay_id");
 
-            log.DebugFormat("微信支付统一下单：{0}，缓存sign：{1}", res,CacheHelper.GetCache("App_Order_Pay" + weChatPay.out_trade_no));
+            log.DebugFormat($"微信支付统一下单：时间{DateTime.Now}");
 
             TimeSpan ts = DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0);            
             GetWechat getWeChat = new GetWechat();
@@ -457,7 +457,7 @@ namespace IMS.Web.Controllers
             HttpClient httpClient = new HttpClient();
             string xml = HttpClientHelper.ObjSerializeXml(weChatPay, sign);
 
-            CacheHelper.SetCache("App_Order_Pay" + weChatPay.out_trade_no, sign, DateTime.UtcNow.AddMinutes(2), TimeSpan.Zero);
+            //CacheHelper.SetCache("App_Order_Pay" + weChatPay.out_trade_no, sign, DateTime.UtcNow.AddMinutes(2), TimeSpan.Zero);
 
             string res = await HttpClientHelper.GetResponseByPostXMLAsync(httpClient, xml, "https://api.mch.weixin.qq.com/pay/unifiedorder");
             if (!res.Contains("SUCCESS"))
@@ -468,7 +468,7 @@ namespace IMS.Web.Controllers
             xmlDoc.LoadXml(res);
             XmlNode Child = xmlDoc.SelectSingleNode("xml/prepay_id");
 
-            log.DebugFormat("微信支付统一下单：{0}，缓存sign：{1}", res, CacheHelper.GetCache("App_Order_Pay" + weChatPay.out_trade_no));
+            log.DebugFormat($"待支付订单微信支付统一下单，时间：{DateTime.Now}");
 
             TimeSpan ts = DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0);
             GetWechat getWeChat = new GetWechat();

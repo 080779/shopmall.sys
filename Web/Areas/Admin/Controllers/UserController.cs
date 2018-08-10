@@ -19,6 +19,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         public IUserService userService { get; set; }
         public IIdNameService idNameService { get; set; }
         public ISettingService settingService { get; set; }
+        //public IOrderService orderService { get; set; }
         public ActionResult List()
         {
             return View();
@@ -27,6 +28,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         [AdminLog("会员管理", "查看用户管理列表")]
         public async Task<ActionResult> List(long? levelId,string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
+            //await orderService.AutoConfirmAsync();
             //long levelId = await idNameService.GetIdByNameAsync("会员等级");
             var result = await userService.GetModelListAsync(levelId, keyword, startTime, endTime, pageIndex, pageSize);
             var set1 = await settingService.GetModelByNameAsync("第三级显示");

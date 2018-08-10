@@ -779,7 +779,7 @@ namespace IMS.Service.Service
             }
         }
 
-        public async Task AutoConfirm()
+        public async Task AutoConfirmAsync()
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -805,11 +805,47 @@ namespace IMS.Service.Service
                         UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u=>u.Id==journal.UserId);
                         user.Amount = user.Amount + journal.InAmount.Value;
                         user.FrozenAmount = user.FrozenAmount - journal.InAmount.Value;
+                        user.BonusAmount = user.BonusAmount + journal.InAmount.Value;
                         journal.BalanceAmount = user.Amount;
                         journal.IsEnabled = true;
                     }
                 }
                 await dbc.SaveChangesAsync();
+            }
+        }
+
+        public void AutoConfirm()
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                long stateId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "已完成").Id;
+                string val = dbc.GetAll<SettingEntity>().SingleOrDefault(i => i.Name == "自动确认收货时间").Parm;
+                Expression<Func<OrderEntity, bool>> timewhere = r => r.ConsignTime == null ? false : r.ConsignTime.Value.AddDays(Convert.ToDouble(val)) < DateTime.Now;
+                var orders = dbc.GetAll<OrderEntity>().Where(r => r.OrderState.Name == "已发货").Where(timewhere.Compile()).ToList();
+                foreach (OrderEntity order in orders)
+                {
+                    order.EndTime = DateTime.Now;
+                    order.OrderStateId = stateId;
+                }
+                val = dbc.GetAll<SettingEntity>().SingleOrDefault(i => i.Name == "不能退货时间").Parm;
+                timewhere = r => r.EndTime == null ? false : r.EndTime.Value.AddDays(Convert.ToDouble(val)) < DateTime.Now;
+                orders = dbc.GetAll<OrderEntity>().Where(r => r.OrderState.Name == "已完成" || r.OrderState.Name == "退货审核").Where(timewhere.Compile()).ToList();
+                foreach (OrderEntity order in orders)
+                {
+                    order.OrderStateId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "已完成").Id;
+                    //UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u=>u.Id==order.BuyerId);
+                    var journals = dbc.GetAll<JournalEntity>().Where(j => j.OrderCode == order.Code && j.JournalType.Name == "佣金收入" && j.IsEnabled == false).ToList();
+                    foreach (JournalEntity journal in journals)
+                    {
+                        UserEntity user = dbc.GetAll<UserEntity>().SingleOrDefault(u => u.Id == journal.UserId);
+                        user.Amount = user.Amount + journal.InAmount.Value;
+                        user.FrozenAmount = user.FrozenAmount - journal.InAmount.Value;
+                        user.BonusAmount = user.BonusAmount + journal.InAmount.Value;
+                        journal.BalanceAmount = user.Amount;
+                        journal.IsEnabled = true;
+                    }
+                }
+                dbc.SaveChanges();
             }
         }
 

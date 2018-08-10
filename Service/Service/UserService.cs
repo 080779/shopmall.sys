@@ -634,7 +634,7 @@ namespace IMS.Service.Service
                                 two = bonusRatio.PlatinumTwo / 100;
                             }
 
-                            twoer.Amount = twoer.Amount + orderlist.TotalFee * two;
+                            twoer.FrozenAmount = twoer.FrozenAmount + orderlist.TotalFee * two;
                             //twoer.BonusAmount = twoer.BonusAmount + orderlist.TotalFee * two;
 
                             JournalEntity journal2 = new JournalEntity();
@@ -663,7 +663,7 @@ namespace IMS.Service.Service
                                     three = bonusRatio.PlatinumThree / 100;
                                 }
 
-                                threer.Amount = threer.Amount + orderlist.TotalFee * three;
+                                threer.FrozenAmount = threer.FrozenAmount + orderlist.TotalFee * three;
                                 //threer.BonusAmount = threer.BonusAmount + orderlist.TotalFee * three;
 
                                 JournalEntity journal3 = new JournalEntity();

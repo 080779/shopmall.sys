@@ -14,7 +14,7 @@ namespace IMS.Web.Controllers
     public class NoticeController : ApiController
     {
         public INoticeService noticeService { get; set; }
-        public IOrderService orderService { get; set; }
+        //public IOrderService orderService { get; set; }
         public IOrderListService orderListService { get; set; }
         public IAdminService adminService { get; set; }
         [HttpPost]
@@ -23,7 +23,7 @@ namespace IMS.Web.Controllers
             NoticeSearchResult result= await noticeService.GetModelListAsync(null,null,null,1,100);
             List<NoticeListApiModel> model;
             model = result.Notices.Where(n=>n.IsEnabled==true).Select(n => new NoticeListApiModel { id = n.Id, content = n.Content, code = n.Code }).ToList();
-            await orderService.AutoConfirm();
+            //await orderService.AutoConfirmAsync();
             //await orderListService.SetDiscountAmountAsync();
             return new ApiResult { status = 1, data = model };
         }

@@ -5,10 +5,15 @@ using IMS.Common.Newtonsoft;
 using IMS.IService;
 using IMS.Web.App_Start;
 using IMS.Web.App_Start.Filter;
+using IMS.Web.Jobs;
+using Quartz;
+using Quartz.Impl;
+using Quartz.Spi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -50,6 +55,21 @@ namespace Web
             GlobalFilters.Filters.Add(new JsonNetActionFilter());
             GlobalFilters.Filters.Add(new SYSExceptionFilter());
             GlobalFilters.Filters.Add(new SYSAuthorizationFilter());
+            StartQuartz();
+        }
+
+        private void StartQuartz()
+        {
+            IScheduler sched = new StdSchedulerFactory().GetScheduler();
+
+            JobDetailImpl jobAutoConfirm = new JobDetailImpl("jobAutoConfirm", typeof(AutoConfirmJob));
+            CalendarIntervalScheduleBuilder builder = CalendarIntervalScheduleBuilder.Create();
+            builder.WithInterval(1, IntervalUnit.Minute);
+            IMutableTrigger triggerAutoConfirm = builder.Build();
+            triggerAutoConfirm.Key = new TriggerKey("triggerAutoConfirm");
+            sched.ScheduleJob(jobAutoConfirm, triggerAutoConfirm); 
+
+            sched.Start();
         }
     }
 }

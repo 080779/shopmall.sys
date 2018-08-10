@@ -17,6 +17,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         public IUserService userService { get; set; }
         public IIdNameService idNameService { get; set; }
         public ISettingService settingService { get; set; }
+        //public IOrderService orderService { get; set; }
         public ActionResult List()
         {
             return View();
@@ -26,6 +27,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         //[Permission("幻灯片管理_删除幻灯片")]
         public async Task<ActionResult> List(long? levelId, string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
+            //await orderService.AutoConfirmAsync();
             var result = await userService.GetModelListAsync(levelId, keyword, startTime, endTime, pageIndex, pageSize);
             TeamUserListViewModel model = new TeamUserListViewModel();
             model.PageCount = result.PageCount;

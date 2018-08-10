@@ -17,6 +17,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         public IJournalService journalService { get; set; }
         public IIdNameService idNameService { get; set; }
         public IUserService userService { get; set; }
+        public IOrderService orderService { get; set; }
         private int pageSize = 10;
         //[Permission("积分管理_积分管理")]
         public ActionResult List()
@@ -28,6 +29,7 @@ namespace IMS.Web.Areas.Admin.Controllers
         [HttpPost]
         public async Task<ActionResult> List(string keyword, DateTime? startTime, DateTime? endTime, int pageIndex = 1)
         {
+            await orderService.AutoConfirmAsync();
             long journalTypeId = await idNameService.GetIdByNameAsync("佣金收入");
             JournalSearchResult result = await journalService.GetModelListAsync(null,journalTypeId, keyword, startTime, endTime, pageIndex, pageSize);
             CalcAmountResult res = await userService.CalcCount();

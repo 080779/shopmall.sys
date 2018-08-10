@@ -15,9 +15,8 @@ namespace IMS.Web.Areas.Admin.Controllers
         public ISettingService settingService { get; set; }
         public IPermissionTypeService permissionTypeService { get; set; }
         public IOrderService orderService { get; set; }
-        public async Task<ActionResult> Index()
-        {
-            await orderService.AutoConfirm();
+        public async Task<ActionResult> Index()        {
+
             long userId = Convert.ToInt64(Session["Platform_AdminUserId"]);
             HomeIndexViewModel model = new HomeIndexViewModel();
             model.Mobile = (await adminService.GetModelAsync(userId)).Mobile;
