@@ -5,6 +5,7 @@ using IMS.Service.Entity;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -822,6 +823,8 @@ namespace IMS.Service.Service
                 string val = dbc.GetAll<SettingEntity>().SingleOrDefault(i => i.Name == "自动确认收货时间").Parm;
                 Expression<Func<OrderEntity, bool>> timewhere = r => r.ConsignTime == null ? false : r.ConsignTime.Value.AddDays(Convert.ToDouble(val)) < DateTime.Now;
                 var orders = dbc.GetAll<OrderEntity>().Where(r => r.OrderState.Name == "已发货").Where(timewhere.Compile()).ToList();
+                //Expression<Func<OrderEntity, bool>> timewhere = r => r.ConsignTime == null ? false : r.ConsignTime.Value.AddDays(Convert.ToDouble(val)) < DateTime.Now;
+                //var orders = dbc.GetAll<OrderEntity>().Where(r => r.OrderState.Name == "已发货").Where(r=>SqlFunctions).ToList();
                 foreach (OrderEntity order in orders)
                 {
                     order.EndTime = DateTime.Now;
