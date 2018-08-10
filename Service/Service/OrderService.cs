@@ -482,6 +482,7 @@ namespace IMS.Service.Service
                 if(deliver== "无需物流")
                 {
                     entity.OrderStateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "已完成")).Id;
+                    entity.EndTime = DateTime.Now;
                 }
                 else
                 {
@@ -793,9 +794,10 @@ namespace IMS.Service.Service
                 }
                 val = (await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "不能退货时间")).Parm;
                 timewhere = r => r.EndTime == null ? false : r.EndTime.Value.AddDays(Convert.ToDouble(val)) < DateTime.Now;
-                orders = dbc.GetAll<OrderEntity>().Where(r => r.OrderState.Name == "已完成").Where(timewhere.Compile()).ToList();
+                orders = dbc.GetAll<OrderEntity>().Where(r => r.OrderState.Name == "已完成" || r.OrderState.Name == "退货审核").Where(timewhere.Compile()).ToList();
                 foreach (OrderEntity order in orders)
                 {
+                    order.OrderStateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "已完成")).Id;
                     //UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u=>u.Id==order.BuyerId);
                     var journals = await dbc.GetAll<JournalEntity>().Where(j => j.OrderCode == order.Code && j.JournalType.Name == "佣金收入" && j.IsEnabled==false).ToListAsync();
                     foreach(JournalEntity journal in journals)
