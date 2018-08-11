@@ -169,31 +169,9 @@ namespace Test
                     Console.WriteLine(sql);
                 };
 
-                RecommendEntity recommend = dbc.GetAll<RecommendEntity>().AsNoTracking().Where(u => u.IsNull == false).SingleOrDefault(r => r.UserId == 2);
-                if (recommend == null)
-                {
-                    return;
-                }
-                var recommends = dbc.GetAll<RecommendEntity>().AsNoTracking().Where(u => u.IsNull == false);
-
-                if (recommend.RecommendMobile == "superhero" && recommend.RecommendGenera == 1)
-                {
-                    recommends = recommends.Where(a => a.RecommendId == 2 ||
-                 (a.RecommendPath.Contains("2" + "-") && a.RecommendGenera == recommend.RecommendGenera + 2) ||
-                 (a.RecommendPath.Contains("2" + "-") && a.RecommendGenera == recommend.RecommendGenera + 3));
-                }
-                else
-                {
-                    recommends = recommends.Where(a => a.RecommendId == 2 ||
-                 (a.RecommendPath.Contains("-" + "2" + "-") && a.RecommendGenera == recommend.RecommendGenera + 2) ||
-                 (a.RecommendPath.Contains("-" + "2" + "-") && a.RecommendGenera == recommend.RecommendGenera + 3));
-                }
-                if (recommends.LongCount() <= 0)
-                {
-                    return;
-                }
-                decimal d = recommends.Sum(r => r.User.BuyAmount);
-                Console.WriteLine();
+                var admin = dbc.GetAll<AdminEntity>().Include(a => a.Permissions).AsNoTracking().SingleOrDefault(a => a.Id == 1);
+                bool flag = admin.Permissions.Any(p => p.Description.Contains("管理员管理_修改密码"));
+                Console.WriteLine(flag);
             }
             Console.ReadKey();
         }
