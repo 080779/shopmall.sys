@@ -4,6 +4,7 @@ using IMS.Service.Entity;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -96,7 +97,7 @@ namespace IMS.Service.Service
                 }
                 if (endTime != null)
                 {
-                    entities = entities.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
+                    entities = entities.Where(a => SqlFunctions.DateDiff("day", endTime, a.CreateTime) <= 0);
                 }
                 result.PageCount = (int)Math.Ceiling((await entities.LongCountAsync()) * 1.0f / pageSize);
                 var goodsSecondTypesResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();

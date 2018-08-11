@@ -6,6 +6,7 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -877,7 +878,7 @@ namespace IMS.Service.Service
                 }
                 if (endTime != null)
                 {
-                    users = users.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
+                    users = users.Where(a => SqlFunctions.DateDiff("day", endTime, a.CreateTime) <= 0);
                 }
                 result.PageCount = (int)Math.Ceiling((await users.LongCountAsync()) * 1.0f / pageSize);
                 var userResult = await users.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
@@ -958,7 +959,7 @@ namespace IMS.Service.Service
                 }
                 if (endTime != null)
                 {
-                    recommends = recommends.Where(a => a.User.CreateTime.Year <= endTime.Value.Year && a.User.CreateTime.Month <= endTime.Value.Month && a.User.CreateTime.Day <= endTime.Value.Day);
+                    recommends = recommends.Where(a => SqlFunctions.DateDiff("day", endTime, a.User.CreateTime) <= 0);
                 }
                 result.TotalCount = recommends.LongCount();
                 result.PageCount = (int)Math.Ceiling(recommends.LongCount() * 1.0f / pageSize);
@@ -1033,7 +1034,7 @@ namespace IMS.Service.Service
                 }
                 if (endTime != null)
                 {
-                    recommends = recommends.Where(a => a.User.CreateTime.Year <= endTime.Value.Year && a.User.CreateTime.Month <= endTime.Value.Month && a.User.CreateTime.Day <= endTime.Value.Day);
+                    recommends = recommends.Where(a => SqlFunctions.DateDiff("day", endTime, a.User.CreateTime) <= 0);
                 }
                 result.TotalCount = recommends.LongCount();
                 result.PageCount = (int)Math.Ceiling(recommends.LongCount() * 1.0f / pageSize);

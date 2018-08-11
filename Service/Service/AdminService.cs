@@ -5,6 +5,7 @@ using IMS.Service.Entity;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -163,7 +164,7 @@ namespace IMS.Service.Service
                     }
                     if (endTime != null)
                     {
-                        admins = admins.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
+                        admins = admins.Where(a => SqlFunctions.DateDiff("day",endTime, a.CreateTime) <=0);
                     }
                 }
                 result.PageCount = (int)Math.Ceiling((await admins.LongCountAsync()) * 1.0f / pageSize);
@@ -193,7 +194,7 @@ namespace IMS.Service.Service
                 }
                 if (endTime != null)
                 {
-                    admins = admins.Where(a => a.CreateTime.Year <= endTime.Value.Year && a.CreateTime.Month <= endTime.Value.Month && a.CreateTime.Day <= endTime.Value.Day);
+                    admins = admins.Where(a => SqlFunctions.DateDiff("day", endTime, a.CreateTime) <= 0);
                 }
                 result.PageCount = (int)Math.Ceiling((await admins.LongCountAsync()) * 1.0f / pageSize);
                 var adminsResult = await admins.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
