@@ -6,6 +6,7 @@ using JWT.Serializers;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Linq.Expressions;
@@ -94,7 +95,7 @@ namespace Test
             Console.WriteLine(result);
             Console.ReadKey();
         }
-        static void Main(string[] args)
+        static void Main2(string[] args)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -157,6 +158,21 @@ namespace Test
                 dbc.SaveChanges();
             }
             Console.ReadKey();
-        }        
+        }
+
+        static void Main(string[] args)
+        {
+            using (MyDbContext dbc = new MyDbContext())
+            {
+                dbc.Database.Log = (sql) =>
+                {
+                    Console.WriteLine(sql);
+                };
+
+               long id = dbc.GetId<IdNameEntity>(i => i.Name == "退货完成21");
+                Console.WriteLine();
+            }
+            Console.ReadKey();
+        }
     }
 }
