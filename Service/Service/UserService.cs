@@ -288,12 +288,12 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                UserEntity entity = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Mobile == mobile);
-                if (entity == null)
+                long id = await dbc.GetIdAsync<UserEntity>(u => u.Mobile == mobile);
+                if (id == 0)
                 {
                     return -1;
                 }
-                return entity.Id;
+                return id;
             }
         }
 
@@ -339,8 +339,8 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                UserEntity user = dbc.GetAll<UserEntity>().SingleOrDefault(u=>u.Id==id);
-                if(user==null)
+                long res = dbc.GetId<UserEntity>(u => u.Id == id);
+                if (res == 0)
                 {
                     return false;
                 }
@@ -385,6 +385,7 @@ namespace IMS.Service.Service
                     decimal two = 0;
                     decimal three = 0;
 
+                    long journalTypeId= await dbc.GetIdAsync<IdNameEntity>(i => i.Name == "佣金收入");
                     UserEntity oneer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == user.Recommend.RecommendId);
                     if (oneer != null && oneer.Recommend.RecommendPath != "0")
                     {
@@ -409,7 +410,7 @@ namespace IMS.Service.Service
                         //journal1.BalanceAmount = oneer.Amount;
                         journal1.InAmount = orderlist.TotalFee * one;
                         journal1.Remark = "商品佣金收入";
-                        journal1.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "佣金收入")).Id;
+                        journal1.JournalTypeId = journalTypeId;
                         journal1.OrderCode = order.Code;
                         journal1.IsEnabled = false;
                         dbc.Journals.Add(journal1);
@@ -438,7 +439,7 @@ namespace IMS.Service.Service
                             //journal2.BalanceAmount = twoer.Amount;
                             journal2.InAmount = orderlist.TotalFee * two;
                             journal2.Remark = "商品佣金收入";
-                            journal2.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "佣金收入")).Id;
+                            journal2.JournalTypeId = journalTypeId;
                             journal2.OrderCode = order.Code;
                             journal2.IsEnabled = false;
                             dbc.Journals.Add(journal2);
@@ -467,7 +468,7 @@ namespace IMS.Service.Service
                                 //journal3.BalanceAmount = threer.Amount;
                                 journal3.InAmount = orderlist.TotalFee * three;
                                 journal3.Remark = "商品佣金收入";
-                                journal3.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "佣金收入")).Id;
+                                journal3.JournalTypeId = journalTypeId;
                                 journal3.OrderCode = order.Code;
                                 journal3.IsEnabled = false;
                                 dbc.Journals.Add(journal3);
@@ -481,24 +482,17 @@ namespace IMS.Service.Service
                 decimal up1 = 0;
                 decimal up2 = 0;
                 decimal up3 = 0;
-                SettingEntity upSetting1 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员→黄金会员");
-                SettingEntity upSetting2 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员→→铂金会员");
-                SettingEntity upSetting3 = await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "黄金会员→铂金会员");
-                if (upSetting1 != null)
-                {
-                    decimal.TryParse(upSetting1.Parm, out up1);
-                }
-                if (upSetting2 != null)
-                {
-                    decimal.TryParse(upSetting2.Parm, out up2);
-                }
-                if (upSetting3 != null)
-                {
-                    decimal.TryParse(upSetting3.Parm, out up3);
-                }
-                long level1 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "普通会员")).Id;
-                long level2 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "黄金会员")).Id;
-                long level3 = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "铂金会员")).Id;
+                string upSetting1 = await dbc.GetParameterAsync<SettingEntity>(i => i.Name == "普通会员→黄金会员",i=>i.Parm);
+                string upSetting2 = await dbc.GetParameterAsync<SettingEntity>(i => i.Name == "普通会员→→铂金会员", i => i.Parm);
+                string upSetting3 = await dbc.GetParameterAsync<SettingEntity>(i => i.Name == "黄金会员→铂金会员", i => i.Parm);
+
+                decimal.TryParse(upSetting1, out up1);
+                decimal.TryParse(upSetting2, out up2);
+                decimal.TryParse(upSetting3, out up3);
+
+                long level1 = await dbc.GetIdAsync<IdNameEntity>(i => i.Name == "普通会员");
+                long level2 = await dbc.GetIdAsync<IdNameEntity>(i => i.Name == "黄金会员");
+                long level3 = await dbc.GetIdAsync<IdNameEntity>(i => i.Name == "铂金会员");
                 if (order.Amount > user.Amount)
                 {
                     return -4;
@@ -509,11 +503,11 @@ namespace IMS.Service.Service
                 user.BuyAmount = user.BuyAmount + order.Amount;
 
                 order.PayTime = DateTime.Now;
-                order.PayTypeId= (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "余额")).Id;
-                order.OrderStateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "待发货")).Id;
+                order.PayTypeId= await dbc.GetIdAsync<IdNameEntity>(i => i.Name == "余额");
+                order.OrderStateId = await dbc.GetIdAsync<IdNameEntity>(i => i.Name == "待发货");
                 if (order.Deliver== "无需物流")
                 {
-                    order.OrderStateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "已完成")).Id;
+                    order.OrderStateId = await dbc.GetIdAsync<IdNameEntity>(i => i.Name == "已完成");
                 }            
                 if (levelId == level1)
                 {
@@ -539,7 +533,7 @@ namespace IMS.Service.Service
                 journal.BalanceAmount = user.Amount;
                 journal.OutAmount = order.Amount;
                 journal.Remark = "购买商品";
-                journal.JournalTypeId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "购物")).Id;
+                journal.JournalTypeId = await dbc.GetIdAsync<IdNameEntity>(i => i.Name == "购物");
                 journal.OrderCode = order.Code;
                 journal.LevelId = upLevelId;
                 dbc.Journals.Add(journal);      
@@ -590,6 +584,8 @@ namespace IMS.Service.Service
                     decimal two = 0;
                     decimal three = 0;
 
+                    long journalTypeId = dbc.GetId<IdNameEntity>(i => i.Name == "佣金收入");
+
                     UserEntity oneer = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefault(u => u.Id == user.Recommend.RecommendId);
                     if (oneer != null && oneer.Recommend.RecommendPath != "0")
                     {
@@ -614,7 +610,7 @@ namespace IMS.Service.Service
                         //journal1.BalanceAmount = oneer.Amount;
                         journal1.InAmount = orderlist.TotalFee * one;
                         journal1.Remark = "商品佣金收入";
-                        journal1.JournalTypeId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "佣金收入").Id;
+                        journal1.JournalTypeId = journalTypeId;
                         journal1.OrderCode = order.Code;
                         journal1.IsEnabled = false;
                         dbc.Journals.Add(journal1);
@@ -643,7 +639,7 @@ namespace IMS.Service.Service
                             //journal2.BalanceAmount = twoer.Amount;
                             journal2.InAmount = orderlist.TotalFee * two;
                             journal2.Remark = "商品佣金收入";
-                            journal2.JournalTypeId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "佣金收入").Id;
+                            journal2.JournalTypeId = journalTypeId;
                             journal2.OrderCode = order.Code;
                             journal2.IsEnabled = false;
                             dbc.Journals.Add(journal2);
@@ -672,7 +668,7 @@ namespace IMS.Service.Service
                                 //journal3.BalanceAmount = threer.Amount;
                                 journal3.InAmount = orderlist.TotalFee * three;
                                 journal3.Remark = "商品佣金收入";
-                                journal3.JournalTypeId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "佣金收入").Id;
+                                journal3.JournalTypeId = journalTypeId;
                                 journal3.OrderCode = order.Code;
                                 journal3.IsEnabled = false;
                                 dbc.Journals.Add(journal3);
@@ -685,38 +681,29 @@ namespace IMS.Service.Service
                 decimal up1 = 0;
                 decimal up2 = 0;
                 decimal up3 = 0;
-                SettingEntity upSetting1 = dbc.GetAll<SettingEntity>().SingleOrDefault(i => i.Name == "普通会员→黄金会员");
-                SettingEntity upSetting2 = dbc.GetAll<SettingEntity>().SingleOrDefault(i => i.Name == "普通会员→→铂金会员");
-                SettingEntity upSetting3 = dbc.GetAll<SettingEntity>().SingleOrDefault(i => i.Name == "黄金会员→铂金会员");
-                if (upSetting1 != null)
-                {
-                    decimal.TryParse(upSetting1.Parm, out up1);
-                }
-                if (upSetting2 != null)
-                {
-                    decimal.TryParse(upSetting2.Parm, out up2);
-                }
-                if (upSetting3 != null)
-                {
-                    decimal.TryParse(upSetting3.Parm, out up3);
-                }
-                long level1 = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "普通会员").Id;
-                long level2 = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "黄金会员").Id;
-                long level3 = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "铂金会员").Id;
-                //if (order.Amount > user.Amount)
-                //{
-                //    return -4;
-                //}
+
+                string upSetting1 = dbc.GetParameter<SettingEntity>(i => i.Name == "普通会员→黄金会员", i => i.Parm);
+                string upSetting2 = dbc.GetParameter<SettingEntity>(i => i.Name == "普通会员→→铂金会员", i => i.Parm);
+                string upSetting3 = dbc.GetParameter<SettingEntity>(i => i.Name == "黄金会员→铂金会员", i => i.Parm);
+
+                decimal.TryParse(upSetting1, out up1);
+                decimal.TryParse(upSetting2, out up2);
+                decimal.TryParse(upSetting3, out up3);
+
+                long level1 = dbc.GetId<IdNameEntity>(i => i.Name == "普通会员");
+                long level2 = dbc.GetId<IdNameEntity>(i => i.Name == "黄金会员");
+                long level3 = dbc.GetId<IdNameEntity>(i => i.Name == "铂金会员");
+
                 long levelId = user.LevelId;
                 long upLevelId = 1;
                 user.BuyAmount = user.BuyAmount + order.Amount;
 
                 order.PayTime = DateTime.Now;
-                order.PayTypeId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "微信").Id;
-                order.OrderStateId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "待发货").Id;
+                order.PayTypeId = dbc.GetId<IdNameEntity>(i => i.Name == "微信");
+                order.OrderStateId = dbc.GetId<IdNameEntity>(i => i.Name == "待发货");
                 if (order.Deliver == "无需物流")
                 {
-                    order.OrderStateId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "已完成").Id;
+                    order.OrderStateId = dbc.GetId<IdNameEntity>(i => i.Name == "已完成");
                 }
 
                 if (levelId == level1)
@@ -743,7 +730,7 @@ namespace IMS.Service.Service
                 journal.BalanceAmount = user.Amount;
                 journal.OutAmount = order.Amount;
                 journal.Remark = "微信支付购买商品";
-                journal.JournalTypeId = dbc.GetAll<IdNameEntity>().SingleOrDefault(i => i.Name == "购物").Id;
+                journal.JournalTypeId = dbc.GetId<IdNameEntity>(i => i.Name == "购物");
                 journal.LevelId = upLevelId;
                 journal.OrderCode = order.Code;
                 dbc.Journals.Add(journal);
@@ -759,8 +746,8 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 CalcAmountResult res = new CalcAmountResult();
-                var users = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false);
-                var takeCash = dbc.GetAll<TakeCashEntity>().Where(t => t.State.Name == "已结款");
+                var users = dbc.GetAll<UserEntity>().AsNoTracking().Where(u => u.IsNull == false);
+                var takeCash = dbc.GetAll<TakeCashEntity>().AsNoTracking().Where(t => t.State.Name == "已结款");
                 res.TotalAmount = users.Any() ? await users.SumAsync(u => u.Amount) : 0;
                 res.TotalTakeCash = takeCash.Any() ? await takeCash.SumAsync(u => u.Amount) : 0;
                 res.TotalBuyAmount = users.Any() ? await users.SumAsync(u => u.BuyAmount) : 0;
@@ -772,12 +759,12 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.UserId == id);
+                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().AsNoTracking().Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.UserId == id);
                 if(recommend==null)
                 {
                     return 0;
                 }
-                var recommends = dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false);
+                var recommends = dbc.GetAll<RecommendEntity>().Include(r=>r.User).AsNoTracking().Where(u => u.IsNull == false);
 
                 if (recommend.RecommendMobile == "superhero" && recommend.RecommendGenera == 1)
                 {
@@ -803,12 +790,12 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                RecommendEntity recommend = dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false).SingleOrDefault(r => r.UserId == id);
+                RecommendEntity recommend = dbc.GetAll<RecommendEntity>().AsNoTracking().Where(u => u.IsNull == false).SingleOrDefault(r => r.UserId == id);
                 if (recommend == null)
                 {
                     return 0;
                 }
-                var recommends = dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false);
+                var recommends = dbc.GetAll<RecommendEntity>().Include(r=>r.User).AsNoTracking().Where(u => u.IsNull == false);
 
                 if (recommend.RecommendMobile == "superhero" && recommend.RecommendGenera == 1)
                 {
@@ -834,7 +821,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                UserEntity entity = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Id == id);
+                UserEntity entity = await dbc.GetAll<UserEntity>().Include(u=>u.Recommend).AsNoTracking().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Id == id);
                 if (entity == null)
                 {
                     return null;
@@ -848,7 +835,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserSearchResult result = new UserSearchResult();
-                var user = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Mobile == mobile);
+                var user = await dbc.GetAll<UserEntity>().Include(u => u.Recommend).AsNoTracking().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Mobile == mobile);
                 if (user == null)
                 {
                     return null;
@@ -862,7 +849,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserSearchResult result = new UserSearchResult();
-                var users = dbc.GetAll<UserEntity>().Where(u => u.IsNull == false);
+                var users = dbc.GetAll<UserEntity>().Include(u => u.Recommend).AsNoTracking().Where(u => u.IsNull == false);
 
                 if (levelId != null)
                 {
@@ -893,14 +880,14 @@ namespace IMS.Service.Service
                 UserTeamSearchResult result = new UserTeamSearchResult();
                 if (string.IsNullOrEmpty(mobile))
                 {
-                    mobile = (await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Recommend.RecommendGenera == 1)).Mobile;
+                    mobile = await dbc.GetParameterAsync<UserEntity>(u => u.Recommend.RecommendGenera == 1, u => u.Mobile);
                 }
-                RecommendEntity user = await dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.User.Mobile == mobile);
+                RecommendEntity user = await dbc.GetAll<RecommendEntity>().AsNoTracking().Include(u=>u.User).Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.User.Mobile == mobile);
                 if (user == null)
                 {
                     return result;
                 }
-                var recommends = dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false);
+                var recommends = dbc.GetAll<RecommendEntity>().AsNoTracking().Include(u => u.User).Where(u => u.IsNull == false);
                 if (teamLevel != null)
                 {
                     if (user.RecommendMobile == "superhero" && user.RecommendGenera == 1)
@@ -974,8 +961,8 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserTeamSearchResult result = new UserTeamSearchResult();
-                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.UserId == userId);
-                var recommends = dbc.GetAll<RecommendEntity>().Where(u => u.IsNull == false);
+                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().AsNoTracking().Include(u => u.User).Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.UserId == userId);
+                var recommends = dbc.GetAll<RecommendEntity>().AsNoTracking().Include(u => u.User).Where(u => u.IsNull == false);
                 if (teamLevel != null)
                 {
                     if (recommend.RecommendMobile == "superhero" && recommend.RecommendGenera == 1)

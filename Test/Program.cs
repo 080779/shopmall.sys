@@ -169,7 +169,30 @@ namespace Test
                     Console.WriteLine(sql);
                 };
 
-               long id = dbc.GetId<IdNameEntity>(i => i.Name == "退货完成21");
+                RecommendEntity recommend = dbc.GetAll<RecommendEntity>().AsNoTracking().Where(u => u.IsNull == false).SingleOrDefault(r => r.UserId == 2);
+                if (recommend == null)
+                {
+                    return;
+                }
+                var recommends = dbc.GetAll<RecommendEntity>().AsNoTracking().Where(u => u.IsNull == false);
+
+                if (recommend.RecommendMobile == "superhero" && recommend.RecommendGenera == 1)
+                {
+                    recommends = recommends.Where(a => a.RecommendId == 2 ||
+                 (a.RecommendPath.Contains("2" + "-") && a.RecommendGenera == recommend.RecommendGenera + 2) ||
+                 (a.RecommendPath.Contains("2" + "-") && a.RecommendGenera == recommend.RecommendGenera + 3));
+                }
+                else
+                {
+                    recommends = recommends.Where(a => a.RecommendId == 2 ||
+                 (a.RecommendPath.Contains("-" + "2" + "-") && a.RecommendGenera == recommend.RecommendGenera + 2) ||
+                 (a.RecommendPath.Contains("-" + "2" + "-") && a.RecommendGenera == recommend.RecommendGenera + 3));
+                }
+                if (recommends.LongCount() <= 0)
+                {
+                    return;
+                }
+                decimal d = recommends.Sum(r => r.User.BuyAmount);
                 Console.WriteLine();
             }
             Console.ReadKey();

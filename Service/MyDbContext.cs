@@ -49,6 +49,16 @@ namespace IMS.Service
             return await this.Set<T>().AsNoTracking().Where(e => e.IsDeleted == false).Where(expression).Select(parameterName).SingleOrDefaultAsync();
         }
 
+        public decimal GetDecimalParameter<T>(Expression<Func<T, bool>> expression, Expression<Func<T, decimal>> parameterName) where T : BaseEntity
+        {
+            return this.Set<T>().AsNoTracking().Where(e => e.IsDeleted == false).Where(expression).Select(parameterName).SingleOrDefault();
+        }
+
+        public async Task<decimal> GetDecimalParameterAsync<T>(Expression<Func<T, bool>> expression, Expression<Func<T, decimal>> parameterName) where T : BaseEntity
+        {
+            return await this.Set<T>().AsNoTracking().Where(e => e.IsDeleted == false).Where(expression).Select(parameterName).SingleOrDefaultAsync();
+        }
+
         public DbSet<AddressEntity> Addresses { get; set; }
         public DbSet<BankAccountEntity> BankAccounts { get; set; }
         public DbSet<GoodsAreaEntity> GoodsAreas { get; set; }
