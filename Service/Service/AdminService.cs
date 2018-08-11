@@ -133,7 +133,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entity = await dbc.GetAll<AdminEntity>().SingleOrDefaultAsync(a => a.Id == id);
+                var entity = await dbc.GetAll<AdminEntity>().AsNoTracking().SingleOrDefaultAsync(a => a.Id == id);
                 if (entity == null)
                 {
                     return null;
@@ -147,7 +147,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 AdminSearchResult result = new AdminSearchResult();
-                var admins = dbc.GetAll<AdminEntity>();
+                var admins = dbc.GetAll<AdminEntity>().AsNoTracking();
                 if(isAdmin!="admin")
                 {
                     admins = admins.Where(a => a.Mobile== isAdmin);
@@ -179,7 +179,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 AdminSearchResult result = new AdminSearchResult();
-                var admins = dbc.GetAll<AdminEntity>();
+                var admins = dbc.GetAll<AdminEntity>().AsNoTracking();
                 if (isAdmin != "admin")
                 {
                     admins = admins.Where(a => a.Mobile != "admin");
@@ -207,7 +207,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var admin = dbc.GetAll<AdminEntity>().SingleOrDefault(a => a.Id == id);
+                var admin = dbc.GetAll<AdminEntity>().Include(a=>a.Permissions).AsNoTracking().SingleOrDefault(a => a.Id == id);
                 if(admin==null)
                 {
                     return false;
