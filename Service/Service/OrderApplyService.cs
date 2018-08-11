@@ -64,7 +64,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 OrderApplySearchResult result = new OrderApplySearchResult();
-                var entities = dbc.GetAll<OrderApplyEntity>().Where(o => o.UserId == userId);
+                var entities = dbc.GetAll<OrderApplyEntity>().AsNoTracking().Where(o => o.UserId == userId);
                 var res= await entities.ToListAsync();
                 result.OrderApplies = res.Select(o => ToDTO(o)).ToArray();
                 result.ToTalAmount = res.Sum(o => o.TotalFee);

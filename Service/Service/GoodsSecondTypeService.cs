@@ -55,7 +55,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                GoodsSecondTypeEntity entity = await dbc.GetAll<GoodsSecondTypeEntity>().SingleOrDefaultAsync(g => g.Id == id);
+                GoodsSecondTypeEntity entity = await dbc.GetAll<GoodsSecondTypeEntity>().AsNoTracking().SingleOrDefaultAsync(g => g.Id == id);
                 if (entity == null)
                 {
                     return null;
@@ -68,12 +68,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                GoodsSecondTypeEntity entity = await dbc.GetAll<GoodsSecondTypeEntity>().SingleOrDefaultAsync(g => g.Name == name);
-                if (entity == null)
-                {
-                    return 0;
-                }
-                return entity.Id;
+                return await dbc.GetIdAsync<GoodsSecondTypeEntity>(g => g.Name == name);
             }
         }
 
@@ -82,7 +77,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 GoodsSecondTypeSearchResult result = new GoodsSecondTypeSearchResult();
-                var entities = dbc.GetAll<GoodsSecondTypeEntity>().Where(g => g.IsNull == false);
+                var entities = dbc.GetAll<GoodsSecondTypeEntity>().AsNoTracking().Where(g => g.IsNull == false);
                 if (goodTypeId != null)
                 {
                     entities = entities.Where(a => a.GoodsTypeId == goodTypeId);
@@ -110,7 +105,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                GoodsSecondTypeEntity entity = await dbc.GetAll<GoodsSecondTypeEntity>().SingleOrDefaultAsync(g => g.Id == id);
+                GoodsSecondTypeEntity entity = await dbc.GetAll<GoodsSecondTypeEntity>().AsNoTracking().SingleOrDefaultAsync(g => g.Id == id);
                 if (entity == null)
                 {
                     return false;

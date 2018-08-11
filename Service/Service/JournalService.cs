@@ -40,7 +40,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 JournalSearchResult result = new JournalSearchResult();
-                var entities = dbc.GetAll<JournalEntity>().Where(j=>j.IsEnabled==true);
+                var entities = dbc.GetAll<JournalEntity>().AsNoTracking().Where(j=>j.IsEnabled==true);
                 if (userId != null)
                 {
                     entities = entities.Where(a => a.UserId == userId);
@@ -66,7 +66,7 @@ namespace IMS.Service.Service
                 decimal? totalOutAmount= await entities.SumAsync(j => j.OutAmount);
                 result.TotalInAmount = totalInAmount == null ? 0 : totalInAmount;
                 result.TotalOutAmount = totalOutAmount == null ? 0 : totalOutAmount;
-                var journalResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                var journalResult = await entities.Include(j => j.JournalType).Include(j => j.User).OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 result.Journals = journalResult.Select(a => ToDTO(a)).ToArray();
                 return result;
             }

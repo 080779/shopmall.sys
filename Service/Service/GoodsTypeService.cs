@@ -56,7 +56,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                GoodsTypeEntity entity = await dbc.GetAll<GoodsTypeEntity>().SingleOrDefaultAsync(g => g.Id == id);
+                GoodsTypeEntity entity = await dbc.GetAll<GoodsTypeEntity>().AsNoTracking().SingleOrDefaultAsync(g => g.Id == id);
                 if (entity == null)
                 {
                     return null;
@@ -70,7 +70,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 GoodsTypeSearchResult result = new GoodsTypeSearchResult();
-                var entities = dbc.GetAll<GoodsTypeEntity>().Where(g=>g.IsNull == false);
+                var entities = dbc.GetAll<GoodsTypeEntity>().AsNoTracking().Where(g=>g.IsNull == false);
                 if (!string.IsNullOrEmpty(keyword))
                 {
                     entities = entities.Where(g => g.Name.Contains(keyword) || g.Description.Contains(keyword));

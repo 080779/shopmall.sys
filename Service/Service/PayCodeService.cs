@@ -86,7 +86,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entities = dbc.GetAll<PayCodeEntity>().Where(b=>b.IsNull==false && b.UserId==id);
+                var entities = dbc.GetAll<PayCodeEntity>().AsNoTracking().Where(b=>b.IsNull==false && b.UserId==id);
                 var payCodes = await entities.ToListAsync();
                 return payCodes.Select(p => ToDTO(p)).ToArray();
             }

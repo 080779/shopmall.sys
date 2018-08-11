@@ -66,12 +66,12 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entities = dbc.GetAll<GoodsImgEntity>().Where(g=>g.GoodsId==goodsId);
-                if(entities.Count()<=0)
+                string imgUrl = dbc.GetAll<GoodsImgEntity>().Where(g=>g.GoodsId==goodsId).Select(g => g.ImgUrl).SingleOrDefault();
+                if(imgUrl==null)
                 {
                     return "";
                 }
-                return entities.First().ImgUrl;
+                return imgUrl;
             }
         }
 
@@ -79,7 +79,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entities = dbc.GetAll<GoodsImgEntity>();
+                var entities = dbc.GetAll<GoodsImgEntity>().AsNoTracking();
                 if (goodsId != null)
                 {
                     entities = entities.Where(a => a.GoodsId == goodsId);
@@ -92,7 +92,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entities = dbc.GetAll<GoodsImgEntity>();
+                var entities = dbc.GetAll<GoodsImgEntity>().AsNoTracking();
                 if (goodsId != null)
                 {
                     entities = entities.Where(a => a.GoodsId == goodsId);
@@ -107,7 +107,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 GoodsImgSearchResult result = new GoodsImgSearchResult();
-                var entities = dbc.GetAll<GoodsImgEntity>();
+                var entities = dbc.GetAll<GoodsImgEntity>().AsNoTracking();
                 if(goodsId!=null)
                 {
                     entities = entities.Where(a => a.GoodsId == goodsId);

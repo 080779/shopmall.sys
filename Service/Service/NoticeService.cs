@@ -67,7 +67,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                NoticeEntity entity = await dbc.GetAll<NoticeEntity>().SingleOrDefaultAsync(g => g.Id == id);
+                NoticeEntity entity = await dbc.GetAll<NoticeEntity>().AsNoTracking().SingleOrDefaultAsync(g => g.Id == id);
                 if (entity == null)
                 {
                     return null;
@@ -82,7 +82,7 @@ namespace IMS.Service.Service
             {
                 NoticeSearchResult result = new NoticeSearchResult();
                 await dbc.GetAll<NoticeEntity>().ForEachAsync(n => { if(n.FailureTime<DateTime.Now){ n.IsEnabled = false;}});
-                var entities = dbc.GetAll<NoticeEntity>();
+                var entities = dbc.GetAll<NoticeEntity>().AsNoTracking();
                 if (!string.IsNullOrEmpty(keyword))
                 {
                     entities = entities.Where(g => g.Code.Contains(keyword) || g.Content.Contains(keyword));

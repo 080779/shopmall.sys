@@ -49,14 +49,14 @@ namespace IMS.Service.Service
                 entity.GoodsId = goodsId;
                 entity.Number = number;
                 entity.Price = goods.RealityPrice;
-                GoodsImgEntity imgEntity = await dbc.GetAll<GoodsImgEntity>().FirstOrDefaultAsync(g => g.GoodsId == goodsId);
-                if(imgEntity==null)
+                string imgUrl = await dbc.GetAll<GoodsImgEntity>().Where(g => g.GoodsId == goodsId).Select(g=>g.ImgUrl).FirstOrDefaultAsync();
+                if(imgUrl == null)
                 {
                     entity.ImgUrl = "";
                 }
                 else
                 {
-                    entity.ImgUrl = imgEntity.ImgUrl;
+                    entity.ImgUrl = imgUrl;
                 }                
                 entity.TotalFee = entity.Price * number;
                 dbc.OrderLists.Add(entity);
@@ -81,14 +81,14 @@ namespace IMS.Service.Service
                     entity.GoodsId = goods.GoodsId;
                     entity.Number = goods.Number;
                     entity.Price = goodsEntity.RealityPrice;
-                    GoodsImgEntity imgEntity = await dbc.GetAll<GoodsImgEntity>().FirstOrDefaultAsync(g => g.GoodsId == goods.GoodsId);
-                    if (imgEntity == null)
+                    string imgUrl = await dbc.GetAll<GoodsImgEntity>().Where(g => g.GoodsId == goods.GoodsId).Select(g => g.ImgUrl).FirstOrDefaultAsync();
+                    if (imgUrl == null)
                     {
                         entity.ImgUrl = "";
                     }
                     else
                     {
-                        entity.ImgUrl = imgEntity.ImgUrl;
+                        entity.ImgUrl = imgUrl;
                     }
                     entity.TotalFee = entity.Price * entity.Number;
                     dbc.OrderLists.Add(entity);
@@ -132,7 +132,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 OrderListSearchResult result = new OrderListSearchResult();
-                var entities = dbc.GetAll<OrderListEntity>();
+                var entities = dbc.GetAll<OrderListEntity>().Include(o=>o.Goods).Include(o=>o.Order).AsNoTracking();
                 if (orderId != null)
                 {
                     entities = entities.Where(a => a.OrderId == orderId);

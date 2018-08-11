@@ -71,6 +71,10 @@
       <Project>{599be380-8a33-46b7-be16-ab6d08ef0c5c}</Project>
       <Name>IMS.DTO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\IService\IMS.IService.csproj">
+      <Project>{865AA8F1-EFAF-4173-A31B-B7A98A8E829A}</Project>
+      <Name>IMS.IService</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Service\IMS.Service.csproj">
       <Project>{cfc4137d-9e7e-4581-a63f-9ce932833277}</Project>
       <Name>IMS.Service</Name>

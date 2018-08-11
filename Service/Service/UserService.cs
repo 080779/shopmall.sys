@@ -764,7 +764,7 @@ namespace IMS.Service.Service
                 {
                     return 0;
                 }
-                var recommends = dbc.GetAll<RecommendEntity>().Include(r=>r.User).AsNoTracking().Where(u => u.IsNull == false);
+                var recommends = dbc.GetAll<RecommendEntity>().AsNoTracking().Where(u => u.IsNull == false);
 
                 if (recommend.RecommendMobile == "superhero" && recommend.RecommendGenera == 1)
                 {
@@ -782,7 +782,7 @@ namespace IMS.Service.Service
                 {
                     return 0;
                 }
-                return recommends.Sum(r => r.User.BuyAmount);
+                return await recommends.Include(r => r.User).SumAsync(r => r.User.BuyAmount);
             }
         }
 
@@ -795,7 +795,7 @@ namespace IMS.Service.Service
                 {
                     return 0;
                 }
-                var recommends = dbc.GetAll<RecommendEntity>().Include(r=>r.User).AsNoTracking().Where(u => u.IsNull == false);
+                var recommends = dbc.GetAll<RecommendEntity>().AsNoTracking().Where(u => u.IsNull == false);
 
                 if (recommend.RecommendMobile == "superhero" && recommend.RecommendGenera == 1)
                 {
@@ -813,7 +813,7 @@ namespace IMS.Service.Service
                 {
                     return 0;
                 }
-                return recommends.Sum(r => r.User.BuyAmount);
+                return recommends.Include(r => r.User).Sum(r => r.User.BuyAmount);
             }
         }
 
@@ -849,7 +849,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserSearchResult result = new UserSearchResult();
-                var users = dbc.GetAll<UserEntity>().Include(u => u.Recommend).AsNoTracking().Where(u => u.IsNull == false);
+                var users = dbc.GetAll<UserEntity>().AsNoTracking().Where(u => u.IsNull == false);
 
                 if (levelId != null)
                 {
@@ -868,7 +868,7 @@ namespace IMS.Service.Service
                     users = users.Where(a => SqlFunctions.DateDiff("day", endTime, a.CreateTime) <= 0);
                 }
                 result.PageCount = (int)Math.Ceiling((await users.LongCountAsync()) * 1.0f / pageSize);
-                var userResult = await users.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                var userResult = await users.Include(u => u.Recommend).OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 result.Users = userResult.Select(a => ToDTO(a)).ToArray();
                 return result;
             }
@@ -882,7 +882,7 @@ namespace IMS.Service.Service
                 {
                     mobile = await dbc.GetParameterAsync<UserEntity>(u => u.Recommend.RecommendGenera == 1, u => u.Mobile);
                 }
-                RecommendEntity user = await dbc.GetAll<RecommendEntity>().AsNoTracking().Include(u=>u.User).Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.User.Mobile == mobile);
+                RecommendEntity user = await dbc.GetAll<RecommendEntity>().AsNoTracking().Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.User.Mobile == mobile);
                 if (user == null)
                 {
                     return result;
@@ -951,7 +951,7 @@ namespace IMS.Service.Service
                 result.TotalCount = recommends.LongCount();
                 result.PageCount = (int)Math.Ceiling(recommends.LongCount() * 1.0f / pageSize);
                 result.TeamLeader = ToDTO(user.User);
-                var userResult = await recommends.OrderByDescending(a => a.User.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                var userResult = await recommends.Include(u => u.User).OrderByDescending(a => a.User.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 result.Members = userResult.Select(a => ToDTO(a.User)).ToArray();
                 return result;
             }
@@ -961,8 +961,8 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserTeamSearchResult result = new UserTeamSearchResult();
-                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().AsNoTracking().Include(u => u.User).Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.UserId == userId);
-                var recommends = dbc.GetAll<RecommendEntity>().AsNoTracking().Include(u => u.User).Where(u => u.IsNull == false);
+                RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().Include(u => u.User).AsNoTracking().Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.UserId == userId);
+                var recommends = dbc.GetAll<RecommendEntity>().AsNoTracking().Where(u => u.IsNull == false);
                 if (teamLevel != null)
                 {
                     if (recommend.RecommendMobile == "superhero" && recommend.RecommendGenera == 1)
@@ -1025,7 +1025,7 @@ namespace IMS.Service.Service
                 }
                 result.TotalCount = recommends.LongCount();
                 result.PageCount = (int)Math.Ceiling(recommends.LongCount() * 1.0f / pageSize);
-                var userResult = await recommends.OrderByDescending(a => a.User.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                var userResult = await recommends.Include(u => u.User).OrderByDescending(a => a.User.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 result.Members = userResult.Select(a => ToDTO(a.User)).ToArray();
                 return result;
             }

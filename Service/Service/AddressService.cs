@@ -70,7 +70,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entity = await dbc.GetAll<AddressEntity>().SingleOrDefaultAsync(a=>a.Id==id);
+                var entity = await dbc.GetAll<AddressEntity>().AsNoTracking().SingleOrDefaultAsync(a=>a.Id==id);
                 if(entity==null)
                 {
                     return null;
@@ -83,7 +83,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entity = await dbc.GetAll<AddressEntity>().SingleOrDefaultAsync(a => a.UserId == userId && a.IsDefault==true);
+                var entity = await dbc.GetAll<AddressEntity>().AsNoTracking().SingleOrDefaultAsync(a => a.UserId == userId && a.IsDefault==true);
                 if (entity == null)
                 {
                     return null;
@@ -97,7 +97,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 AddressSearchResult result = new AddressSearchResult();
-                var entities = dbc.GetAll<AddressEntity>();
+                var entities = dbc.GetAll<AddressEntity>().AsNoTracking();
                 if (userId != null)
                 {
                     entities = entities.Where(a => a.UserId == userId);

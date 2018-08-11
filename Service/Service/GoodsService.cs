@@ -83,7 +83,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                GoodsEntity entity = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g => g.Id == id);
+                GoodsEntity entity = await dbc.GetAll<GoodsEntity>().Include(g=>g.GoodsArea).Include(g => g.GoodsSecondType).Include(g => g.GoodsType).AsNoTracking().SingleOrDefaultAsync(g => g.Id == id);
                 if (entity == null)
                 {
                     return null;
@@ -97,7 +97,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 GoodsSearchResult result = new GoodsSearchResult();
-                var entities = dbc.GetAll<GoodsEntity>().Where(g=>g.IsPutaway==true);
+                var entities = dbc.GetAll<GoodsEntity>().Include(g => g.GoodsArea).Include(g => g.GoodsSecondType).Include(g => g.GoodsType).AsNoTracking().Where(g=>g.IsPutaway==true);
                 if (goodsAreaId != null)
                 {
                     entities = entities.Where(a => a.GoodsAreaId == goodsAreaId);
@@ -134,7 +134,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 GoodsSearchResult result = new GoodsSearchResult();
-                var entities = dbc.GetAll<GoodsEntity>();
+                var entities = dbc.GetAll<GoodsEntity>().Include(g => g.GoodsArea).Include(g => g.GoodsSecondType).Include(g => g.GoodsType).AsNoTracking();
                 if(goodsAreaId!=null)
                 {
                     entities = entities.Where(a => a.GoodsAreaId == goodsAreaId);
@@ -171,7 +171,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 GoodsSearchResult result = new GoodsSearchResult();
-                var entities = dbc.GetAll<GoodsEntity>().Where(g=>g.IsPutaway==true);
+                var entities = dbc.GetAll<GoodsEntity>().Include(g => g.GoodsArea).Include(g => g.GoodsSecondType).Include(g => g.GoodsType).AsNoTracking().Where(g=>g.IsPutaway==true);
                 if (!string.IsNullOrEmpty(keyword))
                 {
                     entities = entities.Where(g => g.Name.Contains(keyword) || g.Description.Contains(keyword) || g.GoodsSecondType.Name.Contains(keyword) || g.GoodsType.Name.Contains(keyword));

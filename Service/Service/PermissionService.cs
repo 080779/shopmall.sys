@@ -28,7 +28,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entities = dbc.GetAll<PermissionEntity>().Where(p => p.PermissionTypeId == id);
+                var entities = dbc.GetAll<PermissionEntity>().Include(p=>p.PermissionType).AsNoTracking().Where(p => p.PermissionTypeId == id);
                 var permissions = await entities.ToListAsync();
                 return permissions.Select(p => ToDTO(p)).ToArray();
             }
@@ -38,7 +38,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entity = dbc.GetAll<PermissionEntity>().SingleOrDefault(p => p.Description == description);
+                var entity = dbc.GetAll<PermissionEntity>().Include(p => p.PermissionType).AsNoTracking().SingleOrDefault(p => p.Description == description);
                 return ToDTO(entity);
             }
         }        

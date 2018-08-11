@@ -84,12 +84,12 @@ namespace IMS.Service.Service
                 TakeCashEntity entity = new TakeCashEntity();
                 entity.UserId = userId;
                 entity.PayTypeId = payTypeId;
-                var state = await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "未结款");
-                if(state==null)
+                var stateId = await dbc.GetIdAsync<IdNameEntity>(i => i.Name == "未结款");
+                if(stateId == 0)
                 {
                     return -3;
                 }
-                entity.StateId = state.Id;
+                entity.StateId = stateId;
                 entity.Amount = amount;
                 entity.Description = descripton;
                 dbc.TakeCashes.Add(entity);

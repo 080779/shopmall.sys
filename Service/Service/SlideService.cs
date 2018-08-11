@@ -74,7 +74,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 SlideSearchResult result = new SlideSearchResult();
-                var entities = dbc.GetAll<SlideEntity>();
+                var entities = dbc.GetAll<SlideEntity>().AsNoTracking();
                 if (!string.IsNullOrEmpty(keyword))
                 {
                     entities = entities.Where(g => g.Code.Contains(keyword) || g.Name.Contains(keyword));

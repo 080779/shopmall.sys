@@ -1,4 +1,5 @@
-﻿using IMS.Service;
+﻿using IMS.IService;
+using IMS.Service;
 using IMS.Service.Entity;
 using JWT;
 using JWT.Algorithms;
@@ -12,6 +13,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using IMS.Service.Service;
+using IMS.DTO;
 
 namespace Test
 {
@@ -169,11 +172,45 @@ namespace Test
                     Console.WriteLine(sql);
                 };
 
-                var admin = dbc.GetAll<AdminEntity>().Include(a => a.Permissions).AsNoTracking().SingleOrDefault(a => a.Id == 1);
-                bool flag = admin.Permissions.Any(p => p.Description.Contains("管理员管理_修改密码"));
-                Console.WriteLine(flag);
+                GoodsCarSearchResult result = new GoodsCarSearchResult();
+                var entities = dbc.GetAll<GoodsCarEntity>().AsNoTracking();
+
+                result.PageCount = (int)Math.Ceiling((entities.LongCount()) * 1.0f / 5);
+                var goodsAreaResult = entities.Include(g => g.Goods).OrderByDescending(a => a.CreateTime).Skip((1 - 1) * 5).Take(5).ToList();
+                var imgUrls = dbc.GetAll<GoodsImgEntity>().AsNoTracking().Select(g => new { g.GoodsId, g.ImgUrl });
+                result.GoodsCars = goodsAreaResult.Select(a => ToDTO(a, imgUrls.Where(g => g.GoodsId == a.GoodsId).Select(g=>g.ImgUrl).FirstOrDefault())).ToArray();
+                result.TotalAmount = result.GoodsCars.Where(g => g.IsSelected == true).Sum(g => g.GoodsAmount);
+                Console.WriteLine();
             }
             Console.ReadKey();
+        }
+
+        private static GoodsCarDTO ToDTO(GoodsCarEntity entity, string imgUrl)
+        {
+            GoodsCarDTO dto = new GoodsCarDTO();
+            dto.GoodsId = entity.GoodsId;
+            dto.UserId = entity.UserId;
+            dto.Code = entity.Goods.Code;
+            dto.CreateTime = entity.CreateTime;
+            dto.Description = entity.Goods.Description;
+            dto.Id = entity.Id;
+            if (string.IsNullOrEmpty(imgUrl))
+            {
+                dto.ImgUrl = "";
+            }
+            else
+            {
+                dto.ImgUrl = imgUrl;
+            }
+            dto.Name = entity.Goods.Name;
+            dto.Price = entity.Goods.Price;
+            dto.RealityPrice = entity.Goods.RealityPrice;
+            dto.Standard = entity.Goods.Standard;
+            dto.Number = entity.Number;
+            dto.IsSelected = entity.IsSelected;
+            dto.GoodsAmount = entity.Goods.RealityPrice * entity.Number;
+            dto.Inventory = entity.Goods.Inventory;
+            return dto;
         }
     }
 }

@@ -105,14 +105,14 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entities = dbc.GetAll<GoodsCarEntity>().Where(g => g.IsSelected == true);
+                var entities = dbc.GetAll<GoodsCarEntity>().AsNoTracking().Where(g => g.IsSelected == true);
                 if (userId != null)
                 {
                     entities = entities.Where(g => g.UserId == userId);
                 }
                 var goodsCarResult = await entities.ToListAsync();
-                var imgUrls = dbc.GetAll<GoodsImgEntity>();
-                return goodsCarResult.Select(a => ToDTO(a, imgUrls.FirstOrDefault(g => g.GoodsId == a.GoodsId) == null ? null : imgUrls.FirstOrDefault(g => g.GoodsId == a.GoodsId).ImgUrl)).ToArray();
+                var imgUrls = dbc.GetAll<GoodsImgEntity>().AsNoTracking().Select(g => new { g.GoodsId, g.ImgUrl });
+                return goodsCarResult.Select(a => ToDTO(a, imgUrls.Where(g => g.GoodsId == a.GoodsId).Select(g => g.ImgUrl).FirstOrDefault())).ToArray();
             }
         }
 
@@ -121,7 +121,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 GoodsCarSearchResult result = new GoodsCarSearchResult();
-                var entities = dbc.GetAll<GoodsCarEntity>();
+                var entities = dbc.GetAll<GoodsCarEntity>().AsNoTracking();
                 if (userId != null)
                 {
                     entities = entities.Where(g => g.UserId == userId);
@@ -139,9 +139,9 @@ namespace IMS.Service.Service
                     entities = entities.Where(a => SqlFunctions.DateDiff("day", endTime, a.CreateTime) <= 0);
                 }
                 result.PageCount = (int)Math.Ceiling((await entities.LongCountAsync()) * 1.0f / pageSize);
-                var goodsAreaResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
-                var imgUrls = dbc.GetAll<GoodsImgEntity>();
-                result.GoodsCars = goodsAreaResult.Select(a => ToDTO(a, imgUrls.FirstOrDefault(g => g.GoodsId == a.GoodsId) == null ? null : imgUrls.FirstOrDefault(g => g.GoodsId == a.GoodsId).ImgUrl)).ToArray();
+                var goodsAreaResult = await entities.Include(g => g.Goods).OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                var imgUrls = dbc.GetAll<GoodsImgEntity>().AsNoTracking().Select(g => new { g.GoodsId, g.ImgUrl });
+                result.GoodsCars = goodsAreaResult.Select(a => ToDTO(a, imgUrls.Where(g => g.GoodsId == a.GoodsId).Select(g => g.ImgUrl).FirstOrDefault())).ToArray();
                 result.TotalAmount = result.GoodsCars.Where(g => g.IsSelected == true).Sum(g => g.GoodsAmount);
                 return result;
             }
@@ -152,7 +152,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 GoodsCarSearchResult result = new GoodsCarSearchResult();
-                var entities = dbc.GetAll<GoodsCarEntity>();
+                var entities = dbc.GetAll<GoodsCarEntity>().Include(g => g.Goods).AsNoTracking();
                 if (userId != null)
                 {
                     entities = entities.Where(g => g.UserId == userId);
@@ -175,8 +175,8 @@ namespace IMS.Service.Service
                 }
                 result.PageCount = (int)Math.Ceiling((await entities.LongCountAsync()) * 1.0f / pageSize);
                 var goodsAreaResult = await entities.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
-                var imgUrls = dbc.GetAll<GoodsImgEntity>();
-                result.GoodsCars = goodsAreaResult.Select(a => ToDTO(a, imgUrls.FirstOrDefault(g => g.GoodsId == a.GoodsId) == null ? null : imgUrls.FirstOrDefault(g => g.GoodsId == a.GoodsId).ImgUrl)).ToArray();
+                var imgUrls = dbc.GetAll<GoodsImgEntity>().AsNoTracking().Select(g=>new { g.GoodsId,g.ImgUrl});
+                result.GoodsCars = goodsAreaResult.Select(a => ToDTO(a, imgUrls.Where(g => g.GoodsId == a.GoodsId).Select(g => g.ImgUrl).FirstOrDefault())).ToArray();
                 result.TotalAmount = result.GoodsCars.Where(g => g.IsSelected == true).Sum(g => g.GoodsAmount);
                 return result;
             }

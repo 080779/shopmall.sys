@@ -83,7 +83,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 GoodsAreaSearchResult result = new GoodsAreaSearchResult();
-                var entities= dbc.GetAll<GoodsAreaEntity>();
+                var entities= dbc.GetAll<GoodsAreaEntity>().AsNoTracking();
                 if(!string.IsNullOrEmpty(keyword))
                 {
                     entities = entities.Where(g=>g.Title.Contains(keyword) || g.Note.Contains(keyword) || g.Description.Contains(keyword));

@@ -102,7 +102,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entities = dbc.GetAll<BankAccountEntity>().Where(b=>b.IsNull==false && b.UserId==id);
+                var entities = dbc.GetAll<BankAccountEntity>().AsNoTracking().Where(b=>b.IsNull==false && b.UserId==id);
                 var bankAccounts = await entities.ToListAsync();
                 return bankAccounts.Select(p => ToDTO(p)).ToArray();
             }
@@ -112,7 +112,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entity = await dbc.GetAll<BankAccountEntity>().SingleOrDefaultAsync(b => b.IsNull == false && b.Id == id);
+                var entity = await dbc.GetAll<BankAccountEntity>().AsNoTracking().SingleOrDefaultAsync(b => b.IsNull == false && b.Id == id);
                 if(entity==null)
                 {
                     return null;
@@ -125,7 +125,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entity = await dbc.GetAll<BankAccountEntity>().SingleOrDefaultAsync(b => b.IsNull == false && b.UserId == id);
+                var entity = await dbc.GetAll<BankAccountEntity>().AsNoTracking().SingleOrDefaultAsync(b => b.IsNull == false && b.UserId == id);
                 if (entity == null)
                 {
                     return null;

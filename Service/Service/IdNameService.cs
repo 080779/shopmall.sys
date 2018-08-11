@@ -26,12 +26,12 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entitiy = await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == name);
-                if(entitiy==null)
+                long id = await dbc.GetIdAsync<IdNameEntity>(i => i.Name == name);
+                if (id == 0)
                 {
                     return -1;
                 }
-                return entitiy.Id;
+                return id;
             }
         }
 
@@ -39,7 +39,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entitiy = await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == name);
+                var entitiy = await dbc.GetAll<IdNameEntity>().AsNoTracking().SingleOrDefaultAsync(i => i.Name == name);
                 if (entitiy == null)
                 {
                     return null;
@@ -52,7 +52,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                var entities = dbc.GetAll<IdNameEntity>().Where(i => i.TypeName == typeName && i.IsNull == false);
+                var entities = dbc.GetAll<IdNameEntity>().AsNoTracking().Where(i => i.TypeName == typeName && i.IsNull == false);
                 var result= await entities.OrderBy(i => i.Id).ToListAsync();
                 return result.Select(i => ToDTO(i)).ToArray();
             }

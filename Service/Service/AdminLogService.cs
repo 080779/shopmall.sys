@@ -64,7 +64,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 AdminLogSearchResult result = new AdminLogSearchResult();
-                var adminLogs = dbc.GetAll<AdminLogEntity>();
+                var adminLogs = dbc.GetAll<AdminLogEntity>().AsNoTracking();
                 if (!string.IsNullOrEmpty(keyword))
                 {
                     adminLogs = adminLogs.Where(a => a.Admin.Mobile.Contains(keyword));
@@ -82,7 +82,7 @@ namespace IMS.Service.Service
                     adminLogs = adminLogs.Where(a => SqlFunctions.DateDiff("day", endTime, a.CreateTime) <= 0);
                 }
                 result.PageCount = (int)Math.Ceiling((await adminLogs.LongCountAsync()) * 1.0f / pageSize);
-                var adminLogsResult = await adminLogs.OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                var adminLogsResult = await adminLogs.Include(a => a.Admin).Include(a => a.PermissionType).OrderByDescending(a => a.CreateTime).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
                 result.AdminLogs = adminLogsResult.Select(a => ToDTO(a)).ToArray();
                 return result;
             }
