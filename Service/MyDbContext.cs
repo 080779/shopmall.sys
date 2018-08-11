@@ -34,14 +34,19 @@ namespace IMS.Service
             return this.Set<T>().AsNoTracking().Where(e => e.IsDeleted == false).Where(expression).Select(e => e.Id).SingleOrDefault();
         }
 
+        public async Task<long> GetIdAsync<T>(Expression<Func<T, bool>> expression) where T : BaseEntity
+        {
+            return await this.Set<T>().AsNoTracking().Where(e => e.IsDeleted == false).Where(expression).Select(e => e.Id).SingleOrDefaultAsync();
+        }
+
         public string GetParameter<T>(Expression<Func<T, bool>> expression, Expression<Func<T, string>> parameterName) where T : BaseEntity
         {
             return this.Set<T>().AsNoTracking().Where(e => e.IsDeleted == false).Where(expression).Select(parameterName).SingleOrDefault();
         }
 
-        public T GetEntity<TEntity,T>(Expression<Func<TEntity, bool>> expression, Expression<Func<TEntity, T>> parameterName) where TEntity : BaseEntity
+        public async Task<string> GetParameterAsync<T>(Expression<Func<T, bool>> expression, Expression<Func<T, string>> parameterName) where T : BaseEntity
         {
-            return this.Set<TEntity>().Where(e => e.IsDeleted == false).Where(expression).Select(parameterName).SingleOrDefault();
+            return await this.Set<T>().AsNoTracking().Where(e => e.IsDeleted == false).Where(expression).Select(parameterName).SingleOrDefaultAsync();
         }
 
         public DbSet<AddressEntity> Addresses { get; set; }

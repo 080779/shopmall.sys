@@ -784,33 +784,53 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                long stateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "已完成")).Id;
-                string val= (await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "自动确认收货时间")).Parm;
-                Expression<Func<OrderEntity, bool>> timewhere = r => r.ConsignTime == null ? false : r.ConsignTime.Value.AddDays(Convert.ToDouble(val)) < DateTime.Now;
-                var orders = dbc.GetAll<OrderEntity>().Where(r=>r.OrderState.Name=="已发货").Where(timewhere.Compile()).ToList();
-                foreach(OrderEntity order in orders)
+                long stateId = await dbc.GetIdAsync<IdNameEntity>(i => i.Name == "已完成");
+                string val = await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "自动确认收货时间", s => s.Parm);
+                double day;
+                double.TryParse(val, out day);
+                if (day == 0)
+                {
+                    day = 7;
+                }
+                //Expression<Func<OrderEntity, bool>> timewhere = r => r.ConsignTime == null ? false : r.ConsignTime.Value.AddDays(Convert.ToDouble(val)) < DateTime.Now;
+                //var orders = dbc.GetAll<OrderEntity>().Where(r => r.OrderState.Name == "已发货").Where(timewhere.Compile()).ToList();
+                var orders = dbc.GetAll<OrderEntity>().AsNoTracking().Where(r => r.OrderState.Name == "已发货").Where(r => SqlFunctions.DateAdd("day", day, r.ConsignTime) < DateTime.Now);
+                foreach (OrderEntity order in orders)
                 {
                     order.EndTime = DateTime.Now;
                     order.OrderStateId = stateId;
                 }
-                val = (await dbc.GetAll<SettingEntity>().SingleOrDefaultAsync(i => i.Name == "不能退货时间")).Parm;
-                timewhere = r => r.EndTime == null ? false : r.EndTime.Value.AddDays(Convert.ToDouble(val)) < DateTime.Now;
-                orders = dbc.GetAll<OrderEntity>().Where(r => r.OrderState.Name == "已完成" || r.OrderState.Name == "退货审核").Where(timewhere.Compile()).ToList();
-                foreach (OrderEntity order in orders)
+                val = await dbc.GetParameterAsync<SettingEntity>(s => s.Name == "不能退货时间", s => s.Parm);
+                double.TryParse(val, out day);
+                if (day == 0)
                 {
-                    order.OrderStateId = (await dbc.GetAll<IdNameEntity>().SingleOrDefaultAsync(i => i.Name == "已完成")).Id;
-                    //UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u=>u.Id==order.BuyerId);
-                    var journals = await dbc.GetAll<JournalEntity>().Where(j => j.OrderCode == order.Code && j.JournalType.Name == "佣金收入" && j.IsEnabled==false).ToListAsync();
-                    foreach(JournalEntity journal in journals)
-                    {
-                        UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u=>u.Id==journal.UserId);
-                        user.Amount = user.Amount + journal.InAmount.Value;
-                        user.FrozenAmount = user.FrozenAmount - journal.InAmount.Value;
-                        user.BonusAmount = user.BonusAmount + journal.InAmount.Value;
-                        journal.BalanceAmount = user.Amount;
-                        journal.IsEnabled = true;
-                    }
+                    day = 3;
                 }
+                var orders1 = dbc.GetAll<OrderEntity>().Where(r => r.CloseTime == null).Where(r => r.OrderState.Name == "已完成" || r.OrderState.Name == "退货审核").Where(r => SqlFunctions.DateAdd("day", day, r.EndTime) < DateTime.Now);
+                List<string> orderCodes = new List<string>();
+                foreach (OrderEntity order in orders1)
+                {
+                    order.OrderStateId = stateId;
+                    order.CloseTime = DateTime.Now;
+                    orderCodes.Add(order.Code);
+                }
+                var journals = dbc.GetAll<JournalEntity>().AsNoTracking().Where(j => orderCodes.Contains(j.OrderCode) && j.JournalType.Name == "佣金收入" && j.IsEnabled == false);
+                Dictionary<long, long> dicts = new Dictionary<long, long>();
+                foreach (JournalEntity journal in journals)
+                {
+                    dicts.Add(journal.Id, journal.UserId);
+                }
+                foreach (var dict in dicts)
+                {
+                    var user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u => u.Id == dict.Value);
+                    JournalEntity journal = await dbc.GetAll<JournalEntity>().SingleOrDefaultAsync(j => j.Id == dict.Key);
+                    user.Amount = user.Amount + journal.InAmount.Value;
+                    user.FrozenAmount = user.FrozenAmount - journal.InAmount.Value;
+                    user.BonusAmount = user.BonusAmount + journal.InAmount.Value;
+                    journal.BalanceAmount = user.Amount;
+                    journal.IsEnabled = true;
+                }
+
                 await dbc.SaveChangesAsync();
             }
         }
@@ -841,8 +861,6 @@ namespace IMS.Service.Service
                 {
                     day = 3;
                 }
-                //timewhere = r => r.EndTime == null ? false : r.EndTime.Value.AddDays(Convert.ToDouble(val)) < DateTime.Now;
-                //orders = dbc.GetAll<OrderEntity>().Where(r => r.OrderState.Name == "已完成" || r.OrderState.Name == "退货审核").Where(timewhere.Compile()).ToList();
                 var orders1 = dbc.GetAll<OrderEntity>().Where(r => r.CloseTime == null).Where(r => r.OrderState.Name == "已完成" || r.OrderState.Name == "退货审核").Where(r => SqlFunctions.DateAdd("day", day, r.EndTime) < DateTime.Now);
                 List<string> orderCodes = new List<string>();
                 foreach (OrderEntity order in orders1)
@@ -851,7 +869,6 @@ namespace IMS.Service.Service
                     order.CloseTime = DateTime.Now;
                     orderCodes.Add(order.Code);
                 }
-                //UserEntity user = await dbc.GetAll<UserEntity>().SingleOrDefaultAsync(u=>u.Id==order.BuyerId);
                 var journals = dbc.GetAll<JournalEntity>().AsNoTracking().Where(j =>orderCodes.Contains(j.OrderCode) && j.JournalType.Name == "佣金收入" && j.IsEnabled == false);
                 Dictionary<long, long> dicts=new Dictionary<long, long>();
                 foreach (JournalEntity journal in journals)
