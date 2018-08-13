@@ -33,7 +33,7 @@ namespace IMS.Web.Controllers
             UserCenterInfoApiModel model = new UserCenterInfoApiModel();
             model.amount = result.Amount;
             model.frozenAmount = result.FrozenAmount;
-            model.bonusAmount = result.BonusAmount;
+            model.bonusAmount = result.BonusAmount+result.FrozenAmount;
             model.buyAmount = result.BuyAmount + (await userService.GetTeamBuyAmountAsync(user.Id));
             model.createTime = result.CreateTime.ToString("yyyy-MM-dd HH:mm:ss");
             if(!string.IsNullOrEmpty(result.HeadPic))

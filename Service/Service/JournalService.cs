@@ -32,6 +32,7 @@ namespace IMS.Service.Service
             dto.OrderCode = entity.OrderCode;
             dto.IsEnabled = entity.IsEnabled;
             dto.LevelId = entity.LevelId;
+            dto.GoodsId = entity.GoodsId;
             return dto;
         }
 

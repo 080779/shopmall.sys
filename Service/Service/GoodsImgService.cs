@@ -66,7 +66,7 @@ namespace IMS.Service.Service
         {
             using (MyDbContext dbc = new MyDbContext())
             {
-                string imgUrl = dbc.GetAll<GoodsImgEntity>().Where(g=>g.GoodsId==goodsId).Select(g => g.ImgUrl).SingleOrDefault();
+                string imgUrl = dbc.GetAll<GoodsImgEntity>().Where(g=>g.GoodsId==goodsId).Select(g => g.ImgUrl).FirstOrDefault();
                 if(imgUrl==null)
                 {
                     return "";

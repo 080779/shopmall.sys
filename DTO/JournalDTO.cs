@@ -18,6 +18,7 @@ namespace IMS.DTO
         public long UserId { get; set; }
         public string Mobile { get; set; }
         public string NickName { get; set; }
+        public long GoodsId { get; set; }
         public string OrderCode { get; set; }
         public bool IsEnabled { get; set; }
         public long LevelId { get; set; }

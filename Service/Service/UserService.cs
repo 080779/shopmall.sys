@@ -412,6 +412,7 @@ namespace IMS.Service.Service
                         journal1.Remark = "商品佣金收入";
                         journal1.JournalTypeId = journalTypeId;
                         journal1.OrderCode = order.Code;
+                        journal1.GoodsId = goods.Id;
                         journal1.IsEnabled = false;
                         dbc.Journals.Add(journal1);
 
@@ -441,6 +442,7 @@ namespace IMS.Service.Service
                             journal2.Remark = "商品佣金收入";
                             journal2.JournalTypeId = journalTypeId;
                             journal2.OrderCode = order.Code;
+                            journal2.GoodsId = goods.Id;
                             journal2.IsEnabled = false;
                             dbc.Journals.Add(journal2);
 
@@ -470,6 +472,7 @@ namespace IMS.Service.Service
                                 journal3.Remark = "商品佣金收入";
                                 journal3.JournalTypeId = journalTypeId;
                                 journal3.OrderCode = order.Code;
+                                journal3.GoodsId = goods.Id;
                                 journal3.IsEnabled = false;
                                 dbc.Journals.Add(journal3);
                             }
@@ -522,7 +525,7 @@ namespace IMS.Service.Service
                 }
                 else if (levelId == level2)
                 {
-                    if (order.Amount > up3)
+                    if (order.Amount >= up3)
                     {
                         upLevelId = level3;
                     }
@@ -612,6 +615,7 @@ namespace IMS.Service.Service
                         journal1.Remark = "商品佣金收入";
                         journal1.JournalTypeId = journalTypeId;
                         journal1.OrderCode = order.Code;
+                        journal1.GoodsId = goods.Id;
                         journal1.IsEnabled = false;
                         dbc.Journals.Add(journal1);
 
@@ -641,6 +645,7 @@ namespace IMS.Service.Service
                             journal2.Remark = "商品佣金收入";
                             journal2.JournalTypeId = journalTypeId;
                             journal2.OrderCode = order.Code;
+                            journal2.GoodsId = goods.Id;
                             journal2.IsEnabled = false;
                             dbc.Journals.Add(journal2);
 
@@ -670,6 +675,7 @@ namespace IMS.Service.Service
                                 journal3.Remark = "商品佣金收入";
                                 journal3.JournalTypeId = journalTypeId;
                                 journal3.OrderCode = order.Code;
+                                journal3.GoodsId = goods.Id;
                                 journal3.IsEnabled = false;
                                 dbc.Journals.Add(journal3);
                             }
@@ -719,7 +725,7 @@ namespace IMS.Service.Service
                 }
                 else if (levelId == level2)
                 {
-                    if (order.Amount > up3)
+                    if (order.Amount >= up3)
                     {
                         upLevelId = level3;
                     }

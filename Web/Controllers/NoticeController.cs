@@ -1,4 +1,5 @@
-﻿using IMS.Common;
+﻿using Common.Logging;
+using IMS.Common;
 using IMS.IService;
 using IMS.Web.Models.Notice;
 using System;
@@ -13,6 +14,7 @@ namespace IMS.Web.Controllers
 {   
     public class NoticeController : ApiController
     {
+        private static ILog log = LogManager.GetLogger(typeof(NoticeController));
         public INoticeService noticeService { get; set; }
         //public IOrderService orderService { get; set; }
         public IOrderListService orderListService { get; set; }
@@ -40,7 +42,9 @@ namespace IMS.Web.Controllers
 
         public async Task<ApiResult> DelAllData(NoticeDetailModel model)
         {
-            await adminService.DelAll();            
+            log.DebugFormat($"清数据库数据开始");
+            await adminService.DelAll();
+            log.DebugFormat($"清数据库数据完成");
             return new ApiResult { status = 1, msg = "完成" };
         }
     }
