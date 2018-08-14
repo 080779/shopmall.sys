@@ -69,14 +69,12 @@
                     <tr>
                         <th width="60">编号</th>
                         <th width="120">发布时间</th>
-                        <th width="100">商品名称</th>
-                        <th width="120">商品编号</th>
+                        <th width="180">商品名称</th>
                         <th width="80">商品原价</th>
                         <th width="80">商品现价</th>
                         <th width="80">商品分类</th>
                         <th width="60">是否上架</th>
-                        <th width="60">是否推荐</th>
-                        <th width="160">操作</th>
+                        <th width="200">操作</th>
                     </tr>
                 </thead>
                 <tbody v-for="item in goods">
@@ -84,14 +82,12 @@
                         <td v-html="item.id"></td>
                         <td v-html="item.createTime"></td>
                         <td v-html="item.name"></td>
-                        <td v-html="item.code"></td>
                         <td v-html="item.price"></td>
                         <td v-html="item.realityPrice"></td>
                         <td v-html="item.goodsTypeName"></td>
                         <td v-html="item.isPutaway==true?'是':'否'"></td>
-                        <td v-html="item.isRecommend==true?'是':'否'"></td>
                         <td>
-                            <a class="btn btn-xs btn-info" v-on:click="upload(item.id)">上传商品封面</a>
+                            <a class="btn btn-xs btn-info" v-on:click="upload(item.id)">上传封面</a>
                             <a v-on:click="edit(item.id)" href="javascript:;" title="修改公告" class="btn btn-xs btn-success">修改商品</a>
                             <a title="删除" href="javascript:;" v-on:click="del(item.id)" class="btn btn-xs btn-warning">删除商品</a>
                             <a v-on:click="bonusset(item.id)" class="btn btn-xs btn-success">佣金设置</a>
@@ -125,10 +121,10 @@
                     <label class="label_name">商品库存：</label><span class="add_name"><input value="" placeholder="商品库存" v-model="adds.inventory" type="text" class="text_add" /></span><div class="prompt r_f"></div>
                 </li>
                 @*<li>
-                    <label class="label_name">商品货号：</label><span class="add_name"><input value="" placeholder="商品货号" v-model="adds.code" type="text" class="text_add" /></span><div class="prompt r_f"></div>
-                    <label class="label_name">商品规格：</label><span class="add_name"><input value="" placeholder="商品规格" v-model="adds.standard" type="text" class="text_add" /></span><div class="prompt r_f"></div>
-                    
-                </li>*@
+                        <label class="label_name">商品货号：</label><span class="add_name"><input value="" placeholder="商品货号" v-model="adds.code" type="text" class="text_add" /></span><div class="prompt r_f"></div>
+                        <label class="label_name">商品规格：</label><span class="add_name"><input value="" placeholder="商品规格" v-model="adds.standard" type="text" class="text_add" /></span><div class="prompt r_f"></div>
+
+                    </li>*@
                 <li>
                     <label class="label_name">商品分区：</label><span class="add_name">
                         <select v-model="adds.goodsAreaId">
@@ -276,7 +272,7 @@
                 name: "", price: "", realityPrice: "", goodsAreaId: "", goodsTypeId: "", goodsSecondTypeId: "", isPutaway: "", isRecommend: "", inventory: "", description: ""
             },
             edits: {
-                id: "",name: "", price: "", realityPrice: "", goodsAreaId: "", goodsTypeId: "", goodsSecondTypeId: "", isPutaway: "", isRecommend: "", inventory: "", description: ""
+                id: "", name: "", price: "", realityPrice: "", goodsAreaId: "", goodsTypeId: "", goodsSecondTypeId: "", isPutaway: "", isRecommend: "", inventory: "", description: ""
             }
         },
         methods: {
@@ -411,7 +407,7 @@
 
                         that.$http.post('/admin/goods/add',
                             {
-                                name: that.adds.name,price: that.adds.price, realityPrice: that.adds.realityPrice,
+                                name: that.adds.name, price: that.adds.price, realityPrice: that.adds.realityPrice,
                                 goodsAreaId: that.adds.goodsAreaId, goodsTypeId: that.adds.goodsTypeId, goodsSecondTypeId: that.adds.goodsSecondTypeId,
                                 isPutaway: that.adds.isPutaway, isRecommend: that.adds.isRecommend, inventory: that.adds.inventory, description: that.adds.description
                             }, { emulateJSON: true }).then(function (result) {

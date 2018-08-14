@@ -112,7 +112,7 @@ namespace IMS.Service.Service
                 }
                 if (!string.IsNullOrEmpty(keyword))
                 {
-                    entities = entities.Where(g => g.Code.Contains(keyword) || g.Name.Contains(keyword) || g.Description.Contains(keyword));
+                    entities = entities.Where(g =>g.Name.Contains(keyword) || g.Description.Contains(keyword));
                 }
                 if (startTime != null)
                 {
@@ -149,7 +149,7 @@ namespace IMS.Service.Service
                 }
                 if (!string.IsNullOrEmpty(keyword))
                 {
-                    entities = entities.Where(g =>g.Code.Contains(keyword) || g.Name.Contains(keyword) || g.Description.Contains(keyword));
+                    entities = entities.Where(g =>g.Name.Contains(keyword) || g.Description.Contains(keyword));
                 }
                 if (startTime != null)
                 {

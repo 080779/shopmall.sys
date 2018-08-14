@@ -380,6 +380,7 @@ namespace IMS.Web.Controllers
             weChatPay.body = "订单支付";
             weChatPay.out_trade_no = order.Code;
             weChatPay.openid = user.Code.Substring(3, 28);
+            weChatPay.total_fee = Math.Truncate(order.Amount * 100).ToString();
             string parm = HttpClientHelper.BuildParam(weChatPay);
             string key= System.Configuration.ConfigurationManager.AppSettings["KEY"];
             parm = parm + "&key=" + key;
@@ -450,6 +451,7 @@ namespace IMS.Web.Controllers
             weChatPay.body = "订单支付";
             weChatPay.out_trade_no = order.Code;
             weChatPay.openid = user.Code.Substring(3, 28);
+            weChatPay.total_fee = Math.Truncate(order.Amount * 100).ToString();
             string parm = HttpClientHelper.BuildParam(weChatPay);
             string key = System.Configuration.ConfigurationManager.AppSettings["KEY"];
             parm = parm + "&key=" + key;

@@ -59,8 +59,8 @@ namespace IMS.Web.Controllers
         public class Parm
         {
             public string scene { get; set; }
-            //public string page { get; set; } = "pages/register/register";
-            public string page { get; set; } = "";
+            public string page { get; set; } = "pages/register/register";
+            //public string page { get; set; } = "";
             public int width { get; set; } = 430;
             public bool auto_color { get; set; } = false;
             public object line_color { get; set; } = new LineColor();

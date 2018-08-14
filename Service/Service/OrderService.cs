@@ -188,8 +188,8 @@ namespace IMS.Service.Service
                             listEntity.DiscountFee = listEntity.TotalFee * entity.UpAmount.Value;
                             dbc.OrderLists.Add(listEntity);
                         }
-                        entity.DiscountAmount = entity.Amount * entity.UpAmount;
-                        entity.Amount = entity.DiscountAmount.Value + entity.PostFee;
+                        entity.DiscountAmount = entity.Amount * entity.UpAmount.Value;
+                        entity.Amount = entity.DiscountAmount + entity.PostFee;
                         await dbc.SaveChangesAsync();
                         scope.Commit();
                         return entity.Id;
@@ -609,7 +609,7 @@ namespace IMS.Service.Service
                         totalReturnAmount = totalReturnAmount + item.TotalFee;
                     }
                 }                
-                if (order.DiscountAmount != null && totalAmount != 0 && order.UpAmount!=null)
+                if (order.DiscountAmount != 0 && totalAmount != 0 && order.UpAmount!=null)
                 {
                     totalDiscountAmount = totalAmount * order.UpAmount.Value;
                     totalDiscountReturnAmount = totalReturnAmount * order.UpAmount.Value;

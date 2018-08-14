@@ -56,19 +56,18 @@
                 <thead>
                     <tr>
                         <th width="60">编号</th>
-                        <th width="100">申请退货时间</th>
-                        <th width="120">订单号</th>
+                        <th width="120">申请退货时间</th>
+                        <th width="140">订单号</th>
                         <th width="60">订单金额</th>
-                        <th width="60">优惠金额</th>
                         <th width="60">退货金额</th>
                         <th width="60">扣除金额</th>
                         <th width="100">会员账号</th>
-                        <th width="60">降级处理</th>
+                        <th width="70">降级处理</th>
                         <th width="60">订单状态</th>
                         <th width="60">审核状态</th>
-                        <th width="100">审核时间</th>
-                        <th width="100">审核者</th>
-                        <th width="120">操作</th>
+                        <th width="120">审核时间</th>
+                        <th width="80">审核者</th>
+                        <th width="200">操作</th>
                     </tr>
                 </thead>
                 <tbody v-for="order in orders">
@@ -77,7 +76,6 @@
                         <td v-html="order.applyTime"></td>
                         <td v-html="order.code"></td>
                         <td v-html="order.amount"></td>
-                        <td v-html="order.discountAmount"></td>
                         <td v-html="order.returnAmount"></td>
                         <td v-html="order.deductAmount"></td>
                         <td v-html="order.buyerMobile"></td>
@@ -87,9 +85,9 @@
                         <td v-html="order.auditTime"></td>
                         <td v-html="order.auditMobile"></td>
                         <td>
-                            <button title="审核" href="javascript:;" v-bind:disabled="order.auditStatusName=='已审核'" v-on:click="audit(order.id)" class="btn btn-xs btn-warning">审核</button>
-                            <button title="退货完成" href="javascript:;" v-bind:disabled="order.orderStateName=='退货完成'" v-on:click="confirm(order.id,order.auditStatusName)" class="btn btn-xs btn-warning">退货完成</button>
-                            <a title="查看退货详情" class="btn btn-xs btn-info" v-bind:href="'/admin/return/detail?id='+order.id">查看退货详情</a>
+                            <a title="审核" href="javascript:;" v-bind:disabled="order.auditStatusName=='已审核'" v-on:click="audit(order.id)" class="btn btn-xs btn-warning">审核</a>
+                            <a title="退货完成" href="javascript:;" v-bind:disabled="order.orderStateName=='退货完成'" v-on:click="confirm(order.id,order.auditStatusName)" class="btn btn-xs btn-warning">退货完成</a>
+                            <a title="详情" class="btn btn-xs btn-info" v-bind:href="'/admin/return/detail?id='+order.id">详情</a>
                         </td>
                     </tr>
                 </tbody>
@@ -108,7 +106,7 @@
                 <li><a v-on:click="pages.cur=pages.all,getpage()">尾页</a></li>
                 <li><a>共<i><font v-html="pages.all"></font></i>页</a></li>
             </ul>
-        </div>   
+        </div>
     </div>
 </body>
 </html>
@@ -174,8 +172,7 @@
             },
             confirm: function (id, auditStatusName) {
                 var that = this;
-                if (auditStatusName != "已审核")
-                {
+                if (auditStatusName != "已审核") {
                     layer.alert('未审核，请审核后再进行操作', { icon: 0, title: '提示框' });
                     return;
                 }

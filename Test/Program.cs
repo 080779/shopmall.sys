@@ -163,7 +163,7 @@ namespace Test
             Console.ReadKey();
         }
 
-        static void Main(string[] args)
+        static void Main3(string[] args)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
@@ -182,6 +182,15 @@ namespace Test
                 result.TotalAmount = result.GoodsCars.Where(g => g.IsSelected == true).Sum(g => g.GoodsAmount);
                 Console.WriteLine();
             }
+            Console.ReadKey();
+        }
+
+        static void Main(string[] args)
+        {
+            decimal d = (decimal)5.23;
+            decimal dd = Math.Truncate(d * 100);
+            string total_fee= ((Math.Truncate(d * 100) / 100) * 100).ToString();
+            
             Console.ReadKey();
         }
 
