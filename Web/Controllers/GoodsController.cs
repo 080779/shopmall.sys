@@ -23,7 +23,7 @@ namespace IMS.Web.Controllers
         [HttpPost]
         public async Task<ApiResult> List(GoodsListModel model)
         {
-            string parm = await settingService.GetParmByNameAsync("网站域名1");
+            string parm = await settingService.GetParmByNameAsync("网站域名");
             GoodsSearchResult result = await goodsService.FrontModelListAsync(model.AreaId, model.TypeId, model.SecondTypeId, null, null, null, model.PageIndex, model.PageSize);
             List<SearchResultModel> lists;
             lists = result.Goods.Select(g => new SearchResultModel { id = g.Id,inventory=g.Inventory, name = g.Name, realityPrice = g.RealityPrice, saleNum = g.SaleNum, imgUrl=parm+goodsImgService.GetFirstImg(g.Id)}).ToList();

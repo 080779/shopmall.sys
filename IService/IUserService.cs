@@ -68,6 +68,7 @@ namespace IMS.IService
         /// <param name="id">用户id</param>
         /// <returns></returns>
         Task<UserDTO> GetModelAsync(long id);
+        Task<string> GetMobileById(long id);
         /// <summary>
         /// 根据用户账号获得用户模型
         /// </summary>

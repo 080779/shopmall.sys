@@ -44,7 +44,7 @@ namespace IMS.Web.Controllers
                 }
                 GetAccessToken getAccessToken = JsonConvert.DeserializeObject<GetAccessToken>(res);
                 Parm parm = new Parm();
-                parm.scene = (await userService.GetModelAsync(user.Id)).Mobile;
+                parm.scene = userDTO.Mobile;
                 string getCodeUrl = string.Format("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={0}", getAccessToken.access_token);
                 var result = await HttpClientHelper.GetResponseStringByPostJsonAsync(httpClient, parm, getCodeUrl);
                 path = ImageHelper.SaveByte(result);
