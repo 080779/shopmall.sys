@@ -273,12 +273,16 @@
     <Content Include="assets\src\laydate.js" />
     <Content Include="assets\src\theme\default\font\iconfont.svg" />
     <Content Include="assets\src\theme\default\laydate.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Site.css" />
     <Content Include="css\details.css" />
     <Content Include="css\easyui_style.css" />
     <Content Include="css\login.css" />
     <Content Include="css\my_pagination.css" />
     <Content Include="css\page.css" />
     <Content Include="css\vueupload.css" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="images\del.png" />
     <Content Include="images\upload.png" />
     <Content Include="images\headpic.png" />
@@ -329,6 +333,12 @@
     <Content Include="js\vue-resource.min1.5.0.js" />
     <Content Include="js\vue.min2.5.16.js" />
     <Content Include="js\wangEditor.min.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -526,11 +536,17 @@
     <Content Include="Areas\Admin\Views\Return\Detail.cshtml" />
     <Content Include="Areas\Admin\Views\Refund\Detail.cshtml" />
     <Content Include="Areas\Admin\Views\Refund\List.cshtml" />
+    <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Admin\Views\Test\Index.cshtml" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

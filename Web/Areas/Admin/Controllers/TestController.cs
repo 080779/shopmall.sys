@@ -22,6 +22,12 @@ namespace IMS.Web.Areas.Admin.Controllers
             var df = HttpClientHelper.BuildParam(w);
             return View();
         }
+
+        public ActionResult Index()
+        {
+            return View();
+        }
+
         public ActionResult Upload(listres imgList)
         {
             return View();

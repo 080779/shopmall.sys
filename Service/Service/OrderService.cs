@@ -540,6 +540,18 @@ namespace IMS.Service.Service
                     return -2;
                 }
 
+                var orderlists = dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == order.Id).ToList();
+                foreach (var orderlist in orderlists)
+                {
+                    GoodsEntity goods = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g => g.Id == orderlist.GoodsId);
+                    if (goods == null)
+                    {
+                        continue;
+                    }
+                    goods.Inventory = goods.Inventory + orderlist.Number;
+                    goods.SaleNum = goods.SaleNum - orderlist.Number;
+                }
+
                 JournalEntity journal1 = await dbc.GetAll<JournalEntity>().SingleOrDefaultAsync(j => j.UserId == user.Id && j.OrderCode == order.Code && j.JournalType.Name== "购物");
                 if(journal1==null)
                 {
