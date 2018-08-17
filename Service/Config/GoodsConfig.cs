@@ -8,7 +8,7 @@ namespace IMS.Service.Config
         public GoodsConfig()
         {
             ToTable("tb_goods");
-            Property(p => p.Name).HasMaxLength(30).IsRequired();
+            Property(p => p.Name).HasMaxLength(256).IsRequired();
             Property(p => p.Code).HasMaxLength(30).IsRequired();
             Property(p => p.Standard).HasMaxLength(30).IsRequired();
             Property(p => p.Description).HasMaxLength(2048).IsRequired();
