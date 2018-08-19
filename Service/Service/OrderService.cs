@@ -602,6 +602,10 @@ namespace IMS.Service.Service
                 {
                     return -2;
                 }
+                if(order.CloseTime!=null)
+                {
+                    return -6;
+                }
                 string val = await dbc.GetParameterAsync<SettingEntity>(s=>s.Name== "不能退货时间", s=>s.Parm);
 
                 if (order.EndTime!=null && DateTime.Now > order.EndTime.Value.AddDays(Convert.ToDouble(val)))
@@ -613,6 +617,10 @@ namespace IMS.Service.Service
                 decimal totalReturnAmount = 0;
                 decimal totalDiscountReturnAmount = 0;
                 decimal totalDiscountAmount = 0;
+                if(!orderLists.Any(o=>o.IsReturn==true))
+                {
+                    return -5;
+                }
                 foreach (var item in orderLists)
                 {
                     totalAmount = totalAmount + item.TotalFee;
@@ -677,6 +685,11 @@ namespace IMS.Service.Service
                 }
 
                 var orderLists = await dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == order.Id).ToListAsync();
+
+                if (!orderLists.Any(o => o.IsReturn == true))
+                {
+                    return -2;
+                }
 
                 foreach (var item in orderLists)
                 {
@@ -767,6 +780,10 @@ namespace IMS.Service.Service
                 if (order == null)
                 {
                     return -1;
+                }
+                if(!(await dbc.GetAll<OrderListEntity>().AnyAsync(o => o.IsReturn == true)))
+                {
+                    return -2;
                 }
                 order.AuditStatusId = await dbc.GetIdAsync<IdNameEntity>(i => i.Name == "已审核");
                 order.OrderStateId = await dbc.GetIdAsync<IdNameEntity>(i => i.Name == "退货中");

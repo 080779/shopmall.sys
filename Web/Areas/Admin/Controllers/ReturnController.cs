@@ -67,6 +67,10 @@ namespace IMS.Web.Areas.Admin.Controllers
             long res = await orderService.ReturnAuditAsync(id, Convert.ToInt64(Session["Platform_AdminUserId"]));
             if (res <= 0)
             {
+                if(res==-2)
+                {
+                    return Json(new AjaxResult { Status = 0, Msg = "订单中没有要退货的商品" });
+                }
                 return Json(new AjaxResult { Status = 0, Msg = "退货审核失败" });
             }
             return Json(new AjaxResult { Status = 1, Msg = "退货审核成功" });
@@ -80,6 +84,10 @@ namespace IMS.Web.Areas.Admin.Controllers
             long res = await orderService.ReturnAsync(id);
             if(res<=0)
             {
+                if(res==-2)
+                {
+                    return Json(new AjaxResult { Status = 0, Msg = "订单中没有要退货的商品" });
+                }
                 return Json(new AjaxResult { Status = 0, Msg = "确认退货完成失败" });
             }
             return Json(new AjaxResult { Status = 1, Msg = "确认退货完成成功" });

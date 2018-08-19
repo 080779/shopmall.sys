@@ -38,10 +38,18 @@ namespace IMS.Web.Controllers
                 {
                     return new ApiResult { status = 0, msg = "不是已完成的订单，不能申请退货" };
                 }
-                if(res==-4)
+                if (res == -6)
+                {
+                    return new ApiResult { status = 0, msg = "订单已经发放佣金完成，不能申请退货" };
+                }
+                if (res==-4)
                 {
                     string parm = await settingService.GetParmByNameAsync("不能退货时间");
                     return new ApiResult { status = 0, msg = $"申请退货失败,确认收货{parm}天后不能退货" };
+                }
+                if(res==-5)
+                {
+                    return new ApiResult { status = 0, msg = "请选择退货商品" };
                 }
                 return new ApiResult { status = 0, msg = "申请退货失败" };
             }
