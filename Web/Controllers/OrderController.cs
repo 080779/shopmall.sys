@@ -261,6 +261,10 @@ namespace IMS.Web.Controllers
             long id = await orderService.AddAsync(model.DeliveryTypeId,0, user.Id, model.AddressId, model.PayTypeId, orderStateId, dtos.OrderApplies);
             if (id <= 0)
             {
+                if(id==-4)
+                {
+                    return new ApiResult { status = 0, msg = "订单中有商品已经下架，请重新下单", data = 0 };
+                }
                 return new ApiResult { status = 0, msg = "生成订单失败"};
             }
             await goodsCarService.DeleteListAsync(user.Id);
@@ -308,6 +312,10 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "用户不存在", data = order.Id };
             }
+            if (payResId == -5)
+            {
+                return new ApiResult { status = 0, msg = "订单中有商品已经下架，请重新下单", data = order.Id };
+            }
             if (payResId == -3)
             {
                 return new ApiResult { status = 0, msg = "商品库存不足", data = order.Id };
@@ -315,7 +323,7 @@ namespace IMS.Web.Controllers
             if (payResId == -4)
             {
                 return new ApiResult { status = 0, msg = "用户账户余额不足", data = order.Id };
-            }
+            }            
 
             return new ApiResult { status = 1, msg = "支付成功", data = order.Id };
         }
@@ -364,6 +372,10 @@ namespace IMS.Web.Controllers
             long id = await orderService.AddAsync(model.DeliveryTypeId, 0, user.Id, model.AddressId, model.PayTypeId, orderStateId, dtos.OrderApplies);
             if (id <= 0)
             {
+                if (id == -4)
+                {
+                    return new ApiResult { status = 0, msg = "订单中有商品已经下架，请重新下单", data = 0 };
+                }
                 return new ApiResult { status = 0, msg = "生成订单失败" };
             }
             OrderDTO order = await orderService.GetModelAsync(id);
@@ -442,10 +454,14 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg = "会员不存在", data = order.Id };
             }
+            if (id == -4)
+            {
+                return new ApiResult { status = 0, msg = "订单中有商品已经下架，请重新下单", data = order.Id };
+            }
             if (id == -3)
             {
                 return new ApiResult { status = 0, msg = "商品库存不足", data = order.Id };
-            }
+            }            
 
             WeChatPay weChatPay = new WeChatPay();
             weChatPay.body = "订单支付";

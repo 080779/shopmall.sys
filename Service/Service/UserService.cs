@@ -370,11 +370,17 @@ namespace IMS.Service.Service
                 {
                     GoodsEntity goods = await dbc.GetAll<GoodsEntity>().SingleOrDefaultAsync(g => g.Id == orderlist.GoodsId);
                     totalAmount = totalAmount + orderlist.TotalFee;
+
                     if (goods == null)
                     {
                         continue;
                     }
-                    
+
+                    if (!goods.IsPutaway)
+                    {
+                        return -5;
+                    }
+
                     if (goods.Inventory < orderlist.Number)
                     {
                         return -3;
@@ -568,13 +574,21 @@ namespace IMS.Service.Service
 
                 var orderlists = dbc.GetAll<OrderListEntity>().Where(o => o.OrderId == order.Id).ToList();
                 decimal totalAmount = 0;
+
                 foreach (var orderlist in orderlists)
                 {
                     GoodsEntity goods = dbc.GetAll<GoodsEntity>().SingleOrDefault(g => g.Id == orderlist.GoodsId);
+                   
                     totalAmount = totalAmount + orderlist.TotalFee;
+
                     if (goods == null)
                     {
                         continue;
+                    }
+
+                    if (!goods.IsPutaway)
+                    {
+                        return -5;
                     }
 
                     if (goods.Inventory < orderlist.Number)
