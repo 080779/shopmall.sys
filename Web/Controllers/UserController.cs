@@ -146,7 +146,7 @@ namespace IMS.Web.Controllers
             parmArray.Add(new KeyValuePair<string, string>("grant_type", "authorization_code"));
             string result= await HttpClientHelper.GetResponseByGetAsync(httpClient, parmArray, "https://api.weixin.qq.com/sns/jscode2session");
             log.DebugFormat($"传进来的code：{model.Code}");
-            log.DebugFormat($"获取openId结果：{result}");
+            log.Debug($"获取openId结果：{result}");
             if (result.Contains("errcode"))
             {
                 WeChatErrorResultModel errorModel= JsonConvert.DeserializeObject<WeChatErrorResultModel>(result);

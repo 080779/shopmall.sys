@@ -27,7 +27,6 @@ namespace IMS.Web.Controllers
         [HttpPost]
         public async Task<ApiResult> Get()
         {
-            log.Debug($"获取分享二维码开始：{DateTime.Now}");
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             string path = "";
             var userDTO = await userService.GetModelAsync(user.Id);
