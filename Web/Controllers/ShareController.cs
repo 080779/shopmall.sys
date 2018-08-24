@@ -40,7 +40,7 @@ namespace IMS.Web.Controllers
                 string res = await HttpClientHelper.GetResponseByGetAsync(httpClient, getTokenUrl);
                 if (res.Contains(@"errcode\"))
                 {
-                    return new ApiResult { status = 1, data = res };
+                    return new ApiResult { status = 0, data = res };
                 }
                 GetAccessToken getAccessToken = JsonConvert.DeserializeObject<GetAccessToken>(res);
                 Parm parm = new Parm();
