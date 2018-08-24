@@ -4,6 +4,7 @@ using IMS.IService;
 using IMS.Web.App_Start.Filter;
 using IMS.Web.Models.TakeCash;
 using IMS.Web.Models.User;
+using log4net;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -22,9 +23,11 @@ namespace IMS.Web.Controllers
         public ISettingService settingService { get; set; }
         private string APPID = System.Configuration.ConfigurationManager.AppSettings["APPID"];
         private string APPSECRET = System.Configuration.ConfigurationManager.AppSettings["SECRET"];
+        private static ILog log = LogManager.GetLogger(typeof(ShareController));
         [HttpPost]
         public async Task<ApiResult> Get()
         {
+            log.Debug($"获取分享二维码开始：{DateTime.Now}");
             User user = JwtHelper.JwtDecrypt<User>(ControllerContext);
             string path = "";
             var userDTO = await userService.GetModelAsync(user.Id);
@@ -33,6 +36,7 @@ namespace IMS.Web.Controllers
             {
                 return new ApiResult { status = 0, msg="会员不存在" };
             }
+            /*
             if (string.IsNullOrEmpty(userDTO.ShareCode))
             {                
                 string getTokenUrl = string.Format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}", APPID, APPSECRET);
@@ -45,6 +49,8 @@ namespace IMS.Web.Controllers
                 GetAccessToken getAccessToken = JsonConvert.DeserializeObject<GetAccessToken>(res);
                 Parm parm = new Parm();
                 parm.scene = userDTO.Mobile;
+                log.DebugFormat($"scene：{userDTO.Mobile}");
+                log.DebugFormat($"用户id：{user.Id}");
                 string getCodeUrl = string.Format("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={0}", getAccessToken.access_token);
                 var result = await HttpClientHelper.GetResponseStringByPostJsonAsync(httpClient, parm, getCodeUrl);
                 path = ImageHelper.SaveByte(result);
@@ -53,7 +59,23 @@ namespace IMS.Web.Controllers
             else
             {
                 path = userDTO.ShareCode;
+            }*/
+            string getTokenUrl = string.Format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}", APPID, APPSECRET);
+            HttpClient httpClient = new HttpClient();
+            string res = await HttpClientHelper.GetResponseByGetAsync(httpClient, getTokenUrl);
+            if (res.Contains(@"errcode\"))
+            {
+                return new ApiResult { status = 0, data = res };
             }
+            GetAccessToken getAccessToken = JsonConvert.DeserializeObject<GetAccessToken>(res);
+            Parm parm = new Parm();
+            parm.scene = userDTO.Mobile;
+            log.Debug($"scene：{userDTO.Mobile}");
+            log.Debug($"用户id：{user.Id}");
+            string getCodeUrl = string.Format("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={0}", getAccessToken.access_token);
+            var result = await HttpClientHelper.GetResponseStringByPostJsonAsync(httpClient, parm, getCodeUrl);
+            path = ImageHelper.SaveByte(result);
+            await userService.UpdateShareCodeAsync(user.Id, path);
             return new ApiResult { status = 1, data = parmUrl + path };
         }
         public class Parm

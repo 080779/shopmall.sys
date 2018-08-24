@@ -3,6 +3,7 @@ using IMS.DTO;
 using IMS.IService;
 using IMS.Web.App_Start.Filter;
 using IMS.Web.Models.User;
+using log4net;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace IMS.Web.Controllers
     {
         private string appid = System.Configuration.ConfigurationManager.AppSettings["APPID"];
         private string secret = System.Configuration.ConfigurationManager.AppSettings["SECRET"];
+        private static ILog log = LogManager.GetLogger(typeof(UserController));
         public IUserService userService { get; set; }
         public IUserTokenService userTokenService { get; set; }
         public IIdNameService idNameService { get; set; }
@@ -141,7 +143,10 @@ namespace IMS.Web.Controllers
             parmArray.Add(new KeyValuePair<string, string>("appid", appid));
             parmArray.Add(new KeyValuePair<string, string>("secret", secret));
             parmArray.Add(new KeyValuePair<string, string>("js_code", model.Code));
+            parmArray.Add(new KeyValuePair<string, string>("grant_type", "authorization_code"));
             string result= await HttpClientHelper.GetResponseByGetAsync(httpClient, parmArray, "https://api.weixin.qq.com/sns/jscode2session");
+            log.DebugFormat($"传进来的code：{model.Code}");
+            log.DebugFormat($"获取openId结果：{result}");
             if (result.Contains("errcode"))
             {
                 WeChatErrorResultModel errorModel= JsonConvert.DeserializeObject<WeChatErrorResultModel>(result);

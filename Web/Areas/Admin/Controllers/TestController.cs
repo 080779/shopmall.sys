@@ -3,6 +3,7 @@ using IMS.DTO;
 using IMS.IService;
 using IMS.Web.App_Start.Filter;
 using IMS.Web.Areas.Admin.Models.User;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,17 +15,22 @@ namespace IMS.Web.Areas.Admin.Controllers
 {
     public class TestController : Controller
     {
+        private static ILog log = LogManager.GetLogger(typeof(TestController));
         public ActionResult List()
-        {
-            WeChatPay w = new WeChatPay();
-            var sd= HttpClientHelper.ToKeyValue(w);
-
-            var df = HttpClientHelper.BuildParam(w);
+        {            
             return View();
         }
 
         public ActionResult Index()
         {
+            try
+            {
+                log.DebugFormat("传进来的code：{DateTime.Now}");
+            }
+            catch(Exception ex)
+            {
+                log.DebugFormat("错误：{ex.ToString()}");
+            }
             return View();
         }
 
