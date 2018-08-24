@@ -177,6 +177,11 @@ namespace IMS.Service.Service
                                 scope.Rollback();
                                 return -1;
                             }
+                            if (!goods.IsPutaway)
+                            {
+                                scope.Rollback();
+                                return -4;
+                            }
                             OrderListEntity listEntity = new OrderListEntity();
                             listEntity.OrderId = entity.Id;
                             listEntity.GoodsId = goods.Id;
@@ -924,7 +929,10 @@ namespace IMS.Service.Service
                     {
                         continue;
                     }
-
+                    if(!goods.IsPutaway)
+                    {
+                        return -4;
+                    }
                     if (goods.Inventory < orderlist.Number)
                     {
                         return -3;

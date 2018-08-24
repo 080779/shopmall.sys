@@ -536,7 +536,6 @@
     <Content Include="Areas\Admin\Views\Return\Detail.cshtml" />
     <Content Include="Areas\Admin\Views\Refund\Detail.cshtml" />
     <Content Include="Areas\Admin\Views\Refund\List.cshtml" />
-    <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Admin\Views\Test\Index.cshtml" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
