@@ -135,9 +135,13 @@ namespace IMS.Web.Areas.Admin.Controllers
         [Permission("会员管理_删除用户")]
         public async Task<ActionResult> Delete(long id)
         {
-            bool res = await userService.DeleteAsync(id);
-            if (!res)
+            long res = await userService.DeleteAsync(id);
+            if (res<=0)
             {
+                if(res==-2)
+                {
+                    return Json(new AjaxResult { Status = 0, Msg = "不能删除系统会员，否则没有初始推荐人" });
+                }
                 return Json(new AjaxResult { Status = 0, Msg = "删除用户失败" });
             }
             return Json(new AjaxResult { Status = 1, Msg = "删除用户成功" });

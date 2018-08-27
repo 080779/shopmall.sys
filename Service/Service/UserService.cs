@@ -174,14 +174,18 @@ namespace IMS.Service.Service
                 return user.Id;
             }
         }
-        public async Task<bool> DeleteAsync(long id)
+        public async Task<long> DeleteAsync(long id)
         {
             using (MyDbContext dbc = new MyDbContext())
             {
                 UserEntity entity = await dbc.GetAll<UserEntity>().Where(u => u.IsNull == false).SingleOrDefaultAsync(u => u.Id == id);
                 if (entity == null)
                 {
-                    return false;
+                    return -1;
+                }
+                if(entity.Mobile=="15615615616")
+                {
+                    return -2;
                 }
                 var address = dbc.GetAll<AddressEntity>().Where(a => a.UserId == id);
                 if (address.LongCount() > 0)
@@ -200,7 +204,7 @@ namespace IMS.Service.Service
                 }
                 entity.IsDeleted = true;
                 await dbc.SaveChangesAsync();
-                return true;
+                return 1;
             }
         }
 

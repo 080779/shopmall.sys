@@ -36,7 +36,7 @@ namespace IMS.IService
         /// </summary>
         /// <param name="id">用户id</param>
         /// <returns></returns>
-        Task<bool> DeleteAsync(long id);
+        Task<long> DeleteAsync(long id);
         /// <summary>
         /// 冻结用户
         /// </summary>
