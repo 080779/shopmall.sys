@@ -1000,6 +1000,13 @@ namespace IMS.Service.Service
                 UserTeamSearchResult result = new UserTeamSearchResult();
                 RecommendEntity recommend = await dbc.GetAll<RecommendEntity>().Include(u => u.User).AsNoTracking().Where(u => u.IsNull == false).SingleOrDefaultAsync(r => r.UserId == userId);
                 var recommends = dbc.GetAll<RecommendEntity>().AsNoTracking().Where(u => u.IsNull == false);
+                List<long> ids = new List<long>();
+                IQueryable<long> ids01 = dbc.GetIds<RecommendEntity>(r => r.RecommendId == userId);
+                IQueryable<long> ids02 = dbc.GetIds<RecommendEntity>(r => ids01.Contains(r.RecommendId));
+                IQueryable<long> ids03 = dbc.GetIds<RecommendEntity>(r => ids02.Contains(r.RecommendId));
+                ids.AddRange(await ids01.ToListAsync());
+                ids.AddRange(await ids02.ToListAsync());
+                ids.AddRange(await ids03.ToListAsync());
                 if (teamLevel != null)
                 {
                     if (recommend.RecommendMobile == "superhero" && recommend.RecommendGenera == 1)
@@ -1067,5 +1074,6 @@ namespace IMS.Service.Service
                 return result;
             }
         }
+      
     }
 }

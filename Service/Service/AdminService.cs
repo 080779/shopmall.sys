@@ -243,6 +243,7 @@ namespace IMS.Service.Service
             using (MyDbContext dbc = new MyDbContext())
             {
                 await dbc.Database.ExecuteSqlCommandAsync("exec del_all");
+                //dbc.Database.SqlQuery<Item>("exec @ReturnCode = spItemData @Code, @StatusLog OUT", returnCode, code, outParam);
                 return true;
             }
         }

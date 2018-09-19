@@ -2,6 +2,7 @@
 using IMS.DTO;
 using IMS.IService;
 using IMS.Service.Entity;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -15,6 +16,7 @@ namespace IMS.Service.Service
 {
     public class OrderService : IOrderService
     {
+        private static ILog log = LogManager.GetLogger(typeof(OrderService));
         private OrderDTO ToDTO(OrderEntity entity)
         {
             OrderDTO dto = new OrderDTO();
@@ -811,7 +813,7 @@ namespace IMS.Service.Service
                 {
                     day = 7;
                 }
-                var orders = dbc.GetAll<OrderEntity>().AsNoTracking().Where(r => r.OrderState.Name == "已发货").Where(r => SqlFunctions.DateAdd("day", day, r.ConsignTime) < DateTime.Now);
+                var orders = dbc.GetAll<OrderEntity>().Where(r => r.OrderState.Name == "已发货").Where(r => SqlFunctions.DateAdd("day", day, r.ConsignTime) < DateTime.Now);
                 foreach (OrderEntity order in orders)
                 {
                     order.EndTime = DateTime.Now;
@@ -864,14 +866,19 @@ namespace IMS.Service.Service
                 {
                     day = 7;
                 }
+                
                 //Expression<Func<OrderEntity, bool>> timewhere = r => r.ConsignTime == null ? false : r.ConsignTime.Value.AddDays(Convert.ToDouble(val)) < DateTime.Now;
                 //var orders = dbc.GetAll<OrderEntity>().Where(r => r.OrderState.Name == "已发货").Where(timewhere.Compile()).ToList();
-                var orders = dbc.GetAll<OrderEntity>().AsNoTracking().Where(r => r.OrderState.Name == "已发货").Where(r => SqlFunctions.DateAdd("day", day, r.ConsignTime) < DateTime.Now);
+                var orders = dbc.GetAll<OrderEntity>().Where(r => r.OrderState.Name == "已发货").Where(r => SqlFunctions.DateAdd("day", day, r.ConsignTime) < DateTime.Now);
+                long count = 0;
                 foreach (OrderEntity order in orders)
                 {
                     order.EndTime = DateTime.Now;
-                    order.OrderStateId = stateId;
+                    order.OrderStateId = stateId;      
+                    count++;
                 }
+                log.Debug($"自动确认收货时间:{day},订单状态:{stateId},符合要求订单数量{count}");
+                dbc.SaveChanges();
                 val = dbc.GetParameter<SettingEntity>(s => s.Name == "不能退货时间", s => s.Parm);
                 double.TryParse(val, out day);
                 if (day == 0)
@@ -904,6 +911,7 @@ namespace IMS.Service.Service
                 }
                 
                 dbc.SaveChanges();
+                log.Debug($"service中执行自动收货，不能退货完成");
             }
         }
 

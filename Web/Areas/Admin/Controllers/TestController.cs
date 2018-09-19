@@ -6,6 +6,7 @@ using IMS.Web.Areas.Admin.Models.User;
 using log4net;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -34,9 +35,13 @@ namespace IMS.Web.Areas.Admin.Controllers
             return View();
         }
 
-        public ActionResult Upload(listres imgList)
+        public ActionResult Code()
         {
-            return View();
+            string verifyCode = CommonHelper.GetCaptcha(4);
+            TempData["verifyCode"] = verifyCode;
+            VerificationCode code = new VerificationCode();
+            MemoryStream ms = code.OutputImageStream(verifyCode);
+            return File(ms, "image/jpeg");
         }
         public ActionResult getres()
         {
