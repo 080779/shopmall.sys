@@ -11,7 +11,7 @@ namespace IMS.Service.Config
             Property(p => p.Name).HasMaxLength(256).IsRequired();
             Property(p => p.Code).HasMaxLength(30).IsRequired();
             Property(p => p.Standard).HasMaxLength(30).IsRequired();
-            Property(p => p.Description).HasMaxLength(2048).IsRequired();
+            Property(p => p.Description).IsRequired();
             HasRequired(g => g.GoodsArea).WithMany().HasForeignKey(g => g.GoodsAreaId).WillCascadeOnDelete(false);
             HasRequired(g => g.GoodsType).WithMany().HasForeignKey(g => g.GoodsTypeId).WillCascadeOnDelete(false);
             HasRequired(g => g.GoodsSecondType).WithMany().HasForeignKey(g => g.GoodsSecondTypeId).WillCascadeOnDelete(false);

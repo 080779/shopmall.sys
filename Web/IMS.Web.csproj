@@ -395,6 +395,7 @@
     <Compile Include="Areas\Admin\Models\User\UserListViewModel.cs" />
     <Compile Include="Controllers\GoodsAreaController.cs" />
     <Compile Include="Controllers\GoodsCarController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\GoodsTypeController.cs" />
     <Compile Include="Controllers\GoodsController.cs" />
@@ -407,6 +408,7 @@
     <Compile Include="Controllers\BankAccountController.cs" />
     <Compile Include="Controllers\JournalController.cs" />
     <Compile Include="Controllers\ShareController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UserCenterController.cs" />
     <Compile Include="Controllers\TakeCashController.cs" />
     <Compile Include="Controllers\UserTeamController.cs" />
@@ -556,6 +558,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Home\" />
+    <Folder Include="Views\Test\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\IMS.Common.csproj">

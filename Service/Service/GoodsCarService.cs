@@ -53,14 +53,33 @@ namespace IMS.Service.Service
                 }
                 if (goodsCar != null)
                 {
-                    if (goods.Inventory < goodsCar.Number + num)
+                    if (num <= 0)
                     {
-                        return -2;
+                        if (num != -1)
+                        {
+                            return -3;//购物车减商品数量,只能传-1
+                        }
+                        if(goodsCar.Number==1)
+                        {
+                            return -4;//购物车减商品数量,购物车商品数量不能小于1
+                        }
+                        goodsCar.Number = goodsCar.Number + num;
                     }
-                    goodsCar.Number = goodsCar.Number + num;
+                    else
+                    {
+                        if (goods.Inventory < goodsCar.Number + num)
+                        {
+                            return -2;
+                        }
+                        goodsCar.Number = goodsCar.Number + num;
+                    }                    
                 }
                 else
                 {
+                    if (num <= 0)
+                    {
+                        return -5;//如果记录不存在，添加购物车的商品数量不能小于1
+                    }
                     if (goods.Inventory < num)
                     {
                         return -2;

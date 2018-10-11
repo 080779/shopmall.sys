@@ -20,6 +20,11 @@ namespace IMS.Common
             byte[] bytes = System.Text.Encoding.UTF8.GetBytes(str);
             return GetMD5(bytes);
         }
+        public static string GetMD5ToLower(this string str)
+        {
+            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(str);
+            return GetMD5(bytes).ToLower();
+        }
         public static string GetMD5(byte[] bytes)
         {
             using (MD5 md5 = MD5.Create())
